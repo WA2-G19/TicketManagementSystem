@@ -5,7 +5,7 @@
 
 async function getAllProducts(): Promise<Response>{
     
-    const response = await fetch("products/")
+    const response = await fetch("products")
     return response
 
 }

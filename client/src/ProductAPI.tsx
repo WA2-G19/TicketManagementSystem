@@ -7,6 +7,7 @@ import  { useEffect, useState } from "react"
 
 
 function ProductAPI(){
+
     const prototype = new Product("","","")
     const [statusCode, setStatusCode] = useState<number>(0) 
     const [bodyPretty, setBodyPretty] = useState<Object[]>([])
