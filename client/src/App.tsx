@@ -1,25 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-
+import Sidebar from './Sidebar';
+import Navbar from './Navbar';
+import { Container, Row, Col } from 'react-bootstrap';
+import ProductAPI from './ProductAPI';
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+     <Container fluid className =" d-flex flex-column m-0 p-0 min-vh-100">
+      <Navbar/>
+      <Container fluid className="flex-grow-1">
+          <Row className = "h-100"> 
+          <Sidebar/>
+          <Col  xs = {10} className="p-2">
+                {<ProductAPI/>}
+          </Col>
+          </Row>
+      </Container>
+    </Container>
+    
   );
 }
 
