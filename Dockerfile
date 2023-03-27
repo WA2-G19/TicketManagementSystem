@@ -1,23 +1,31 @@
-FROM gradle:8.0.2-jdk17-alpine AS build
-WORKDIR ./client
+FROM node:16.19 AS buildClient
+WORKDIR /client
+
+COPY ./client/package.json .
+COPY ./client/package-lock.json .
+RUN npm install --silent
+
+COPY ./client .
 
 RUN npm run build
 
-RUN mkdir -p ../server/src/main/resources/static && cp -a ./build/. ../server/src/main/resources/static
+FROM gradle:8.0.2-jdk17 AS buildServer
+WORKDIR /server
 
-WORKDIR ./server
-
-COPY --chown=gradle:gradle . /home/gradle/src
+COPY --chown=gradle:gradle ./server .
+RUN mkdir -p ./src/main/resources/static
+COPY --from=buildClient /client/build/. ./src/main/resources/static
 RUN gradle build -x test --no-daemon
-WORKDIR /home/gradle/src
 
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 
 EXPOSE 8080
 EXPOSE 3000
 
-RUN mkdir /app
+WORKDIR /app
 
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+COPY --from=buildServer /server/build/libs/*.jar ./spring-boot-application.jar
 
-ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]
+RUN echo "spring.datasource.url=jdbc:postgresql://database:5432/TicketManagementSystem" > application.properties
+
+ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]
