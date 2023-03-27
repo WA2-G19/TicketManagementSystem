@@ -1,3 +1,3 @@
 package it.polito.wa2.g19.server.products
 
-class ProductNotFoundException(message: String) : Exception(message)
+class ProductNotFoundException(message: String) : RuntimeException(message)
