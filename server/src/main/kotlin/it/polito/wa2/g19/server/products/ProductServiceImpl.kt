@@ -16,7 +16,13 @@ class ProductServiceImpl(
 
     @Transactional
     override fun getProduct(ean: String): ProductDTO? {
-        return productRepository.findByIdOrNull(ean)?.toDTO()
+        val product = productRepository.findByIdOrNull(ean)
+        if(product == null) {
+            throw ProductNotFoundException("There is no object with given EAN")
+        } else {
+            return product.toDTO()
+        }
+
     }
 
 }
