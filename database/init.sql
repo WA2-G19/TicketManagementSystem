@@ -10,7 +10,13 @@ CREATE TABLE public.product (
 CREATE TABLE public.profile (
     email varchar(255) PRIMARY KEY,
     name varchar(255),
-    surname varchar(255),
-    password varchar(255),
-    salt varchar(255)
+    surname varchar(255)
 );
+
+COPY public.product(ean, name, brand)
+FROM '/docker-entrypoint-initdb.d/product.csv'
+WITH DELIMITER ',' CSV HEADER;
+
+COPY public.profile(email, name, surname)
+FROM '/docker-entrypoint-initdb.d/profile.csv'
+WITH DELIMITER ',' CSV HEADER;
