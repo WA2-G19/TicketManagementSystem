@@ -1,0 +1,34 @@
+name: Build and Push Application Image
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+
+  build_and_push:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        images: matteorosani/ticket-management-system
+
+    - name: Build and push application
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
