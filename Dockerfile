@@ -20,7 +20,6 @@ RUN gradle build -x test --no-daemon
 FROM eclipse-temurin:17-jdk
 
 EXPOSE 8080
-EXPOSE 3000
 
 WORKDIR /app
 

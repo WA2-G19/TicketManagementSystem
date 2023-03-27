@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.profile
+package it.polito.wa2.g19.server.profiles
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.repository.findByIdOrNull

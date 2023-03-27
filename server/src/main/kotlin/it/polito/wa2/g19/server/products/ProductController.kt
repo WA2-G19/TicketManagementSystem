@@ -9,7 +9,7 @@ class ProductController(
     private val productService: ProductService
 ) {
 
-    @GetMapping("/products/")
+    @GetMapping("/products")
     fun getAll(): List<ProductDTO> {
         return productService.getAll()
     }
