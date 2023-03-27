@@ -28,4 +28,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: matteorosani/ticket-management-system:${{ github.event.inputs.tag_name || github.event.release.tag_name }}
+        tags: matteorosani/ticket-management-system:${{ github.event.inputs.tag_name || github.event.release.tag_name }}, matteorosani/ticket-management-system:latest
