@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release Tag v1.0.0 or v1.3.2-alpha for non production'
+        required: true
 
 jobs:
 
@@ -18,17 +22,10 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v3
-      with:
-        images: matteorosani/ticket-management-system
 
     - name: Build and push application
       uses: docker/build-push-action@v3
       with:
         context: .
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: matteorosani/ticket-management-system:${{ github.event.inputs.tag_name || github.event.release.tag_name }}
