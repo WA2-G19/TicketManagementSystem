@@ -1,9 +1,8 @@
 package it.polito.wa2.g19.server.profiles
 
 import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotNull
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,9 +24,9 @@ class ProfileController(
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
+        @Valid
         @PathVariable
         @Email
-        @NotNull
         email: String
     ): ProfileDTO? {
         return profileService.getProfile(email)
@@ -36,6 +35,7 @@ class ProfileController(
     @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
     fun postProfile(
+        @Valid
         @RequestBody
         profile: ProfileDTO
     ) {
@@ -45,6 +45,7 @@ class ProfileController(
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun putProfile(
+        @Valid
         @RequestBody
         profile: ProfileDTO
     ) {
