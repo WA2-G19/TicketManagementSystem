@@ -1,6 +1,9 @@
 package it.polito.wa2.g19.server.profiles
 
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotNull
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -23,6 +26,8 @@ class ProfileController(
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
         @PathVariable
+        @Email
+        @NotNull
         email: String
     ): ProfileDTO? {
         return profileService.getProfile(email)
