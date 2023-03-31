@@ -13,7 +13,6 @@ function ProfilesAPI() {
     const [bodyRaw, setBodyRaw] = useState<string>("")
     const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.name, p.surname, p.email))
 
-
     return (<>
         <Container className="vh-100 d-flex flex-column ">
             <Row className="mb-3">
