@@ -100,17 +100,16 @@ function PostProfileCard(props: {
 
     const handleSubmit = async (event: React.MouseEvent) => {
         event.preventDefault();
-        try {
             const p = new Profile(email, name, surname)
             const response = await API.postProfile(p)
             if (response.ok) {
                 props.setBodyPretty([p])
-                props.setStatusCode(response.status)
                 props.setBodyRaw(JSON.stringify(p, null, 2))
+            } else {
+                props.setBodyPretty([response])
+                props.setBodyRaw(JSON.stringify(response, null, 2))
             }
-        } catch (e) {
-            console.log(e)
-        }
+            props.setStatusCode(response.status)
     }
 
     return (
