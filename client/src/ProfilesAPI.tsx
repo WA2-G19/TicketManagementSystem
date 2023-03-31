@@ -2,7 +2,7 @@ import {Container, Button, Form, Row, Col, Card} from "react-bootstrap"
 import Response from "./Response"
 import Profile from "./classes/Profile"
 import API from "./API/api"
-import {useState} from "react"
+import React, {useState} from "react"
 
 
 function ProfilesAPI() {
@@ -102,7 +102,6 @@ function PostProfileCard(props: {
             const p = new Profile(email, name, surname)
             const response = await API.postProfile(p)
             if (response.ok) {
-
                 props.setBodyPretty([p])
                 props.setBodyRaw(JSON.stringify(p, null, 2))
             } else {
