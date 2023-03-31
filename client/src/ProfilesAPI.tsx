@@ -2,7 +2,7 @@ import {Container, Button, Form, Row, Col, Card} from "react-bootstrap"
 import Response from "./Response"
 import Profile from "./classes/Profile"
 import API from "./API/api"
-import {useEffect, useState} from "react"
+import {useState} from "react"
 
 
 function ProfilesAPI() {
@@ -11,7 +11,7 @@ function ProfilesAPI() {
     const [statusCode, setStatusCode] = useState<number>(0)
     const [bodyPretty, setBodyPretty] = useState<Object[]>([])
     const [bodyRaw, setBodyRaw] = useState<string>("")
-    const profile: Profile[] = bodyPretty.map((p: any, idx) => new Profile(p.name, p.surname, p.email))
+    const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.name, p.surname, p.email))
 
 
     return (<>
@@ -103,6 +103,7 @@ function PostProfileCard(props: {
             const p = new Profile(email, name, surname)
             const response = await API.postProfile(p)
             if (response.ok) {
+
                 props.setBodyPretty([p])
                 props.setBodyRaw(JSON.stringify(p, null, 2))
             } else {
