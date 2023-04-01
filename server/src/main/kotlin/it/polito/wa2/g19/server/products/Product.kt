@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull
 
 @Entity
 @Table(name = "product")
-class Product {
+class Product() {
 
     @Id
     var ean: String = ""
@@ -15,5 +15,13 @@ class Product {
     var name: String = ""
     @NotNull
     var brand: String = ""
+
+    constructor(ean: String, name: String, brand: String): this(){
+        this.ean = ean
+        this.name = name
+        this.brand = brand
+    }
+
+
 
 }

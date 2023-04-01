@@ -1,8 +1,4 @@
 
-
-
-
-
 async function getAllProducts(): Promise<Response>{
     
     const response = await fetch("products")
@@ -11,7 +7,6 @@ async function getAllProducts(): Promise<Response>{
 }
 
 async function getProductByEAN(ean: string): Promise<Response>{
- 
     const response = await fetch("products/" + ean )
     return response
     
