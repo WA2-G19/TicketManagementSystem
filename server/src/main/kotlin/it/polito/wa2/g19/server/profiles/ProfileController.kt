@@ -39,7 +39,7 @@ class ProfileController(
         @RequestBody
         profile: ProfileDTO
     ) {
-        profileService.insertProfile(profile)
+        return profileService.insertProfile(profile)
     }
 
     @PutMapping("/profiles/{email}")
