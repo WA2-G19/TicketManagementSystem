@@ -15,13 +15,13 @@ async function getProductByEAN(ean: string): Promise<Response>{
 
 async function getProfileByEmail(email: string): Promise<Response> {
 
-    const response = await fetch("profiles/" + email)
+    const response = await fetch("/API/profiles/" + email)
     return response
 
 }
 
 async function postProfile(profile: Profile): Promise<Response> {
-    const response = await fetch("profiles", {
+    const response = await fetch("/API/profiles", {
         method: 'POST',
         headers: {'Content-Type': 'application/json', Accept: 'application/json'},
         body: JSON.stringify({email: profile.email, name: profile.name, surname: profile.surname})
@@ -30,7 +30,7 @@ async function postProfile(profile: Profile): Promise<Response> {
 }
 
 async function putProfile(profile: Profile): Promise<Response> {
-    const response = await fetch("profiles/" + profile.email, {
+    const response = await fetch("/API/profiles/" + profile.email, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json', Accept: 'application/json'},
         body: JSON.stringify({email: profile.email, name: profile.name, surname: profile.surname})
@@ -40,7 +40,6 @@ async function putProfile(profile: Profile): Promise<Response> {
 
 
 
-const API = {getAllProducts, getProductByEAN}
 
 const API = {getAllProducts, getProductByEAN, getProfileByEmail, postProfile, putProfile}
 export default API
