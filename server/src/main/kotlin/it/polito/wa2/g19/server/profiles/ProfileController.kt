@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController
 class ProfileController(
     private val profileService: ProfileService
 ) {
-    @GetMapping("/profiles")
+    @GetMapping("/API/profiles")
     @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<ProfileDTO> {
         return profileService.getAll()
     }
 
-    @GetMapping("/profiles/{email}")
+    @GetMapping("/API/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
         @Valid
@@ -32,7 +32,7 @@ class ProfileController(
         return profileService.getProfile(email)
     }
 
-    @PostMapping("/profiles")
+    @PostMapping("/API/profiles")
     @ResponseStatus(HttpStatus.CREATED)
     fun postProfile(
         @Valid
@@ -47,8 +47,12 @@ class ProfileController(
     fun putProfile(
         @Valid
         @RequestBody
-        profile: ProfileDTO
+        profile: ProfileDTO,
+        @Valid
+        @PathVariable
+        @Email
+        email: String
     ) {
-        profileService.updateProfile(profile)
+        profileService.updateProfile(email, profile)
     }
 }

@@ -33,8 +33,9 @@ class ProfileServiceImpl(
         }
     }
 
-    override fun updateProfile(profile: ProfileDTO) {
-        val p = profileRepository.findByIdOrNull(profile.email)
+    override fun updateProfile(email: String, profile: ProfileDTO) {
+        val p = profileRepository.findByIdOrNull(email)
+
         if (p != null) {
             p.name = profile.name
             p.surname = profile.surname

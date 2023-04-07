@@ -17,6 +17,7 @@ class Profile() {
     @NotNull(message = "name cannot be null")
     var name: String = ""
     @NotNull(message = "surname cannot be null")
+
     var surname: String = ""
 
     constructor(email: String, name: String, surname: String) : this(){

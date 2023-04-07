@@ -12,4 +12,6 @@ class ProductsProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler(ProductNotFoundException::class)
     fun handleProductNotFound(e: ProductNotFoundException) = ProblemDetail
         .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
+
+
 }

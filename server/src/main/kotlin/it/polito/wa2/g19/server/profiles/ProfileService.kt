@@ -4,5 +4,5 @@ interface ProfileService {
     fun getAll(): List<ProfileDTO>
     fun getProfile(email: String): ProfileDTO?
     fun insertProfile(profile: ProfileDTO)
-    fun updateProfile(profile: ProfileDTO)
+    fun updateProfile(email: String, profile: ProfileDTO)
 }

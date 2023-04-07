@@ -21,9 +21,7 @@ function ProductAPI(){
             <Col >
                 <GetByIdCard setBodyPretty={setBodyPretty} setBodyRaw={setBodyRaw} setStatusCode={setStatusCode}/>
             </Col>
-            <Col>
-                <PostProductCard/>
-            </Col>
+            
         </Row>
         <Row className="h-100">
             <Response prototype={prototype} responseBodyPretty={products} responseBodyRaw={bodyRaw} responseStatusCode={statusCode}/>
