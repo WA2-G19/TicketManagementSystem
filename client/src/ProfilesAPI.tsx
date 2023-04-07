@@ -11,7 +11,7 @@ function ProfilesAPI() {
     const [statusCode, setStatusCode] = useState<number>(0)
     const [bodyPretty, setBodyPretty] = useState<Object[]>([])
     const [bodyRaw, setBodyRaw] = useState<string>("")
-    const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.name, p.surname, p.email))
+    const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.email, p.name, p.surname))
 
     return (<>
         <Container className="vh-100 d-flex flex-column ">
