@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull
 
 @Entity
 @Table(name = "profile")
-class Profile {
+class Profile() {
 
     @Id
     @Email
@@ -18,4 +18,10 @@ class Profile {
     var name: String = ""
     @NotNull(message = "surname cannot be null")
     var surname: String = ""
+
+    constructor(email: String, name: String, surname: String) : this(){
+        this.email = email
+        this.name = name
+        this.surname = surname
+    }
 }
