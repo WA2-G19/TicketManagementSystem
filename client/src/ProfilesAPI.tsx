@@ -3,6 +3,7 @@ import Response from "./Response"
 import Profile from "./classes/Profile"
 import API from "./API/api"
 import React, {useState} from "react"
+import { decode } from "punycode"
 
 
 function ProfilesAPI() {
@@ -12,9 +13,9 @@ function ProfilesAPI() {
     const [bodyPretty, setBodyPretty] = useState<Object[]>([])
     const [bodyRaw, setBodyRaw] = useState<string>("")
     const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.email, p.name, p.surname))
-
+    const [dummy, setDummy] = useState(false)
     return (<>
-        <Container className="vh-100 d-flex flex-column ">
+        <Container className="h-100 d-flex flex-column align-items-stretch dashboard-page">
             <Row className="mb-3">
                 <Col>
                     <GetByIdCard setBodyPretty={setBodyPretty} setBodyRaw={setBodyRaw} setStatusCode={setStatusCode}/>
@@ -28,9 +29,9 @@ function ProfilesAPI() {
                                     setStatusCode={setStatusCode}/>
                 </Col>
             </Row>
-            <Row className="h-100">
+            <Row className="">
                 <Response prototype={prototype} responseBodyPretty={profile} responseBodyRaw={bodyRaw}
-                          responseStatusCode={statusCode}/>
+                          responseStatusCode={new Number(statusCode)}/>
             </Row>
 
         </Container>
@@ -49,15 +50,21 @@ function GetByIdCard(props: {
 
     const handleGetByID = async (event: React.MouseEvent) => {
         event.preventDefault();
+        const response = await API.getProfileByEmail(email)
+        let decodedResponse = null
         try {
-            const response = await API.getProfileByEmail(email)
-            const jsonResponse = await response.json()
-            props.setBodyPretty([jsonResponse])
-            props.setStatusCode(response.status)
-            props.setBodyRaw(JSON.stringify(jsonResponse, null, 2))
+            decodedResponse= await response.json()
+            console.log(decodedResponse)
+            props.setBodyPretty([decodedResponse])
+            props.setBodyRaw(JSON.stringify(decodedResponse, null, 2))
 
-        } catch (e) {
+        } catch(e){
             console.log(e)
+            decodedResponse = await response.text()
+            props.setBodyRaw(decodedResponse)
+            
+        } finally {
+            props.setStatusCode(response.status)
         }
     }
 
@@ -67,16 +74,16 @@ function GetByIdCard(props: {
                 <Card.Title>
                     GET
                 </Card.Title>
-                <Form>
+                <Form >
                     <Form.Group className="mb-3" controlId="getEan">
-                        <Form.Label>EMAIL</Form.Label>
+                        <Form.Label>Email</Form.Label>
                         <Form.Control value={email} onChange={(e) => setEmail(e.target.value)}
                                       placeholder="The profile email you want to search"/>
 
                     </Form.Group>
                     <Row>
                         <div>
-                            <Button variant="primary" onClick={(e) => handleGetByID(e)}>
+                            <Button variant="primary" onClick={(e) => handleGetByID(e)} disabled={email.length === 0}>
                                 Get by Email
                             </Button>
                         </div>
@@ -99,16 +106,19 @@ function PostProfileCard(props: {
 
     const handleSubmit = async (event: React.MouseEvent) => {
         event.preventDefault();
-            const p = new Profile(email, name, surname)
-            const response = await API.postProfile(p)
-            if (response.ok) {
-                props.setBodyPretty([p])
-                props.setBodyRaw(JSON.stringify(p, null, 2))
-            } else {
-                props.setBodyPretty([response])
-                props.setBodyRaw(JSON.stringify(response, null, 2))
-            }
-            props.setStatusCode(response.status)
+        const p = new Profile(email, name, surname)
+        const response = await API.postProfile(p)
+        const decodedResponse = await response.text()
+        console.log(decodedResponse.length)
+        if(decodedResponse.length === 0){
+            props.setBodyRaw("")
+           
+        } else {
+
+            props.setBodyRaw(JSON.stringify(JSON.parse(decodedResponse), null, 2))
+        }
+        props.setBodyPretty([])
+        props.setStatusCode(response.status)
     }
 
     return (
@@ -151,16 +161,19 @@ function PutProfileCard(props: {
 
     const handleSubmit = async (event: React.MouseEvent) => {
         event.preventDefault();
-            const p = new Profile(email, name, surname)
-            const response = await API.putProfile(p)
-            if (response.ok) {
-                props.setBodyPretty([p])
-                props.setBodyRaw(JSON.stringify(p, null, 2))
-            } else {
-                props.setBodyPretty([response])
-                props.setBodyRaw(JSON.stringify(response, null, 2))
-            }
-            props.setStatusCode(response.status)
+        const p = new Profile(email, name, surname)
+        const response = await API.postProfile(p)
+        const decodedResponse = await response.text()
+        console.log(decodedResponse.length)
+        if(decodedResponse.length === 0){
+            props.setBodyRaw("")
+           
+        } else {
+
+            props.setBodyRaw(JSON.stringify(JSON.parse(decodedResponse), null, 2))
+        }
+        props.setBodyPretty([])
+        props.setStatusCode(response.status)
     }
 
     return (

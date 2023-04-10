@@ -13,18 +13,18 @@ function ProductAPI(){
     const [bodyPretty, setBodyPretty] = useState<Object[]>([])
     const [bodyRaw, setBodyRaw] = useState<string>("")
     const products: Product[] = bodyPretty.map((p: any, idx) => new Product(p.ean, p.name, p.brand))
-    
+
 
     return (<>
-        <Container className="vh-100 d-flex flex-column ">
+        <Container className="h-100 d-flex flex-column align-items-stretch dashboard-page">
         <Row className="mb-3">
             <Col >
                 <GetByIdCard setBodyPretty={setBodyPretty} setBodyRaw={setBodyRaw} setStatusCode={setStatusCode}/>
             </Col>
             
         </Row>
-        <Row className="h-100">
-            <Response prototype={prototype} responseBodyPretty={products} responseBodyRaw={bodyRaw} responseStatusCode={statusCode}/>
+        <Row className="">
+            <Response prototype={prototype} responseBodyPretty={products} responseBodyRaw={bodyRaw} responseStatusCode={new Number(statusCode)} />
         </Row>
         
         </Container>
@@ -43,13 +43,23 @@ function GetByIdCard(props: {
         event.preventDefault();
         try{
             const response = await API.getAllProducts()
-            const jsonResponse = await response.json()
-            props.setBodyPretty(jsonResponse)
-            props.setStatusCode(response.status)
-            props.setBodyRaw(JSON.stringify(jsonResponse, null, 2))
+            let decodedResponse = null
+            try {
+                decodedResponse= await response.json()
+                props.setBodyPretty(decodedResponse)
+                props.setBodyRaw(JSON.stringify(decodedResponse, null, 2))
+
+
+            } catch{
+                decodedResponse = await response.text()
+            } finally {
+
+                props.setBodyRaw(decodedResponse)
+                props.setStatusCode(response.status)
+            }
 
         } catch(e){
-            console.log(e)
+            
         }
     }
 
@@ -57,6 +67,7 @@ function GetByIdCard(props: {
         event.preventDefault();
         try{
             const response = await API.getProductByEAN(ean)
+            console.log(response)
             const jsonResponse = await response.json()
             props.setBodyPretty([jsonResponse])
             props.setStatusCode(response.status)
@@ -84,7 +95,7 @@ function GetByIdCard(props: {
                 <Button variant="primary" onClick={(e) => handleGetAll(e)}>
                     Get all
                 </Button> {' '}{' '}
-                <Button  variant="primary" onClick={(e) => handleGetByID(e)}>
+                <Button  variant="primary" disabled={ean.length === 0} onClick={(e) => handleGetByID(e)}>
                     Get by EAN
                 </Button>
                 </div>   

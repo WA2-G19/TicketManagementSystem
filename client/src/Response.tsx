@@ -1,24 +1,31 @@
-import { Card, InputGroup, Button, Container } from "react-bootstrap"
+import { Card, InputGroup, Button, Container, Spinner } from "react-bootstrap"
 import APIObject from "./classes/APIObject"
 import PrettyOutput from "./PrettyOutput"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { HttpStatusEnum } from "./utils/httpMapping"
 
 function Response(props: {
     prototype: APIObject,
     responseBodyPretty: APIObject[],
     responseBodyRaw: string,
-    responseStatusCode: number
+    responseStatusCode: Number,
 }){
 
+    
     const [pretty, setPretty] = useState(true)
-    console.log(props.responseBodyRaw)
+    useEffect(() => {
+        if (props.responseStatusCode.valueOf() < 400)
+        setPretty(false)
+    }, [props.responseStatusCode])
     return(
-        <Card className="flex-grow-1">
-            <Card.Body>
+        <Card className="">
+            <Card.Body className="">
                 <Card.Title>
-                    Result
+                    Response
                 </Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">Status Code: {props.responseStatusCode}</Card.Subtitle>
+                <Card.Subtitle className="mb-2 text-muted">Status Code: {props.responseStatusCode.valueOf()}{' '}-{' '}
+                {HttpStatusEnum.get(props.responseStatusCode.valueOf())?.name}
+                </Card.Subtitle>
                 <InputGroup size="sm" className="mb-2">
                     <Button variant={pretty? "primary": "outline-primary"} onClick={() => setPretty(true)}>Pretty</Button>
                     <Button variant={!pretty? "primary": "outline-primary"} onClick={() => setPretty(false)}>Raw</Button>

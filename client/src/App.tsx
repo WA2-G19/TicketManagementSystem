@@ -10,11 +10,11 @@ function App() {
     const [filter, setFilter] = useState<string>("Product");
 
     return (
-        <Container fluid className=" d-flex flex-column m-0 p-0 min-vh-100">
+        <Container fluid className=" vh-100 d-flex flex-column m-0 p-0 min-vh-100">
             <Navbar/>
             <Container fluid className="flex-grow-1">
                 <Row className="h-100">
-                    <Sidebar setFilter={setFilter}/>
+                    <Sidebar setFilter={setFilter} filter={filter}/>
                     <Col xs={10} className="p-2">
                         {filter=="Profile" ? <ProfilesAPI/> : <></>}
                         {filter=="Product" ? <ProductAPI/> : <></>}
