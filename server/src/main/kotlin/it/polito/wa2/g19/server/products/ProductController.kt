@@ -20,6 +20,7 @@ class ProductController(
 
     @GetMapping("/products/{ean}")
     fun getProduct(@Valid @PathVariable @EAN ean: String): ProductDTO? {
+
         return productService.getProduct(ean)
     }
 

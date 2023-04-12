@@ -4,12 +4,14 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotNull
+import org.hibernate.validator.constraints.EAN
 
 @Entity
 @Table(name = "product")
 class Product() {
 
     @Id
+    @EAN
     var ean: String = ""
     @NotNull
     var name: String = ""

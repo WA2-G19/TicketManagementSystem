@@ -12,6 +12,7 @@ class Profile() {
 
     @Id
     @Email
+
     @NotNull(message = "email cannot be null")
     var email: String = ""
     @NotNull(message = "name cannot be null")
@@ -23,5 +24,22 @@ class Profile() {
         this.email = email
         this.name = name
         this.surname = surname
+    }
+
+
+
+
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Profile
+
+        if (email != other.email) return false
+        if (name != other.name) return false
+        if (surname != other.surname) return false
+
+        return true
     }
 }

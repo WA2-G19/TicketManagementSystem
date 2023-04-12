@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController
 class ProfileController(
     private val profileService: ProfileService
 ) {
-    @GetMapping("/profiles")
+    /*@GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<ProfileDTO> {
         return profileService.getAll()
-    }
+    }*/
 
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
@@ -53,9 +53,9 @@ class ProfileController(
         @RequestBody
         profile: ProfileDTO
     ) {
-        if (email != profile.email) {
-            throw NotMatchingEmailException("The email in the path does not match the email in the body of the request.")
+        if (email.trim().lowercase() != profile.email.trim().lowercase()) {
+            throw NotMatchingEmailException()
         }
-        profileService.updateProfile(profile)
+        profileService.updateProfile(email, profile)
     }
 }

@@ -14,4 +14,4 @@ data class ProfileDTO(
     val surname: String
 )
 
-fun Profile.toDTO(): ProfileDTO = ProfileDTO(email.lowercase(), name, surname)
+fun Profile.toDTO(): ProfileDTO = ProfileDTO(email.trim().lowercase(), name, surname)

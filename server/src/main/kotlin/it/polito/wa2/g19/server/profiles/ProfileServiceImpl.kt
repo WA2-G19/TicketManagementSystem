@@ -13,20 +13,21 @@ class ProfileServiceImpl(
     }
 
     override fun getProfile(email: String): ProfileDTO? {
-        val profile = profileRepository.findByIdOrNull(email)
+
+        val profile = profileRepository.findByIdOrNull(email.trim().lowercase())
         if(profile == null) {
-            throw ProfileNotFoundException("There is no profile associated to this email")
+            throw ProfileNotFoundException()
         } else {
             return profile.toDTO()
         }
     }
 
     override fun insertProfile(profile: ProfileDTO) {
-        if (profileRepository.existsById(profile.email)) {
-            throw DuplicateEmailException("There is already an email associated to this profile")
+        if (profileRepository.existsById(profile.email.trim().lowercase())) {
+            throw DuplicateEmailException()
         } else {
             val p = Profile()
-            p.email = profile.email
+            p.email = profile.email.trim().lowercase()
             p.name = profile.name
             p.surname = profile.surname
             profileRepository.save(p)
@@ -34,14 +35,14 @@ class ProfileServiceImpl(
     }
 
     override fun updateProfile(email: String, profile: ProfileDTO) {
-        val p = profileRepository.findByIdOrNull(email)
+        val p = profileRepository.findByIdOrNull(email.trim().lowercase())
 
         if (p != null) {
             p.name = profile.name
             p.surname = profile.surname
             profileRepository.save(p)
         } else {
-            throw ProfileNotFoundException("This profile does not exist")
+            throw ProfileNotFoundException()
         }
     }
 }

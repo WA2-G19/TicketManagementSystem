@@ -42,7 +42,7 @@ class ErrorResponse(val fieldErrors: List<FieldError>, val status: HttpStatusCod
         fieldErrors.forEach{
             val field = it.field
             val errorMessage = it.defaultMessage
-            map.put(field,errorMessage?: "")
+            map[field] = errorMessage?: ""
         }
         response.put("detail", JSONObject(map))
 
