@@ -54,7 +54,6 @@ function GetByIdCard(props: {
                 decodedResponse = await response.text()
             } finally {
 
-                props.setBodyRaw(decodedResponse)
                 props.setStatusCode(response.status)
             }
 
@@ -105,37 +104,6 @@ function GetByIdCard(props: {
     </Card>)
 }
 
-
-
-
-function PostProductCard(){
-    return (
-    <Card className="h-100">
-        <Card.Body className="h-100 ">
-        <Card.Title>
-            POST
-        </Card.Title>
-        <Form>
-        <Form.Group className="mb-3" controlId="postEan">
-            <Form.Label>EAN</Form.Label>
-            <Form.Control  placeholder="" />                
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="postEan">
-            <Form.Label>Name</Form.Label>
-            <Form.Control  placeholder="" />                
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="postEan">
-            <Form.Label>Brand</Form.Label>
-            <Form.Control  placeholder="" />                
-        </Form.Group>
-        <Button  variant="primary" type="submit">
-            Post Product
-        </Button>
-        </Form>
-    </Card.Body>
-    </Card>
-    )
-}
 
 
 

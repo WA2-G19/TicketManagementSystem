@@ -162,7 +162,7 @@ function PutProfileCard(props: {
     const handleSubmit = async (event: React.MouseEvent) => {
         event.preventDefault();
         const p = new Profile(email, name, surname)
-        const response = await API.postProfile(p)
+        const response = await API.putProfile(p)
         const decodedResponse = await response.text()
         console.log(decodedResponse.length)
         if(decodedResponse.length === 0){
@@ -196,7 +196,7 @@ function PutProfileCard(props: {
                         <Form.Control value={surname} onChange={(e) => setSurname(e.target.value)} placeholder=""/>
                     </Form.Group>
                     <Button variant="primary" onClick={(e) => handleSubmit(e)}>
-                        Post Profile
+                        Put Profile
                     </Button>
                 </Form>
             </Card.Body>

@@ -11,7 +11,6 @@ function Response(props: {
     responseStatusCode: Number,
 }){
 
-    
     const [pretty, setPretty] = useState(true)
     useEffect(() => {
         if (props.responseStatusCode.valueOf() < 400)
