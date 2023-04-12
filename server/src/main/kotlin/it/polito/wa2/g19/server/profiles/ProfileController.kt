@@ -3,7 +3,6 @@ package it.polito.wa2.g19.server.profiles
 import jakarta.validation.constraints.Email
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,44 +15,47 @@ import org.springframework.web.bind.annotation.RestController
 class ProfileController(
     private val profileService: ProfileService
 ) {
+    @GetMapping("/profiles")
+    @ResponseStatus(HttpStatus.OK)
+    fun getAll(): List<ProfileDTO> {
+        return profileService.getAll()
+    }
 
-
-    @GetMapping("/API/profiles/{email}")
+    @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
         @Valid
         @PathVariable
-        @Email(message = "provide a valid email")
+        @Email
         email: String
     ): ProfileDTO? {
-
-        return profileService.getProfile(email.lowercase())
+        return profileService.getProfile(email)
     }
 
-    @PostMapping("/API/profiles")
+    @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
     fun postProfile(
         @Valid
         @RequestBody
         profile: ProfileDTO
     ) {
-        profile.email = profile.email.lowercase()
-
         return profileService.insertProfile(profile)
     }
 
-    @PutMapping("/API/profiles/{email}")
+    @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun putProfile(
         @Valid
-        @RequestBody
-        profile: ProfileDTO,
-        @Valid
         @PathVariable
-        @Email(message = "provide a valid email")
-        email: String
+        @Email
+        email: String,
+        @Valid
+        @RequestBody
+        profile: ProfileDTO
     ) {
-        profile.email = profile.email.lowercase()
-        profileService.updateProfile(email.lowercase(), profile)
+        if (email != profile.email) {
+            throw NotMatchingEmailException("The email in the path does not match the email in the body of the request.")
+        }
+        profileService.updateProfile(profile)
     }
 }
