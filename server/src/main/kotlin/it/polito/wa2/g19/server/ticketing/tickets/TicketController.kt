@@ -52,7 +52,7 @@ class TicketController(
     /*
        Since a PUT method should ensure the idempotency property, actually this should be a PATCH method,
        however, the RestTemplate object used for testing does not allow us to issue PATCH request.
-       Just for the sake of testing we use treat this method as it handle a PUT method.
+       Just for the sake of testing we use treat this method as it handle a PUT method. 
     */
     @PutMapping("/tickets/{ticketId}")
     fun putTicket(
