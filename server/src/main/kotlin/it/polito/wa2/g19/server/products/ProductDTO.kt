@@ -1,16 +1,16 @@
 package it.polito.wa2.g19.server.products
 
+import jakarta.validation.constraints.NotBlank
 import org.hibernate.validator.constraints.EAN
-import jakarta.validation.constraints.NotNull
 
 
 data class ProductDTO (
     @field:EAN(message = "ean is not valid")
-    @field:NotNull(message = "ean cannot be null")
+    @field:NotBlank(message = "ean cannot be blank")
     val ean: String,
-    @field:NotNull(message = "name cannot be null")
+    @field:NotBlank(message = "name cannot be blank")
     val name: String,
-    @field:NotNull(message = "brand cannot be null")
+    @field:NotBlank(message = "brand cannot be blank")
     val brand: String
 )
 

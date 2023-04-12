@@ -3,9 +3,11 @@ package it.polito.wa2.g19.server.profiles
 import jakarta.validation.constraints.Email
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@Validated
 @RequestMapping("/API")
 class ProfileController(
     private val profileService: ProfileService
@@ -21,7 +23,7 @@ class ProfileController(
     fun getProfile(
         @Valid
         @PathVariable
-        @Email
+        @Email(message = "provide a valid email")
         email: String
     ): ProfileDTO? {
         return profileService.getProfile(email)
@@ -42,7 +44,7 @@ class ProfileController(
     fun putProfile(
         @Valid
         @PathVariable
-        @Email
+        @Email(message = "provide a valid email")
         email: String,
         @Valid
         @RequestBody

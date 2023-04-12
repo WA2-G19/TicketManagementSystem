@@ -21,7 +21,12 @@ class ProductController(
     }
 
     @GetMapping("/products/{ean}")
-    fun getProduct(@Valid @PathVariable @EAN ean: String): ProductDTO? {
+    fun getProduct(
+        @Valid
+        @PathVariable
+        @EAN(message = "ean is not valid")
+        ean: String
+    ): ProductDTO? {
 
         return productService.getProduct(ean)
     }
