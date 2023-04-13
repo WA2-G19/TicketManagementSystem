@@ -3,7 +3,6 @@ import Response from "./Response"
 import Profile from "./classes/Profile"
 import API from "./API/api"
 import React, {useState} from "react"
-import { decode } from "punycode"
 
 
 function ProfilesAPI() {
@@ -13,7 +12,6 @@ function ProfilesAPI() {
     const [bodyPretty, setBodyPretty] = useState<Object[]>([])
     const [bodyRaw, setBodyRaw] = useState<string>("")
     const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.email, p.name, p.surname))
-    const [dummy, setDummy] = useState(false)
     return (<>
         <Container className="h-100 d-flex flex-column align-items-stretch dashboard-page">
             <Row className="mb-3">
@@ -48,7 +46,7 @@ function GetByIdCard(props: {
     const [email, setEmail] = useState("")
 
 
-    const handleGetByID = async (event: React.MouseEvent) => {
+    const handleGetByID = async (event: React.FormEvent) => {
         event.preventDefault();
         const response = await API.getProfileByEmail(email)
         let decodedResponse = null
@@ -74,7 +72,7 @@ function GetByIdCard(props: {
                 <Card.Title>
                     GET
                 </Card.Title>
-                <Form >
+                <Form onSubmit={handleGetByID}>
                     <Form.Group className="mb-3" controlId="getEan">
                         <Form.Label>Email</Form.Label>
                         <Form.Control value={email} onChange={(e) => setEmail(e.target.value)}
@@ -83,7 +81,7 @@ function GetByIdCard(props: {
                     </Form.Group>
                     <Row>
                         <div>
-                            <Button variant="primary" onClick={(e) => handleGetByID(e)} disabled={email.length === 0}>
+                            <Button variant="primary" type="submit" disabled={email.length === 0}>
                                 Get by Email
                             </Button>
                         </div>
@@ -104,7 +102,7 @@ function PostProfileCard(props: {
     const [name, setName] = useState<string>("")
     const [surname, setSurname] = useState<string>("")
 
-    const handleSubmit = async (event: React.MouseEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const p = new Profile(email, name, surname)
         const response = await API.postProfile(p)
@@ -127,7 +125,7 @@ function PostProfileCard(props: {
                 <Card.Title>
                     POST
                 </Card.Title>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="postProfile">
                         <Form.Label>Email</Form.Label>
                         <Form.Control value={email} onChange={(e) => setEmail(e.target.value)} placeholder=""/>
@@ -140,7 +138,7 @@ function PostProfileCard(props: {
                         <Form.Label>Surname</Form.Label>
                         <Form.Control value={surname} onChange={(e) => setSurname(e.target.value)} placeholder=""/>
                     </Form.Group>
-                    <Button variant="primary" onClick={(e) => handleSubmit(e)}>
+                    <Button variant="primary" type="submit">
                         Post Profile
                     </Button>
                 </Form>
@@ -159,7 +157,7 @@ function PutProfileCard(props: {
     const [name, setName] = useState<string>("")
     const [surname, setSurname] = useState<string>("")
 
-    const handleSubmit = async (event: React.MouseEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const p = new Profile(email, name, surname)
         const response = await API.putProfile(p)
@@ -182,7 +180,7 @@ function PutProfileCard(props: {
                 <Card.Title>
                     PUT
                 </Card.Title>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="postProfile">
                         <Form.Label>Email</Form.Label>
                         <Form.Control value={email} onChange={(e) => setEmail(e.target.value)} placeholder=""/>
@@ -195,7 +193,7 @@ function PutProfileCard(props: {
                         <Form.Label>Surname</Form.Label>
                         <Form.Control value={surname} onChange={(e) => setSurname(e.target.value)} placeholder=""/>
                     </Form.Group>
-                    <Button variant="primary" onClick={(e) => handleSubmit(e)}>
+                    <Button variant="primary" type="submit">
                         Put Profile
                     </Button>
                 </Form>

@@ -12,7 +12,6 @@ class Profile() {
 
     @Id
     @Email
-
     @NotNull(message = "email cannot be null")
     var email: String = ""
     @NotNull(message = "name cannot be null")
@@ -20,15 +19,11 @@ class Profile() {
     @NotNull(message = "surname cannot be null")
     var surname: String = ""
 
-    constructor(email: String, name: String, surname: String) : this(){
+    constructor(email: String, name: String, surname: String) : this() {
         this.email = email
         this.name = name
         this.surname = surname
     }
-
-
-
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -41,5 +36,12 @@ class Profile() {
         if (surname != other.surname) return false
 
         return true
+    }
+
+    override fun hashCode(): Int {
+        var result = email.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + surname.hashCode()
+        return result
     }
 }

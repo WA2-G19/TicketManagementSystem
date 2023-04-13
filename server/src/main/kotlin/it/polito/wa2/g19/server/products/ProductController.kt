@@ -26,7 +26,7 @@ class ProductController(
         @PathVariable
         @EAN(message = "ean is not valid")
         ean: String
-    ): ProductDTO? {
+    ): ProductDTO {
 
         return productService.getProduct(ean)
     }

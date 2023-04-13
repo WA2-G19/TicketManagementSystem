@@ -14,9 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class CommonProblemDetailsHandler: ResponseEntityExceptionHandler() {
 
-    @ExceptionHandler(ConstraintViolationException::class)
-    fun handleConstraintViolationException(e: ConstraintViolationException) = ProblemDetail
-        .forStatusAndDetail( HttpStatus.BAD_REQUEST, e.message!! )
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
@@ -25,9 +22,16 @@ class CommonProblemDetailsHandler: ResponseEntityExceptionHandler() {
     ): ResponseEntity<Any>? {
         super.handleMethodArgumentNotValid(ex, headers, status, request)
         val fieldErrors = ex.bindingResult.fieldErrors
+        val h = HttpHeaders()
+        headers.forEach { t, u -> h[t] = u }
+        h.contentType = MediaType.APPLICATION_JSON
 
-        return ResponseEntity( ErrorResponse(fieldErrors, status, request).toJSON(), headers,  HttpStatus.FORBIDDEN)
+        return ResponseEntity( ErrorResponse(fieldErrors, status, request).toJSON(), h,  status)
     }
+
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolationException(e: ConstraintViolationException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 }
 
 

@@ -1,6 +1,5 @@
 package it.polito.wa2.g19.server.profiles
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -12,10 +11,9 @@ class ProfileServiceImpl(
         return profileRepository.findAll().map { it.toDTO() }
     }
 
-    override fun getProfile(email: String): ProfileDTO? {
-
+    override fun getProfile(email: String): ProfileDTO {
         val profile = profileRepository.findByIdOrNull(email.trim().lowercase())
-        if(profile == null) {
+        if (profile == null) {
             throw ProfileNotFoundException()
         } else {
             return profile.toDTO()

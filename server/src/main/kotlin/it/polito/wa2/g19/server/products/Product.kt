@@ -18,12 +18,9 @@ class Product() {
     @NotNull
     var brand: String = ""
 
-    constructor(ean: String, name: String, brand: String): this(){
+    constructor(ean: String, name: String, brand: String): this() {
         this.ean = ean
         this.name = name
         this.brand = brand
     }
-
-
-
 }

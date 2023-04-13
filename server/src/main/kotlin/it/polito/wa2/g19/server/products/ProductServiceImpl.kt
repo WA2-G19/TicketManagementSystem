@@ -15,7 +15,7 @@ class ProductServiceImpl(
     }
 
     @Transactional
-    override fun getProduct(ean: String): ProductDTO? {
+    override fun getProduct(ean: String): ProductDTO {
         val product = productRepository.findByIdOrNull(ean)
         if(product == null) {
             throw ProductNotFoundException()
