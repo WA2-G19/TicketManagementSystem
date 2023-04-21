@@ -50,6 +50,7 @@ class Attachment() {
     var contentType: String = ""
     var length: Int = 0
     var content: ByteArray = ByteArray(length)
+    
     @Temporal(TemporalType.TIMESTAMP)
     var timestamp: LocalDateTime = LocalDateTime.now()
 }
