@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @Validated
 @RequestMapping("/API")
-class ProfileController(
-    private val profileService: ProfileService
+class CustomerController(
+    private val profileService: CustomerService
 ) {
     /*@GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
@@ -25,7 +25,7 @@ class ProfileController(
         @PathVariable
         @Email(message = "provide a valid email")
         email: String
-    ): ProfileDTO? {
+    ): CustomerDTO? {
         return profileService.getProfile(email)
     }
 
@@ -34,7 +34,7 @@ class ProfileController(
     fun postProfile(
         @Valid
         @RequestBody
-        profile: ProfileDTO
+        profile: CustomerDTO
     ) {
         return profileService.insertProfile(profile)
     }
@@ -48,7 +48,7 @@ class ProfileController(
         email: String,
         @Valid
         @RequestBody
-        profile: ProfileDTO
+        profile: CustomerDTO
     ) {
         if (email.trim().lowercase() != profile.email.trim().lowercase()) {
             throw NotMatchingEmailException()

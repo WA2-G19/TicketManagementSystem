@@ -5,3 +5,5 @@ class ProfileNotFoundException(): RuntimeException("There is no profile associat
 class DuplicateEmailException(): RuntimeException("There is already an email associated to this profile")
 
 class NotMatchingEmailException(): RuntimeException("The email in the path does not match the email in the body of the request")
+
+class NotMatchStaffTypeException(): RuntimeException("The staff type is not matched")

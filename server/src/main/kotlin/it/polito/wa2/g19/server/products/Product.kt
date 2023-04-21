@@ -4,6 +4,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.EAN
 
 @Entity
@@ -12,6 +13,7 @@ class Product() {
 
     @Id
     @EAN
+    @Size(min = 13, max = 13)
     var ean: String = ""
     @NotNull
     var name: String = ""
