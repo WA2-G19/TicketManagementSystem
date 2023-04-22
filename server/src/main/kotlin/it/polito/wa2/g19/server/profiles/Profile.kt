@@ -1,18 +1,17 @@
 package it.polito.wa2.g19.server.profiles
 
-import jakarta.persistence.Id
+import it.polito.wa2.g19.server.common.EntityBase
+import jakarta.persistence.Column
 import jakarta.persistence.MappedSuperclass
-import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotNull
 
 @MappedSuperclass
-open class Profile {
-    @Id
-    @Email
-    @NotNull(message = "email cannot be null")
+open class Profile(): EntityBase<Int>() {
+
+    @Column(unique = true, nullable = false)
     open var email: String = ""
-    @NotNull(message = "name cannot be null")
+    @Column(nullable = false)
     open var name: String = ""
-    @NotNull(message = "surname cannot be null")
+    @Column(nullable = false)
     open var surname: String = ""
+
 }

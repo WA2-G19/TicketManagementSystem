@@ -1,23 +1,28 @@
 package it.polito.wa2.g19.server.products
 
+import it.polito.wa2.g19.server.common.EntityBase
+import it.polito.wa2.g19.server.ticketing.Ticket
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 import org.hibernate.validator.constraints.EAN
 
 @Entity
 @Table(name = "product")
-class Product() {
+class Product(): EntityBase<Int>() {
 
-    @Id
+    @OneToMany(mappedBy = "product")
+    lateinit var tickets: Set<Ticket>
+
     @EAN
     @Size(min = 13, max = 13)
+    @Column(unique = true, nullable = false)
     var ean: String = ""
-    @NotNull
+    @Column(nullable = false)
     var name: String = ""
-    @NotNull
+    @Column(nullable = false)
     var brand: String = ""
 
     constructor(ean: String, name: String, brand: String): this() {

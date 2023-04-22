@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing
 
+import it.polito.wa2.g19.server.common.EntityBase
 import it.polito.wa2.g19.server.profiles.Customer
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -14,43 +15,22 @@ import java.time.LocalDateTime
         Index(name = "IX_chat_message_author_id", columnList = "author_id DESC")
     ]
 )
-class ChatMessage() {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    var id: Int? = null
+class ChatMessage(): EntityBase<Int>() {
 
     @ManyToOne
-    @JoinColumn(name = "ticket_id")
+    @JoinColumn(name = "ticket_id", nullable = false)
     lateinit var ticket: Ticket
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     lateinit var author: Customer
-    var body: String = ""
     @OneToMany(mappedBy = "message")
-    lateinit var attachments: List<Attachment>
+    lateinit var attachments: Set<Attachment>
 
+    @Column(nullable = false)
+    var body: String = ""
     @CreationTimestamp
+    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     var timestamp: LocalDateTime = LocalDateTime.now()
-}
 
-@Entity
-@Table(name = "attachment")
-class Attachment() {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    var id: Int? = null
-
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
-    lateinit var message: ChatMessage
-
-    var contentType: String = ""
-    var length: Int = 0
-    var content: ByteArray = ByteArray(length)
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    var timestamp: LocalDateTime = LocalDateTime.now()
 }
