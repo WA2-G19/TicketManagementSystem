@@ -7,7 +7,7 @@ import jakarta.persistence.MappedSuperclass
 @MappedSuperclass
 open class Profile(): EntityBase<Int>() {
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "email")
     open var email: String = ""
     @Column(nullable = false)
     open var name: String = ""

@@ -1,5 +1,5 @@
-email, name, surname, address
-jacopo@wa.polito.it, Jacopo, De Cristofaro, Candida
-vittorio@wa.polito.it, Vittorio, Arpino, Scafati
-matteo@wa.polito.it, Matteo, Rosani, "Vicino Torino"
-michele@wa.polito.it, Michele, Masiello, Foggia
+id,email, name, surname, address
+0,jacopo@wa.polito.it, Jacopo, De Cristofaro, Candida
+1,vittorio@wa.polito.it, Vittorio, Arpino, Scafati
+2,matteo@wa.polito.it, Matteo, Rosani, "Vicino Torino"
+3,michele@wa.polito.it, Michele, Masiello, Foggia

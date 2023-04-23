@@ -1,7 +1,8 @@
-package it.polito.wa2.g19.server.profiles
+package it.polito.wa2.g19.server.unit.profiles
 
 import io.mockk.every
 import io.mockk.mockk
+import it.polito.wa2.g19.server.profiles.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -12,7 +13,7 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading an existing profile should return a valid DTO specifying its email`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByIdOrNull("test@email.it") } answers {
+        every { repo.findByEmail("test@email.it") } answers {
             Customer("test@email.it", "testName", "testSurname", "testAddress")
         }
         val service = CustomerServiceImpl(repo)
@@ -25,7 +26,7 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading an existing profile should return a valid DTO specifying its email even if it is in uppercase`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByIdOrNull("test@email.it") } answers {
+        every { repo.findByEmail("test@email.it") } answers {
             Customer("test@email.it", "testName", "testSurname", "testAddress")
         }
         val service = CustomerServiceImpl(repo)
@@ -38,10 +39,10 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading two existing profile should return the correct DTO specifying its email`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByIdOrNull("test@email.it") } answers {
+        every { repo.findByEmail("test@email.it") } answers {
             Customer("test@email.it", "testName", "testSurname", "testAddress")
         }
-        every { repo.findByIdOrNull("test@wrong.it") } answers {
+        every { repo.findByEmail("test@wrong.it") } answers {
             Customer("test@wrong.it", "wrongName", "wrongSurname", "testAddress")
         }
         val service = CustomerServiceImpl(repo)
@@ -54,7 +55,7 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading no profile should throws a ProfileNotFoundException instance`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByIdOrNull("test@email.it") } answers {
+        every { repo.findByEmail("test@email.it") } answers {
             null
         }
         val service = CustomerServiceImpl(repo)
@@ -92,7 +93,7 @@ internal class ProfileServiceImplTest {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
 
-        every { repo.existsById(p.email) } answers {
+        every { repo.existsByEmail(p.email) } answers {
             false
         }
         every { repo.save(p) } answers {
@@ -111,7 +112,7 @@ internal class ProfileServiceImplTest {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
 
-        every { repo.existsById(p.email) } answers {
+        every { repo.existsByEmail(p.email) } answers {
             true
         }
         val service = CustomerServiceImpl(repo)
@@ -122,7 +123,7 @@ internal class ProfileServiceImplTest {
     fun `updating a existing profile should returns nothing`() {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
-        every { repo.findByIdOrNull(p.email) } answers {
+        every { repo.findByEmail(p.email) } answers {
             p
         }
 
@@ -135,12 +136,13 @@ internal class ProfileServiceImplTest {
 
     }
 
+
     @Test
     fun `updating a no existing profile should throws a ProfileNotFoundException instance`() {
         val repo = mockk<CustomerRepository>()
         val p = CustomerDTO("test@email.it", "testName", "testSurname", "testAddress")
         val notExistingEmail = "notexisting@email.it"
-        every { repo.findByIdOrNull(notExistingEmail) } answers {
+        every { repo.findByEmail(notExistingEmail) } answers {
             null
         }
         val service = CustomerServiceImpl(repo)

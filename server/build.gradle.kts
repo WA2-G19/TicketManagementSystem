@@ -30,7 +30,17 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
+	testImplementation ("org.testcontainers:junit-jupiter:1.16.3")
+	testImplementation("org.testcontainers:postgresql:1.16.3")
+
 }
+
+dependencyManagement {
+	imports {
+		mavenBom("org.testcontainers:testcontainers-bom:1.16.3")
+	}
+}
+
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {

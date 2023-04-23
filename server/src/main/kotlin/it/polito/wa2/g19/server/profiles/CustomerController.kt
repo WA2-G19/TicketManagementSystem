@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*
 class CustomerController(
     private val profileService: CustomerService
 ) {
-    /*@GetMapping("/profiles")
+    @GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
-    fun getAll(): List<ProfileDTO> {
+    fun getAll(): List<CustomerDTO> {
         return profileService.getAll()
-    }*/
+    }
 
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
