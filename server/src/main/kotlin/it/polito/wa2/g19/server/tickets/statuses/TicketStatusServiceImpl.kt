@@ -16,6 +16,12 @@ class TicketStatusServiceImpl(
     private val ticketStatusRepository: TicketStatusRepository,
     private val staffRepository: StaffRepository
 ): TicketStatusService {
+
+
+    /*
+    chiedere a Malnati se sia possibile farlo, forse non può essere chiamata da nessuno,
+    sicuramente non dai customer.
+     */
     override fun getStatusHistory(ticketId: Int): Set<TicketStatusDTO> {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
@@ -25,6 +31,10 @@ class TicketStatusServiceImpl(
         }.toSet()
     }
 
+    /*
+    * Probabilmente ridondante, meglio mettere lo stato nel ticket e quindi ritornare con la getTicket.
+    * Magari gestire la validazione con un TicketInDTO e TicketOutDTO che estendono TicketDTO?
+    * */
     override fun getCurrentStatus(ticketId: Int): TicketStatusDTO {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
@@ -32,6 +42,9 @@ class TicketStatusServiceImpl(
         return ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId).toDTO()
     }
 
+    /*
+        grande!!
+     */
     override fun reopenTicket(ticketId: Int) {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
@@ -47,6 +60,9 @@ class TicketStatusServiceImpl(
         }
     }
 
+    /*
+    * grande!!
+    * */
     override fun inProgressTicket(ticketId: Int, expertEmail: String, managerEmail: String) {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
@@ -72,6 +88,9 @@ class TicketStatusServiceImpl(
         }
     }
 
+    /*
+    * grande!!
+    * */
     override fun resolveTicket(ticketId: Int, resolverEmail: String) {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
@@ -89,6 +108,9 @@ class TicketStatusServiceImpl(
         }
     }
 
+    /*
+    * grande!!
+    * */
     override fun closeTicket(ticketId: Int, closerEmail: String) {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
