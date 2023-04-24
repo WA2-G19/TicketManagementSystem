@@ -1,5 +1,6 @@
-package it.polito.wa2.g19.server.ticketing
+package it.polito.wa2.g19.server.attachments
 
+import it.polito.wa2.g19.server.chat.ChatMessage
 import it.polito.wa2.g19.server.common.EntityBase
 import jakarta.persistence.*
 import java.time.LocalDateTime

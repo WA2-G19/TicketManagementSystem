@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.ticketing
+package it.polito.wa2.g19.server.chat
 
 import java.time.LocalDateTime
 

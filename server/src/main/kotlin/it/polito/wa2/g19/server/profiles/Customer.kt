@@ -1,6 +1,6 @@
 package it.polito.wa2.g19.server.profiles
 
-import it.polito.wa2.g19.server.ticketing.Ticket
+import it.polito.wa2.g19.server.tickets.Ticket
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
