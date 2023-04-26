@@ -42,6 +42,21 @@ class TicketStatusServiceImpl(
         return ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId).toDTO()
     }
 
+    override fun stopProgressTicket(ticketId: Int) {
+        if (!ticketRepository.existsById(ticketId)) {
+            throw TicketNotFoundException()
+        }
+        val current = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
+        if (current is InProgressTicketStatus) {
+            ticketStatusRepository.save(OpenTicketStatus().apply {
+                ticket = ticketRepository.findByIdOrNull(ticketId)!!
+                timestamp = LocalDateTime.now()
+            })
+        } else {
+            throw InvalidTicketStatusTransitionException(current.toDTO().status, TicketStatusEnum.Open)
+        }
+    }
+
     /*
         grande!!
      */
@@ -63,7 +78,7 @@ class TicketStatusServiceImpl(
     /*
     * grande!!
     * */
-    override fun inProgressTicket(ticketId: Int, expertEmail: String, managerEmail: String) {
+    override fun startProgressTicket(ticketId: Int, expertEmail: String, managerEmail: String) {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
         }

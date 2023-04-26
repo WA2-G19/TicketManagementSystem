@@ -24,14 +24,14 @@ class TicketStatusController(
         return ticketStatusService.getCurrentStatus(ticketId)
     }
 
-    @PostMapping("/ticket/{ticketId}/open") // For transition from InProgress to Open
+    @PostMapping("/ticket/{ticketId}/stopProgress")
     fun postOpenTicket(@PathVariable ticketId: Int) {
-        //ticketStatusService.reopenTicket(ticketId)
+        ticketStatusService.stopProgressTicket(ticketId)
     }
 
-    @PostMapping("/ticket/{ticketId}/inProgress")
+    @PostMapping("/ticket/{ticketId}/startProgress")
     fun postInProgressTicket(@PathVariable ticketId: Int, @Valid status: TicketStatusDTO) {
-        ticketStatusService.inProgressTicket(ticketId, status.expert!!, status.by!!)
+        ticketStatusService.startProgressTicket(ticketId, status.expert!!, status.by!!)
     }
 
     @PostMapping("/ticket/{ticketId}/close")

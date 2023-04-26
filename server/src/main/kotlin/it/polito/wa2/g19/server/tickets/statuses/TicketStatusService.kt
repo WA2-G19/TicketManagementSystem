@@ -5,9 +5,11 @@ interface TicketStatusService {
 
     fun getCurrentStatus(ticketId: Int): TicketStatusDTO
 
+    fun stopProgressTicket(ticketId: Int)
+
     fun reopenTicket(ticketId: Int)
 
-    fun inProgressTicket(ticketId: Int, expertEmail: String, managerEmail: String)
+    fun startProgressTicket(ticketId: Int, expertEmail: String, managerEmail: String)
 
     fun resolveTicket(ticketId: Int, resolverEmail: String)
 
