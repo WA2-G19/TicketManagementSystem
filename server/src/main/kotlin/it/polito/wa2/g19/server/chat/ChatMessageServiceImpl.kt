@@ -4,8 +4,8 @@ import it.polito.wa2.g19.server.attachments.Attachment
 import it.polito.wa2.g19.server.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.profiles.CustomerRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.tickets.TicketNotFoundException
-import it.polito.wa2.g19.server.tickets.TicketRepository
+import it.polito.wa2.g19.server.ticketing.tickets.TicketNotFoundException
+import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
