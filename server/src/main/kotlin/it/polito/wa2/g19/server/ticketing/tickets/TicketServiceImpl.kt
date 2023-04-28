@@ -1,11 +1,11 @@
-package it.polito.wa2.g19.server.tickets
+package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.products.ProductNotFoundException
 import it.polito.wa2.g19.server.products.ProductRepository
 import it.polito.wa2.g19.server.profiles.CustomerRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.tickets.statuses.OpenTicketStatus
-import it.polito.wa2.g19.server.tickets.statuses.TicketStatus
+import it.polito.wa2.g19.server.ticketing.statuses.OpenTicketStatus
+import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -16,30 +16,35 @@ class TicketServiceImpl(
     private val customerRepository: CustomerRepository,
     private val productRepository: ProductRepository
 ): TicketService {
-    override fun getTicket(id: Int): TicketDTO {
+    override fun getTicket(id: Int): TicketOutDTO {
         if (ticketRepository.existsById(id)) {
-            return ticketRepository.findByIdOrNull(id)!!.toDTO()
+            return ticketRepository.findByIdOrNull(id)!!.toOutDTO()
         }
         throw TicketNotFoundException()
     }
 
-    override fun getTickets(): Set<TicketDTO> {
-        return ticketRepository.findAll().map{ it.toDTO() }.toSet()
+    override fun getTickets(): Set<TicketOutDTO> {
+        return ticketRepository.findAll().map{ it.toOutDTO() }.toSet()
     }
 
-    override fun createTicket(ticket: TicketDTO) {
-        val c = customerRepository.findByEmail(ticket.customerEmail) ?: throw ProfileNotFoundException()
+    override fun createTicket(ticket: TicketDTO): Int {
+        val c = customerRepository.findByEmailIgnoreCase(ticket.customerEmail) ?: throw ProfileNotFoundException()
         val p = productRepository.findByEan(ticket.productEan) ?: throw ProductNotFoundException()
         val t = Ticket().apply {
             customer = c
             product = p
             description = ticket.description
             statusHistory = mutableSetOf()
+            status = TicketStatusEnum.Open
+            expert = null
+            priorityLevel = null
+
         }
         t.statusHistory.add(OpenTicketStatus().apply {
             this.ticket = t
             this.timestamp = LocalDateTime.now()
         })
-        ticketRepository.save(t)
+        val ticketCreated = ticketRepository.save(t)
+        return ticketCreated.getId()!!
     }
 }

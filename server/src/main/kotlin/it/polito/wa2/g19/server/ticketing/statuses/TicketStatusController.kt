@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.tickets.statuses
+package it.polito.wa2.g19.server.ticketing.statuses
 
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import jakarta.validation.Valid
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 
 @RestController
 @Validated
@@ -30,17 +32,17 @@ class TicketStatusController(
     }
 
     @PostMapping("/ticket/{ticketId}/startProgress")
-    fun postInProgressTicket(@PathVariable ticketId: Int, @Valid status: TicketStatusDTO) {
+    fun postInProgressTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
         ticketStatusService.startProgressTicket(ticketId, status.expert!!, status.by!!)
     }
 
-    @PostMapping("/ticket/{ticketId}/close")
-    fun postCloseTicket(@PathVariable ticketId: Int, @Valid status: TicketStatusDTO) {
+    @PutMapping("/tickets/{ticketId}")
+    fun postCloseTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
         ticketStatusService.closeTicket(ticketId, status.by!!)
     }
 
     @PostMapping("/ticket/{ticketId}/resolve")
-    fun postResolveTicket(@PathVariable ticketId: Int, @Valid status: TicketStatusDTO) {
+    fun postResolveTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
         ticketStatusService.resolveTicket(ticketId, status.by!!)
     }
 

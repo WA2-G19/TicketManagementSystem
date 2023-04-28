@@ -1,11 +1,12 @@
-package it.polito.wa2.g19.server.tickets.statuses
+package it.polito.wa2.g19.server.ticketing.statuses
 
 import it.polito.wa2.g19.server.profiles.Expert
 import it.polito.wa2.g19.server.profiles.Manager
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.StaffRepository
-import it.polito.wa2.g19.server.tickets.TicketNotFoundException
-import it.polito.wa2.g19.server.tickets.TicketRepository
+import it.polito.wa2.g19.server.ticketing.tickets.Ticket
+import it.polito.wa2.g19.server.ticketing.tickets.TicketNotFoundException
+import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -83,11 +84,11 @@ class TicketStatusServiceImpl(
             throw TicketNotFoundException()
         }
         val current = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
-        val expert = staffRepository.findByEmail(expertEmail) ?: throw ProfileNotFoundException()
+        val expert = staffRepository.findByEmailIgnoreCase(expertEmail) ?: throw ProfileNotFoundException()
         if (expert !is Expert) {
             throw ProfileNotFoundException()
         }
-        val manager = staffRepository.findByEmail(expertEmail) ?: throw ProfileNotFoundException()
+        val manager = staffRepository.findByEmailIgnoreCase(expertEmail) ?: throw ProfileNotFoundException()
         if (manager !is Manager) {
             throw ProfileNotFoundException()
         }
@@ -111,7 +112,7 @@ class TicketStatusServiceImpl(
             throw TicketNotFoundException()
         }
         val current = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
-        val resolver = staffRepository.findByEmail(resolverEmail) ?: throw ProfileNotFoundException()
+        val resolver = staffRepository.findByEmailIgnoreCase(resolverEmail) ?: throw ProfileNotFoundException()
         if (current is OpenTicketStatus || current is ReopenedTicketStatus || current is InProgressTicketStatus) {
             ticketStatusRepository.save(ResolvedTicketStatus().apply {
                 ticket = ticketRepository.findByIdOrNull(ticketId)!!
@@ -127,19 +128,20 @@ class TicketStatusServiceImpl(
     * grande!!
     * */
     override fun closeTicket(ticketId: Int, closerEmail: String) {
-        if (!ticketRepository.existsById(ticketId)) {
-            throw TicketNotFoundException()
-        }
-        val current = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
-        val closer = staffRepository.findByEmail(closerEmail) ?: throw ProfileNotFoundException()
-        if (current !is ClosedTicketStatus) {
-            ticketStatusRepository.save(ClosedTicketStatus().apply {
-                ticket = ticketRepository.findByIdOrNull(ticketId)!!
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val closer = staffRepository.findByEmailIgnoreCase(closerEmail) ?: throw ProfileNotFoundException()
+        if (ticket.status != TicketStatusEnum.Closed) {
+            ticket.status = TicketStatusEnum.Closed
+            ticket.expert = null
+            ticket.priorityLevel = null
+            ticket.statusHistory.add(ClosedTicketStatus().apply {
                 by = closer
                 timestamp = LocalDateTime.now()
             })
+            ticketRepository.save(ticket)
+
         } else {
-            throw InvalidTicketStatusTransitionException(current.toDTO().status, TicketStatusEnum.Resolved)
+            throw InvalidTicketStatusTransitionException(ticket.status, TicketStatusEnum.Resolved)
         }
     }
 

@@ -13,7 +13,7 @@ class CustomerServiceImpl(
 
     override fun getProfile(email: String): CustomerDTO {
 
-        val profile = customerRepository.findByEmail(email.trim().lowercase())
+        val profile = customerRepository.findByEmailIgnoreCase(email.trim().lowercase())
         if (profile == null) {
             throw ProfileNotFoundException()
         } else {
@@ -22,7 +22,7 @@ class CustomerServiceImpl(
     }
 
     override fun insertProfile(profile: CustomerDTO) {
-        if (customerRepository.existsByEmail(profile.email.trim().lowercase())) {
+        if (customerRepository.existsByEmailIgnoreCase(profile.email.trim().lowercase())) {
             throw DuplicateEmailException()
         } else {
             val p = Customer()
@@ -34,7 +34,7 @@ class CustomerServiceImpl(
     }
 
     override fun updateProfile(email: String, profile: CustomerDTO) {
-        val p = customerRepository.findByEmail(email.trim().lowercase())
+        val p = customerRepository.findByEmailIgnoreCase(email.trim().lowercase())
 
         if (p != null) {
             p.name = profile.name

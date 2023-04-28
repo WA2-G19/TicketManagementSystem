@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.profiles
 
-import it.polito.wa2.g19.server.tickets.Ticket
+import it.polito.wa2.g19.server.ticketing.tickets.Ticket
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
@@ -14,6 +15,7 @@ class Customer(): Profile() {
     var address: String = ""
 
     @OneToMany(mappedBy = "customer")
+
     lateinit var tickets: MutableSet<Ticket>
 
     constructor(email: String, name: String, surname: String, address: String) : this() {

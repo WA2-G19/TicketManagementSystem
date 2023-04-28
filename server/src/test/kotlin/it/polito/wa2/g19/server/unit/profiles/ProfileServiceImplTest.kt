@@ -13,7 +13,7 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading an existing profile should return a valid DTO specifying its email`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByEmail("test@email.it") } answers {
+        every { repo.findByEmailIgnoreCase("test@email.it") } answers {
             Customer("test@email.it", "testName", "testSurname", "testAddress")
         }
         val service = CustomerServiceImpl(repo)
@@ -26,7 +26,7 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading an existing profile should return a valid DTO specifying its email even if it is in uppercase`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByEmail("test@email.it") } answers {
+        every { repo.findByEmailIgnoreCase("test@email.it") } answers {
             Customer("test@email.it", "testName", "testSurname", "testAddress")
         }
         val service = CustomerServiceImpl(repo)
@@ -39,10 +39,10 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading two existing profile should return the correct DTO specifying its email`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByEmail("test@email.it") } answers {
+        every { repo.findByEmailIgnoreCase("test@email.it") } answers {
             Customer("test@email.it", "testName", "testSurname", "testAddress")
         }
-        every { repo.findByEmail("test@wrong.it") } answers {
+        every { repo.findByEmailIgnoreCase("test@wrong.it") } answers {
             Customer("test@wrong.it", "wrongName", "wrongSurname", "testAddress")
         }
         val service = CustomerServiceImpl(repo)
@@ -55,7 +55,7 @@ internal class ProfileServiceImplTest {
     @Test
     fun `loading no profile should throws a ProfileNotFoundException instance`() {
         val repo = mockk<CustomerRepository>()
-        every { repo.findByEmail("test@email.it") } answers {
+        every { repo.findByEmailIgnoreCase("test@email.it") } answers {
             null
         }
         val service = CustomerServiceImpl(repo)
@@ -93,7 +93,7 @@ internal class ProfileServiceImplTest {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
 
-        every { repo.existsByEmail(p.email) } answers {
+        every { repo.existsByEmailIgnoreCase(p.email) } answers {
             false
         }
         every { repo.save(p) } answers {
@@ -112,7 +112,7 @@ internal class ProfileServiceImplTest {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
 
-        every { repo.existsByEmail(p.email) } answers {
+        every { repo.existsByEmailIgnoreCase(p.email) } answers {
             true
         }
         val service = CustomerServiceImpl(repo)
@@ -123,7 +123,7 @@ internal class ProfileServiceImplTest {
     fun `updating a existing profile should returns nothing`() {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
-        every { repo.findByEmail(p.email) } answers {
+        every { repo.findByEmailIgnoreCase(p.email) } answers {
             p
         }
 
@@ -142,7 +142,7 @@ internal class ProfileServiceImplTest {
         val repo = mockk<CustomerRepository>()
         val p = CustomerDTO("test@email.it", "testName", "testSurname", "testAddress")
         val notExistingEmail = "notexisting@email.it"
-        every { repo.findByEmail(notExistingEmail) } answers {
+        every { repo.findByEmailIgnoreCase(notExistingEmail) } answers {
             null
         }
         val service = CustomerServiceImpl(repo)

@@ -1,10 +1,10 @@
-package it.polito.wa2.g19.server.tickets.statuses
+package it.polito.wa2.g19.server.ticketing.statuses
 
 import it.polito.wa2.g19.server.common.EntityBase
 import it.polito.wa2.g19.server.profiles.Expert
 import it.polito.wa2.g19.server.profiles.Staff
 import it.polito.wa2.g19.server.profiles.Manager
-import it.polito.wa2.g19.server.tickets.Ticket
+import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime

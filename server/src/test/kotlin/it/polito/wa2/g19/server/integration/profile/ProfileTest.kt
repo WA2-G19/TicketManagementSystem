@@ -1,15 +1,8 @@
-package it.polito.wa2.g19.server.integration
+package it.polito.wa2.g19.server.integration.profile
 
-import io.mockk.core.ValueClassSupport.boxedValue
-import io.mockk.internalSubstitute
-import it.polito.wa2.g19.server.ServerApplication
-import it.polito.wa2.g19.server.main
-import it.polito.wa2.g19.server.profiles.CustomerController
 import it.polito.wa2.g19.server.profiles.CustomerDTO
 import it.polito.wa2.g19.server.profiles.CustomerRepository
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -20,10 +13,8 @@ import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.http.client.ClientHttpRequest
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.web.client.ResponseExtractor
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers

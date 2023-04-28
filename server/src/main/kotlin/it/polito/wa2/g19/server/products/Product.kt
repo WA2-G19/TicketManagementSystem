@@ -1,7 +1,8 @@
 package it.polito.wa2.g19.server.products
 
 import it.polito.wa2.g19.server.common.EntityBase
-import it.polito.wa2.g19.server.tickets.Ticket
+import it.polito.wa2.g19.server.ticketing.tickets.Ticket
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany

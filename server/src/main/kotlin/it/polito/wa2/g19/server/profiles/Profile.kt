@@ -14,4 +14,10 @@ open class Profile(): EntityBase<Int>() {
     @Column(nullable = false)
     open var surname: String = ""
 
+    constructor(email: String, name: String, surname: String) : this() {
+        this.email = email
+        this.name = name
+        this.surname = surname
+    }
+
 }

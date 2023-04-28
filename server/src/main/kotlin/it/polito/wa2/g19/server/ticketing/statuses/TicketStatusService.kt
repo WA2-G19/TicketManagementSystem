@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.tickets.statuses
+package it.polito.wa2.g19.server.ticketing.statuses
 
 interface TicketStatusService {
     fun getStatusHistory(ticketId: Int): Set<TicketStatusDTO>

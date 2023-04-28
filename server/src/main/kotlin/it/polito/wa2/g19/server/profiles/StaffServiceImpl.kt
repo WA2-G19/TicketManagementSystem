@@ -10,7 +10,7 @@ class StaffServiceImpl(
     }
 
     override fun getProfile(email: String): StaffDTO {
-        val profile = staffRepository.findByEmail(email.trim().lowercase())
+        val profile = staffRepository.findByEmailIgnoreCase(email.trim())
         if (profile == null) {
             throw ProfileNotFoundException()
         } else {
@@ -19,7 +19,7 @@ class StaffServiceImpl(
     }
 
     override fun insertProfile(profile: StaffDTO) {
-        if (staffRepository.existsByEmail(profile.email.trim().lowercase())) {
+        if (staffRepository.existsByEmailIgnoreCase(profile.email.trim())) {
             throw DuplicateEmailException()
         } else {
             val p = if (profile.type == StaffType.Expert) {
@@ -27,7 +27,7 @@ class StaffServiceImpl(
             } else {
                 Manager()
             }
-            p.email = profile.email.trim().lowercase()
+            p.email = profile.email.trim()
             p.name = profile.name
             p.surname = profile.surname
             staffRepository.save(p)
@@ -35,7 +35,7 @@ class StaffServiceImpl(
     }
 
     override fun updateProfile(email: String, profile: StaffDTO) {
-        val p = staffRepository.findByEmail(email.trim().lowercase())
+        val p = staffRepository.findByEmailIgnoreCase(email.trim().lowercase())
 
         if (p != null) {
             p.name = profile.name
