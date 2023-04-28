@@ -3,6 +3,8 @@ package it.polito.wa2.g19.server.chat
 import it.polito.wa2.g19.server.attachments.Attachment
 import it.polito.wa2.g19.server.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.profiles.CustomerRepository
+import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import it.polito.wa2.g19.server.tickets.TicketNotFoundException
 import it.polito.wa2.g19.server.tickets.TicketRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -19,7 +21,8 @@ class ChatMessageServiceImpl(
 ) : ChatMessageService {
 
     override fun getChatMessage(id: Int): ChatMessageDTO {
-        return chatMessageRepository.findByIdOrNull(id)!!.toDTO()
+        val message = chatMessageRepository.findByIdOrNull(id) ?: throw MessageNotFoundException()
+        return message.toDTO()
     }
 
     override fun getChatMessages(): Set<ChatMessageDTO> {
@@ -28,8 +31,8 @@ class ChatMessageServiceImpl(
 
     override fun insertChatMessage(messageToSave: ChatMessageDTO, files: List<MultipartFile>) {
 
-        val referredTicket = ticketRepository.getReferenceById(messageToSave.ticketId)
-        val referredCustomer = customerRepository.getReferenceById(messageToSave.authorId)
+        val referredTicket = ticketRepository.findByIdOrNull(messageToSave.ticketId) ?: throw TicketNotFoundException()
+        val referredCustomer = customerRepository.findByIdOrNull(messageToSave.authorId) ?: throw ProfileNotFoundException()
 
         val createdMessage = ChatMessage().apply {
             ticket = referredTicket
