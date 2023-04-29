@@ -6,6 +6,9 @@ plugins {
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
 	kotlin("plugin.jpa") version "1.7.22"
+	kotlin("kapt") version "1.5.20"
+
+
 }
 
 group = "it.polito.wa2.g19"
@@ -22,6 +25,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+
 	implementation ("org.json:json:20211205")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
@@ -32,6 +36,7 @@ dependencies {
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
 	testImplementation ("org.testcontainers:junit-jupiter:1.16.3")
 	testImplementation("org.testcontainers:postgresql:1.16.3")
+	kapt("org.hibernate:hibernate-jpamodelgen:5.4.30.Final")
 
 }
 
@@ -52,3 +57,4 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+

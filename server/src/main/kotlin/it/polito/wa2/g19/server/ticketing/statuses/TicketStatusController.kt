@@ -33,10 +33,10 @@ class TicketStatusController(
 
     @PostMapping("/ticket/{ticketId}/startProgress")
     fun postInProgressTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
-        ticketStatusService.startProgressTicket(ticketId, status.expert!!, status.by!!)
+        ticketStatusService.startProgressTicket(ticketId, status.expert!!, status!!)
     }
 
-    @PutMapping("/tickets/{ticketId}")
+    @PostMapping("/tickets/{ticketId}/reopen")
     fun postCloseTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
         ticketStatusService.closeTicket(ticketId, status.by!!)
     }

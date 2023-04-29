@@ -19,7 +19,7 @@ class Ticket(): EntityBase<Int>() {
     @ManyToOne
     @JoinColumn(nullable = false)
     lateinit var product: Product
-    @OneToMany(mappedBy = "ticket", cascade = [CascadeType.PERSIST])
+    @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
     lateinit var statusHistory: MutableSet<TicketStatus>
     @Column(nullable = false)
     var description: String = ""

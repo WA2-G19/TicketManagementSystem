@@ -66,7 +66,7 @@ class InProgressTicketStatus(): TicketStatus() {
     @ManyToOne
     var priority: PriorityLevel = PriorityLevel()
 
-    override fun toDTO() = TicketStatusDTO(ticket.getId()!!, TicketStatusEnum.InProgress, expert.email, by.email, priority.name, timestamp)
+    override fun toDTO() = TicketStatusDTO(ticket.getId()!!, TicketStatusEnum.InProgress, expert.email, by.email, PriorityLevelEnum.valueOf(priority.name), timestamp)
 }
 
 @Entity
@@ -82,4 +82,12 @@ class PriorityLevel(): EntityBase<Int>() {
     @Column(unique = true, nullable = false)
     var name: String = ""
 
+
+
+}
+
+
+
+enum class PriorityLevelEnum{
+    LOW, MEDIUM, HIGH, CRITICAL;
 }

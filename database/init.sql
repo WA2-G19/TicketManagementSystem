@@ -1,6 +1,6 @@
-create database "TicketManagementSystem";
-\c "TicketManagementSystem"
 
+drop schema if exists public cascade;
+create schema public;
 create table public.priority_level
 (
     id   serial      not null,
@@ -51,11 +51,16 @@ create table public.ticket
     description varchar(255) not null,
     customer_id integer      not null,
     product_id  integer      not null,
+    expert_id   integer,
+    priority_level_id integer,
+    status smallint not null,
     primary key (id),
     constraint fk_ticket_customer_id
         foreign key (customer_id) references public.profile,
     constraint fk_ticket_product_id
-        foreign key (product_id) references public.product
+        foreign key (product_id) references public.product,
+    constraint fk_ticket_priority_id
+        foreign key (priority_level_id) references public.priority_level
 );
 
 create table public.chat_message
@@ -80,6 +85,7 @@ create table public.attachment
     length       integer      not null,
     timestamp    timestamp(6) not null,
     message_id   integer      not null,
+
     primary key (id),
     constraint fk_attachment_message_id
         foreign key (message_id) references public.chat_message
@@ -124,6 +130,6 @@ COPY public.product(ean, name, brand)
 FROM '/docker-entrypoint-initdb.d/product.csv'
 WITH DELIMITER ',' CSV HEADER;
 
-COPY public.profile(email, name, surname)
+COPY public.profile(id,email, name, surname, address)
 FROM '/docker-entrypoint-initdb.d/profile.csv'
 WITH DELIMITER ',' CSV HEADER;

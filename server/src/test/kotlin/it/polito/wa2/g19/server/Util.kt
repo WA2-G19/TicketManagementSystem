@@ -72,7 +72,6 @@ class Util {
 
         fun mockTicket(): Ticket{
 
-
             return  Ticket().let {
 
                 it.description = "testDescription"

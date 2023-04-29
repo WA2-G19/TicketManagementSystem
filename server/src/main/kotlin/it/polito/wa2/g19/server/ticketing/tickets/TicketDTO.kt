@@ -2,6 +2,7 @@ package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.profiles.Expert
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevel
+import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import jakarta.validation.constraints.Email
@@ -17,11 +18,11 @@ open class TicketDTO(
     var description: String
 )
 
-class TicketOutDTO(id: Int?, customerEmail: String, productEan: String, description: String, priorityLevel: PriorityLevel?, expertEmail: String?, status: TicketStatusEnum)
+class TicketOutDTO(id: Int?, customerEmail: String, productEan: String, description: String, priorityLevel: PriorityLevelEnum?, expertEmail: String?, status: TicketStatusEnum = TicketStatusEnum.Open)
     : TicketDTO(id, customerEmail, productEan, description){
-    var priorityLevel: String? = priorityLevel?.toString()
-    var expert: String? = expertEmail
-    var status: TicketStatusEnum = TicketStatusEnum.Open
+    var priorityLevel: PriorityLevelEnum? = priorityLevel
+    var expertEmail: String? = expertEmail
+    var status: TicketStatusEnum = status
 }
 
 fun Ticket.toDTO() = TicketDTO(
@@ -30,12 +31,22 @@ fun Ticket.toDTO() = TicketDTO(
     product.ean,
     description)
 
-fun Ticket.toOutDTO() = TicketOutDTO(
-    getId(),
-    this.customer.email,
-    this.product.ean,
-    this.description,
-    this.priorityLevel,
-    this.expert?.email,
-    this.status
-)
+fun Ticket.toOutDTO() :TicketOutDTO {
+
+    val priorityLevel = if (this.priorityLevel != null){
+        PriorityLevelEnum.valueOf(this.priorityLevel!!.name)
+    } else{
+        null
+    }
+
+    return TicketOutDTO(
+        getId(),
+        this.customer.email,
+        this.product.ean,
+        this.description,
+        priorityLevel,
+        this.expert?.email,
+        this.status
+    )
+
+}

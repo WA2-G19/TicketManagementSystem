@@ -11,16 +11,16 @@ data class TicketStatusDTO(
     val status: TicketStatusEnum,
     val expert: String? = null,
     val by: String? = null,
-    val priorityLevel: String? = null,
+    val priorityLevel: PriorityLevelEnum? = null,
     val timestamp: LocalDateTime? = null
 ) {
     @AssertTrue
     fun isValid(): Boolean = when (status) {
-        TicketStatusEnum.Open -> expert.isNullOrEmpty() && by.isNullOrEmpty() && priorityLevel.isNullOrEmpty()
-        TicketStatusEnum.InProgress -> !expert.isNullOrEmpty() && !by.isNullOrEmpty() && !priorityLevel.isNullOrEmpty()
-        TicketStatusEnum.Closed -> expert.isNullOrEmpty() && !by.isNullOrEmpty() && priorityLevel.isNullOrEmpty()
-        TicketStatusEnum.Resolved -> expert.isNullOrEmpty() && !by.isNullOrEmpty() && priorityLevel.isNullOrEmpty()
-        TicketStatusEnum.Reopened -> expert.isNullOrEmpty() && by.isNullOrEmpty() && priorityLevel.isNullOrEmpty()
+        TicketStatusEnum.Open -> expert.isNullOrEmpty() && by.isNullOrEmpty() && priorityLevel == null
+        TicketStatusEnum.InProgress -> !expert.isNullOrEmpty() && !by.isNullOrEmpty() && priorityLevel != null
+        TicketStatusEnum.Closed -> expert.isNullOrEmpty() && !by.isNullOrEmpty() && priorityLevel == null
+        TicketStatusEnum.Resolved -> expert.isNullOrEmpty() && !by.isNullOrEmpty() && priorityLevel == null
+        TicketStatusEnum.Reopened -> expert.isNullOrEmpty() && by.isNullOrEmpty() && priorityLevel == null
     }
 }
 
