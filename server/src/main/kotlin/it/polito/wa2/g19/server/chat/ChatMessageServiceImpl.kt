@@ -47,7 +47,7 @@ class ChatMessageServiceImpl(
                     message = createdMessage
                     content = file.bytes
                     length = file.size.toInt()
-                    contentType = file.contentType ?: ""
+                    contentType = file.contentType ?: throw NoContentTypeProvided()
                 }
             )
         }
