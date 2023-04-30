@@ -1,4 +1,3 @@
-
 drop schema if exists public cascade;
 create schema public;
 create table public.priority_level
@@ -80,12 +79,12 @@ create table public.chat_message
 create table public.attachment
 (
     id           serial       not null,
+    name         varchar(255) not null,
     content      bytea        not null,
     content_type varchar(255) not null,
     length       integer      not null,
     timestamp    timestamp(6) not null,
     message_id   integer      not null,
-
     primary key (id),
     constraint fk_attachment_message_id
         foreign key (message_id) references public.chat_message
@@ -126,6 +125,16 @@ create index ix_ticket_status_timestamp
 create index ix_ticket_status_ticket_id
     on public.ticket_status (ticket_id desc);
 
+create sequence public.priority_level_seq start with 1 increment by 50;
+create sequence public.attachment_seq start with 1 increment by 50;
+create sequence public.product_seq start with 1 increment by 50;
+create sequence public.profile_seq start with 1 increment by 50;
+create sequence public.staff_seq start with 1 increment by 50;
+create sequence public.ticket_seq start with 1 increment by 50;
+create sequence public.ticket_status_seq start with 1 increment by 50;
+create sequence public.chat_message_seq start with 1 increment by 50;
+
+
 COPY public.product(ean, name, brand)
 FROM '/docker-entrypoint-initdb.d/product.csv'
 WITH DELIMITER ',' CSV HEADER;
@@ -133,3 +142,16 @@ WITH DELIMITER ',' CSV HEADER;
 COPY public.profile(id,email, name, surname, address)
 FROM '/docker-entrypoint-initdb.d/profile.csv'
 WITH DELIMITER ',' CSV HEADER;
+
+COPY public.priority_level(id,name)
+    FROM '/docker-entrypoint-initdb.d/priority_level.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+COPY public.ticket(id,description,customer_id,product_id,expert_id,priority_level_id,status)
+    FROM '/docker-entrypoint-initdb.d/ticket.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+COPY public.staff(id,email, name, surname, dtype)
+    FROM '/docker-entrypoint-initdb.d/staff.csv'
+    WITH DELIMITER ',' CSV HEADER;
+

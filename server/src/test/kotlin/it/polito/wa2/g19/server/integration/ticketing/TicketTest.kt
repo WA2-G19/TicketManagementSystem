@@ -607,6 +607,8 @@ class TicketTest {
         assert(myTicketsDTO.body!!.size == mySize)
         assert(myTicketsDTO.body!!.all { it.expertEmail == expert.email && it.customerEmail == customer.email
                 && it.status == myStatus && it.priorityLevel == PriorityLevelEnum.valueOf(myPriorityLevel.name) })
+
+
     }
 
 

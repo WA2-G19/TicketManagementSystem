@@ -117,6 +117,7 @@ class TicketStatusServiceImpl(
     /*
     * grande!!
     * */
+
     override fun resolveTicket(ticketId: Int, resolverEmail: String) {
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()

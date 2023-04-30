@@ -1,8 +1,8 @@
-package it.polito.wa2.g19.server.chat
+package it.polito.wa2.g19.server.ticketing.chat
 
 import it.polito.wa2.g19.server.common.EntityBase
 import it.polito.wa2.g19.server.profiles.Customer
-import it.polito.wa2.g19.server.attachments.Attachment
+import it.polito.wa2.g19.server.ticketing.attachments.Attachment
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -27,7 +27,6 @@ class ChatMessage(): EntityBase<Int>() {
     lateinit var author: Customer
     @OneToMany(mappedBy = "message")
     lateinit var attachments: Set<Attachment>
-
     @Column(nullable = false)
     var body: String = ""
     @CreationTimestamp

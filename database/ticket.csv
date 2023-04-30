@@ -1,2 +1,2 @@
-id, description, customer_email, product_ean
-0,"Non si connette ad internet",vittorio@wa.polito.it,5052746141566
+id,description,customer_id,product_id,expert_id,priority_level_id,status
+0,"Non si connette ad internet",0,1,,0,0

@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.common
 
 import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import org.springframework.data.util.ProxyUtils
@@ -13,7 +14,7 @@ abstract class EntityBase<T: Serializable> {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private var id: T? = null
 
     open fun getId(): T? = id

@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.chat
+package it.polito.wa2.g19.server.ticketing.chat
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail

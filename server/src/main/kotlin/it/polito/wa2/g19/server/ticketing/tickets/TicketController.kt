@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
+import it.polito.wa2.g19.server.common.Util
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.net.URI
 
 @RestController
@@ -17,7 +19,8 @@ import java.net.URI
 @RequestMapping("/API")
 class TicketController(
     private val ticketService: TicketService,
-    private val ticketStatusService: TicketStatusService
+    private val ticketStatusService: TicketStatusService,
+    private val handlerMapping: RequestMappingHandlerMapping
 ) {
 
     @GetMapping("/tickets")
@@ -32,7 +35,6 @@ class TicketController(
 
     @GetMapping("/tickets/{ticketId}")
     fun getTicketById(@PathVariable ticketId: Int, ): TicketOutDTO {
-
         return ticketService.getTicket(ticketId)
     }
 
@@ -43,9 +45,11 @@ class TicketController(
     ): ResponseEntity<Void> {
         val id = ticketService.createTicket(ticket)
         val headers = HttpHeaders()
-        headers.location = URI.create("/API/tickets/${id}")
+        headers.location = URI.create(Util.getUri(handlerMapping, ::getTicketById.name, id))
         return ResponseEntity(null, headers, HttpStatus.CREATED)
     }
+
+
 
     @PutMapping("/tickets/{ticketId}")
     fun putTicket(
@@ -63,4 +67,5 @@ class TicketController(
             else -> {}
         }
     }
+
 }
