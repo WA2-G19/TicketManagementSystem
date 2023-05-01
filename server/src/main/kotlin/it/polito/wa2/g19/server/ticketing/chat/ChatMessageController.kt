@@ -46,8 +46,7 @@ class ChatMessageController(
         val messages =  chatMessageService.getChatMessages()
         messages.forEach {
             it.stubAttachments?.forEach {stub ->
-                println("oooooooooooooo")
-                stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId, stub.url)
+                stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId, it.id,stub.url)
             }
         }
         return messages

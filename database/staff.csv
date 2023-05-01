@@ -1,3 +1,3 @@
-id,email,name,surname,dtype
-0,expert@wa.polito.it,Jacopo,"De Cristofaro",Expert
-1,manager@wa.polito.it,Jacopo,"De Cristofaro",Manager
+email,name,surname,dtype
+expert@wa.polito.it,Jacopo,"De Cristofaro",Expert
+manager@wa.polito.it,Jacopo,"De Cristofaro",Manager
