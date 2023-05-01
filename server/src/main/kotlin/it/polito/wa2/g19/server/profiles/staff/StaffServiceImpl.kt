@@ -1,7 +1,10 @@
-package it.polito.wa2.g19.server.profiles
+package it.polito.wa2.g19.server.profiles.staff
 
-import org.springframework.data.repository.findByIdOrNull
+import it.polito.wa2.g19.server.profiles.DuplicateEmailException
+import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import org.springframework.stereotype.Service
 
+@Service
 class StaffServiceImpl(
     private val staffRepository: StaffRepository
 ): StaffService {
@@ -9,12 +12,12 @@ class StaffServiceImpl(
         return staffRepository.findAll().map { it.toDTO() }
     }
 
-    override fun getProfile(email: String): StaffDTO {
-        val profile = staffRepository.findByEmailIgnoreCase(email.trim())
-        if (profile == null) {
+    override fun getStaff(email: String): StaffDTO {
+        val staff = staffRepository.findByEmailIgnoreCase(email.trim())
+        if (staff == null) {
             throw ProfileNotFoundException()
         } else {
-            return profile.toDTO()
+            return staff.toDTO()
         }
     }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 interface TicketStatusRepository: JpaRepository<TicketStatus, Int> {
     fun findAllByTicketId(ticketId: Int): Set<TicketStatus>
 
+
     @Query(value = "select ts from TicketStatus ts where ts.ticket.id = ?1 and ts.timestamp = (select max(ts2.timestamp) from TicketStatus ts2 where ts2.ticket.id = ?1)")
     fun findByTicketAndTimestampIsMaximum(ticketId: Int): TicketStatus
 }

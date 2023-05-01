@@ -1,5 +1,6 @@
-package it.polito.wa2.g19.server.profiles
+package it.polito.wa2.g19.server.profiles.customers
 
+import it.polito.wa2.g19.server.profiles.NotMatchingEmailException
 import jakarta.validation.constraints.Email
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -48,7 +49,8 @@ class CustomerController(
         email: String,
         @Valid
         @RequestBody
-        profile: CustomerDTO)
+        profile: CustomerDTO
+    )
     {
         if (email.trim() != profile.email.trim()) {
             throw NotMatchingEmailException()

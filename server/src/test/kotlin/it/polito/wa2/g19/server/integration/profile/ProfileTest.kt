@@ -1,7 +1,7 @@
 package it.polito.wa2.g19.server.integration.profile
 
-import it.polito.wa2.g19.server.profiles.CustomerDTO
-import it.polito.wa2.g19.server.profiles.CustomerRepository
+import it.polito.wa2.g19.server.profiles.customers.CustomerDTO
+import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

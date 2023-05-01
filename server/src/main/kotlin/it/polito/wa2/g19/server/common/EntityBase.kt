@@ -4,6 +4,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
+import jakarta.persistence.SequenceGenerator
 import org.springframework.data.util.ProxyUtils
 import java.io.Serializable
 
@@ -15,6 +16,7 @@ abstract class EntityBase<T: Serializable> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "entity_seq", allocationSize = 1)
     private var id: T? = null
 
     open fun getId(): T? = id

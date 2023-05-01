@@ -27,9 +27,9 @@ class ChatMessageController(
 
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}")
     @ResponseStatus(HttpStatus.OK)
-    fun getMessage(@PathVariable ticketId: String,
+    fun getMessage(@PathVariable ticketId: Int,
                    @PathVariable chatMessageId: Int): ChatMessageOutDTO {
-        return chatMessageService.getChatMessage(chatMessageId).let {
+        return chatMessageService.getChatMessage(ticketId,chatMessageId).let {
             it.stubAttachments?.forEach {stub ->
                 stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId,chatMessageId,stub.url)
             }
@@ -43,7 +43,7 @@ class ChatMessageController(
     fun getMessages(
         @PathVariable ticketId: Int
     ): Set<ChatMessageOutDTO> {
-        val messages =  chatMessageService.getChatMessages()
+        val messages =  chatMessageService.getChatMessages(ticketId)
         messages.forEach {
             it.stubAttachments?.forEach {stub ->
                 stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId, it.id,stub.url)

@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.profiles
+package it.polito.wa2.g19.server.profiles.customers
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank

@@ -1,6 +1,7 @@
-package it.polito.wa2.g19.server.profiles
+package it.polito.wa2.g19.server.profiles.customers
 
-import org.springframework.data.repository.findByIdOrNull
+import it.polito.wa2.g19.server.profiles.DuplicateEmailException
+import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import org.springframework.stereotype.Service
 
 @Service

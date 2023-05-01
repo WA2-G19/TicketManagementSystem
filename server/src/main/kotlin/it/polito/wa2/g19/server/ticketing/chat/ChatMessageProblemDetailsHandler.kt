@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.chat
 
+import it.polito.wa2.g19.server.ticketing.tickets.TicketNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -11,6 +12,14 @@ class ChatMessageProblemDetailsHandler: ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(MessageNotFoundException::class)
     fun handleProductNotFound(e: MessageNotFoundException) = ProblemDetail
+        .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
+
+    @ExceptionHandler(TicketNotFoundException::class)
+    fun handleProductNotFound(e: TicketNotFoundException) = ProblemDetail
+        .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
+
+    @ExceptionHandler(AttachmentNotFoundException::class)
+    fun handleProductNotFound(e: AttachmentNotFoundException) = ProblemDetail
         .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
 
 }

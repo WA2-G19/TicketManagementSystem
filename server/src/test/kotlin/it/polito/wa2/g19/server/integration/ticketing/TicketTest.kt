@@ -4,7 +4,11 @@ import it.polito.wa2.g19.server.Util
 import it.polito.wa2.g19.server.equalsTo
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductRepository
-import it.polito.wa2.g19.server.profiles.*
+import it.polito.wa2.g19.server.profiles.customers.Customer
+import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
+import it.polito.wa2.g19.server.profiles.staff.Expert
+import it.polito.wa2.g19.server.profiles.staff.Manager
+import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import it.polito.wa2.g19.server.ticketing.tickets.*
 import org.assertj.core.api.Assertions.assertThat
@@ -19,12 +23,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
-import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer

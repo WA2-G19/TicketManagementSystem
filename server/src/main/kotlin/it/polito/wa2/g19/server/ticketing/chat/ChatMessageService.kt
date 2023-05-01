@@ -6,9 +6,9 @@ import org.springframework.web.multipart.MultipartFile
 
 interface ChatMessageService {
 
-    fun getChatMessage(id: Int): ChatMessageOutDTO
+    fun getChatMessage(ticketId: Int,chatMessageId: Int): ChatMessageOutDTO
 
-    fun getChatMessages(): Set<ChatMessageOutDTO>
+    fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO>
 
     fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?): Int
 

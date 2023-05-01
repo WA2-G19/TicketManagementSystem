@@ -1,14 +1,13 @@
 package it.polito.wa2.g19.server
 
 import it.polito.wa2.g19.server.products.Product
-import it.polito.wa2.g19.server.profiles.*
+import it.polito.wa2.g19.server.profiles.customers.Customer
+import it.polito.wa2.g19.server.profiles.staff.Expert
+import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import it.polito.wa2.g19.server.ticketing.tickets.TicketDTO
 import java.sql.Timestamp
-
-import java.time.temporal.ChronoUnit
-import java.util.concurrent.TimeUnit
 
 class Util {
 

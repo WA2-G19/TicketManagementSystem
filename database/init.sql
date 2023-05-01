@@ -1,3 +1,6 @@
+--CREATE DATABASE "TicketManagementSystem";
+--\c "TicketManagementSystem"
+
 drop schema if exists public cascade;
 create schema public;
 
@@ -9,7 +12,7 @@ create sequence public.staff_seq start with 1 increment by 50;
 create sequence public.ticket_seq start with 1 increment by 50;
 create sequence public.ticket_status_seq start with 1 increment by 50;
 create sequence public.chat_message_seq start with 1 increment by 50;
-
+create sequence public.skill_seq start with 1 increment by 50;
 
 create table public.priority_level
 (
@@ -54,6 +57,26 @@ create table public.staff
     constraint uk_staff_email
         unique (email)
 );
+create table public.skill
+(
+    id integer not null default nextval('public.skill_seq'),
+    name varchar(255) not null,
+    primary key (id)
+);
+
+create table public.staff_skill
+(
+    staff_id integer not null,
+    skill_id integer not null,
+    PRIMARY KEY(staff_id, skill_id),
+    constraint fk_staff_skill_staff_id
+        foreign key (staff_id) references public.staff,
+    constraint fk_staff_skill_skill_id
+        foreign key (skill_id) references public.skill
+);
+
+
+
 
 create table public.ticket
 (
@@ -157,5 +180,14 @@ COPY public.ticket(description,customer_id,product_id,expert_id,priority_level_i
 
 COPY public.staff(email, name, surname, dtype)
     FROM '/docker-entrypoint-initdb.d/staff.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+
+COPY public.skill(name)
+    FROM '/docker-entrypoint-initdb.d/skill.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+COPY public.staff_skill(staff_id, skill_id)
+    FROM '/docker-entrypoint-initdb.d/staff_skill.csv'
     WITH DELIMITER ',' CSV HEADER;
 

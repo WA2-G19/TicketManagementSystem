@@ -1,7 +1,7 @@
 package it.polito.wa2.g19.server.ticketing.chat
 
 import it.polito.wa2.g19.server.common.EntityBase
-import it.polito.wa2.g19.server.profiles.Customer
+import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.ticketing.attachments.Attachment
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import jakarta.persistence.*

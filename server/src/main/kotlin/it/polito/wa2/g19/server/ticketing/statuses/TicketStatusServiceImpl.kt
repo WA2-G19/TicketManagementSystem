@@ -1,9 +1,9 @@
 package it.polito.wa2.g19.server.ticketing.statuses
 
-import it.polito.wa2.g19.server.profiles.Expert
-import it.polito.wa2.g19.server.profiles.Manager
+import it.polito.wa2.g19.server.profiles.staff.Expert
+import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.profiles.StaffRepository
+import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.tickets.*
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull

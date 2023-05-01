@@ -1,14 +1,12 @@
-package it.polito.wa2.g19.server.profiles
+package it.polito.wa2.g19.server.profiles.customers
 
+import it.polito.wa2.g19.server.profiles.Profile
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.OneToMany
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "profile")
+
 class Customer(): Profile() {
 
     @Column(nullable = false)

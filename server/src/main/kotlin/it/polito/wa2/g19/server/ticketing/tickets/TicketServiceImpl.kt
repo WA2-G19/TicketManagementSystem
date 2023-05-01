@@ -2,9 +2,9 @@ package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.products.ProductNotFoundException
 import it.polito.wa2.g19.server.products.ProductRepository
-import it.polito.wa2.g19.server.profiles.CustomerRepository
+import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.profiles.StaffRepository
+import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.OpenTicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum

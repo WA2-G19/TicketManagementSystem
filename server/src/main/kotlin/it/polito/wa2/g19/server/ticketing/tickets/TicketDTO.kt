@@ -1,11 +1,7 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
-import it.polito.wa2.g19.server.profiles.Expert
-import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevel
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
-import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
 open class TicketDTO(

@@ -3,10 +3,10 @@ package it.polito.wa2.g19.server.unit.profiles
 import io.mockk.every
 import io.mockk.mockk
 import it.polito.wa2.g19.server.profiles.*
+import it.polito.wa2.g19.server.profiles.customers.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.springframework.data.repository.findByIdOrNull
 
 internal class ProfileServiceImplTest {
 

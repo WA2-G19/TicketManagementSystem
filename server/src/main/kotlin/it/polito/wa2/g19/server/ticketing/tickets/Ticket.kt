@@ -2,8 +2,8 @@ package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.common.EntityBase
 import it.polito.wa2.g19.server.products.Product
-import it.polito.wa2.g19.server.profiles.Customer
-import it.polito.wa2.g19.server.profiles.Expert
+import it.polito.wa2.g19.server.profiles.customers.Customer
+import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevel
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
@@ -31,4 +31,6 @@ class Ticket(): EntityBase<Int>() {
     @ManyToOne
     @JoinColumn(nullable = true)
     var expert: Expert? = null
+
+
 }

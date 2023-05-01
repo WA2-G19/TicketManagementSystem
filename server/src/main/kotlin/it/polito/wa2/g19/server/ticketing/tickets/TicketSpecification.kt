@@ -1,10 +1,8 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
-import it.polito.wa2.g19.server.profiles.Customer
-import it.polito.wa2.g19.server.profiles.Expert
-import it.polito.wa2.g19.server.profiles.Staff
+import it.polito.wa2.g19.server.profiles.customers.Customer
+import it.polito.wa2.g19.server.profiles.staff.Staff
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevel
-import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 
 
