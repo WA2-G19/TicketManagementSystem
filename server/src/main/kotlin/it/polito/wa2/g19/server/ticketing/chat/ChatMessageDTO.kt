@@ -4,12 +4,16 @@ import it.polito.wa2.g19.server.ticketing.attachments.AttachmentProjection
 import it.polito.wa2.g19.server.ticketing.attachments.StubAttachmentDTO
 import it.polito.wa2.g19.server.ticketing.attachments.toStubDTO
 import jakarta.persistence.Id
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
 import java.io.File
 import java.time.LocalDateTime
 
 abstract class ChatMessageDTO(
-
+    @field:Email(message = "authorEmail must be a valid email")
+    @field:NotBlank(message = "authorEmail must be not blank")
     var authorEmail: String,
+    @field:NotBlank(message = "message body must be not blank")
     var body: String,
 )
 

@@ -29,11 +29,10 @@ class ChatMessageController(
     @ResponseStatus(HttpStatus.OK)
     fun getMessage(@PathVariable ticketId: Int,
                    @PathVariable chatMessageId: Int): ChatMessageOutDTO {
-        return chatMessageService.getChatMessage(ticketId,chatMessageId).let {
-            it.stubAttachments?.forEach {stub ->
+        return chatMessageService.getChatMessage(ticketId,chatMessageId).apply {
+            stubAttachments?.forEach {stub ->
                 stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId,chatMessageId,stub.url)
             }
-            it
         }
     }
 
@@ -67,7 +66,8 @@ class ChatMessageController(
         headers.location = URI.create( Util.getUri(handlerMapping, ::getMessage.name,ticketId,id) )
         return ResponseEntity(null, headers, HttpStatus.CREATED)
     }
-    @GetMapping("/{ticketId}/chat-messages/{chatMessageId}/attachments/{attachmentId}", produces =  [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @GetMapping("/{ticketId}/chat-messages/{chatMessageId}/attachments/{attachmentId}")
+    @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     fun getAttachment(
         @Valid
@@ -80,9 +80,7 @@ class ChatMessageController(
         headers.setContentDispositionFormData("attachment", attachmentDTO.name)
         headers.contentType = MediaType.parseMediaType(attachmentDTO.contentType)
         headers["TMS-Creation-Time"] = attachmentDTO.timestamp.toString()
-        headers["TMS-Lenght"] = attachmentDTO.length.toString()
+        headers["TMS-Length"] = attachmentDTO.length.toString()
         return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
     }
-
-
 }

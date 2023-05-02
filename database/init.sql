@@ -1,5 +1,5 @@
-CREATE DATABASE "TicketManagementSystem";
-"TicketManagementSystem"
+create database "TicketManagementSystem";
+\c "TicketManagementSystem"
 
 drop schema if exists public cascade;
 create schema public;
