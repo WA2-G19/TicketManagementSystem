@@ -4,6 +4,8 @@ import it.polito.wa2.g19.server.Util
 import it.polito.wa2.g19.server.equalsTo
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductRepository
+import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import it.polito.wa2.g19.server.profiles.ProfilesProblemDetailsHandler
 import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.Expert
@@ -181,6 +183,19 @@ class TicketTest {
     }
 
     @Test
+    fun `try to close a ticket without expert indication`(){
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Closed
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID",HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(ProfileNotFoundException().message == response.body!!.message)
+    }
+
+    @Test
     fun `reopen an open ticket is unsuccessful`() {
         val ticketID = insertTicket(TicketStatusEnum.Open)
         val ticketStatusDTO = TicketStatusDTO(
@@ -215,6 +230,47 @@ class TicketTest {
     }
 
     @Test
+    fun `try to start progress on an open ticket is not successful without expert indication`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.InProgress,
+            priorityLevel = PriorityLevelEnum.CRITICAL
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(ProfileNotFoundException().message == response.body!!.message)
+    }
+
+    @Test
+    fun `try to start progress on an open ticket is not successful without 'by' indication`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.InProgress,
+            expert = expert.email,
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(response.body!!.message!! == ProfileNotFoundException().message)
+    }
+
+    @Test
+    fun `try to start progress on an open ticket is not successful without any indication`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.InProgress,
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(response.body!!.message!! == ProfileNotFoundException().message)
+    }
+
+    @Test
     fun `resolve an open ticket is successful`(){
         val ticketID = insertTicket(TicketStatusEnum.Open)
         val ticketStatusDTO = TicketStatusDTO(
@@ -245,6 +301,35 @@ class TicketTest {
         val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
+    }
+
+
+    @Test
+    fun `close a ticket that does not exist`() {
+        val ticketID = 10
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Closed,
+            by = manager.email,
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProblemDetail::class.java,)
+        assert(response.statusCode.value() == 404)
+        assert(response.body!!.detail == TicketNotFoundException().message!!)
+    }
+
+    @Test
+    fun `close a ticket with a profile not existing`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Closed,
+            by = "profileNotFound@gmail.com",
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProblemDetail::class.java,)
+        assert(response.statusCode.value() == 404)
+        assert(response.body!!.detail!! == ProfileNotFoundException().message!!)
     }
 
     @Test
@@ -573,47 +658,62 @@ class TicketTest {
     }
 
     @Test
-    fun `filtering by priority and status and expert and customer`(){
+    fun `filtering by priority and status and expert and customer`() {
         val mySize = 10
         val myStatus = TicketStatusEnum.Closed
         val otherStatus = TicketStatusEnum.Reopened
 
         val myPriorityLevel = priorityLevelRepository.findByName("HIGH")
         val otherPriorityLevel = priorityLevelRepository.findByName("LOW")
-        (0 until mySize).forEach{
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
-                it.status = myStatus; it.expert = expert; it.priorityLevel = myPriorityLevel; it})
+        (0 until mySize).forEach {
+            ticketRepository.save(Util.mockTicket().let {
+                it.customer = customer; it.product = product;
+                it.status = myStatus; it.expert = expert; it.priorityLevel = myPriorityLevel; it
+            })
         }
 
-        (0 until mySize).forEach{
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
-                it.status =  myStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
+        (0 until mySize).forEach {
+            ticketRepository.save(Util.mockTicket().let {
+                it.customer = customer; it.product = product;
+                it.status = myStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it
+            })
         }
 
-        (0 until mySize).forEach{
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
-                it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
+        (0 until mySize).forEach {
+            ticketRepository.save(Util.mockTicket().let {
+                it.customer = customer; it.product = product;
+                it.status = otherStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it
+            })
         }
 
-        (0 until mySize).forEach{
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
-                it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = otherPriorityLevel;it})
+        (0 until mySize).forEach {
+            ticketRepository.save(Util.mockTicket().let {
+                it.customer = customer; it.product = product;
+                it.status = otherStatus; it.expert = otherExpert;it.priorityLevel = otherPriorityLevel;it
+            })
         }
 
-        (0 until 12).forEach{
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product;
-                it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it.priorityLevel = otherPriorityLevel; it})
+        (0 until 12).forEach {
+            ticketRepository.save(Util.mockTicket().let {
+                it.customer = otherCustomer; it.product = product;
+                it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it.priorityLevel =
+                otherPriorityLevel; it
+            })
         }
 
 
-        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}&priorityLevel=${myPriorityLevel.name}", HttpMethod.GET, null)
+        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange(
+            "$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}&priorityLevel=${myPriorityLevel.name}",
+            HttpMethod.GET,
+            null
+        )
         assert(myTicketsDTO.body!!.size == mySize)
-        assert(myTicketsDTO.body!!.all { it.expertEmail == expert.email && it.customerEmail == customer.email
-                && it.status == myStatus && it.priorityLevel == PriorityLevelEnum.valueOf(myPriorityLevel.name) })
-
+        assert(myTicketsDTO.body!!.all {
+            it.expertEmail == expert.email && it.customerEmail == customer.email
+                    && it.status == myStatus && it.priorityLevel == PriorityLevelEnum.valueOf(myPriorityLevel.name)
+        })
 
     }
-
 
 
 }

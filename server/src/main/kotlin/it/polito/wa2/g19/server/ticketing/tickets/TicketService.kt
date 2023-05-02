@@ -10,4 +10,6 @@ interface TicketService {
     fun getTickets(customerEmail: String?, expertEmail: String?, statusEnum: TicketStatusEnum?, priorityLevel: PriorityLevelEnum?): List<TicketOutDTO>
 
     fun createTicket(ticket: TicketDTO) : Int
+
+
 }

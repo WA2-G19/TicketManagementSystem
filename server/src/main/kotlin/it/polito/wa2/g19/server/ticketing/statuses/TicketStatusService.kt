@@ -14,4 +14,9 @@ interface TicketStatusService {
     fun resolveTicket(ticketId: Int, resolverEmail: String)
 
     fun closeTicket(ticketId: Int, closerEmail: String)
+
+    fun getTicketClosedByExpert(expertMail: String): Int
+
+    fun getAverageTimedByExpert(expertMail: String): Float
+
 }

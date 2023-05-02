@@ -8,6 +8,7 @@ import it.polito.wa2.g19.server.ticketing.tickets.*
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.time.LocalDateTime
 
 @Service
@@ -65,7 +66,7 @@ class TicketStatusServiceImpl(
         if (!ticketRepository.existsById(ticketId)) {
             throw TicketNotFoundException()
         }
-        var ticket = ticketRepository.findByIdOrNull(ticketId)!!
+        val ticket = ticketRepository.findByIdOrNull(ticketId)!!
 
         if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
             ticket.status = TicketStatusEnum.Reopened
@@ -158,4 +159,32 @@ class TicketStatusServiceImpl(
 
     }
 
+    override fun getTicketClosedByExpert(expertMail: String): Int {
+        val expert = staffRepository.findByEmailIgnoreCase(expertMail) ?: throw ProfileNotFoundException()
+        return ticketStatusRepository.getTicketsStatusByExpert(
+            expert.getId()!!,
+            TicketStatusEnum.Closed
+        )
+    }
+
+    override fun getAverageTimedByExpert(expertMail: String): Float {
+        val expert = staffRepository.findByEmailIgnoreCase(expertMail) ?: throw ProfileNotFoundException()
+        val ticketStatusList = ticketStatusRepository.getTicketStatusByExpert(
+            expert.getId()!!,
+            TicketStatusEnum.InProgress,
+            TicketStatusEnum.Closed)
+        var diff = 0f
+        var count = 0
+        ticketStatusList.groupBy { it.ticket.getId()!! }.values.forEach {
+            val normalizedSize = if(it.size%2 ==0) it.size else it.size - 1
+            for(i in 0 until normalizedSize step 2) {
+                diff += Duration.between(
+                    it[i].timestamp,
+                    it[i+1].timestamp
+                ).seconds
+                count ++
+            }
+        }
+        return if(count == 0) 0f else diff/count
+    }
 }

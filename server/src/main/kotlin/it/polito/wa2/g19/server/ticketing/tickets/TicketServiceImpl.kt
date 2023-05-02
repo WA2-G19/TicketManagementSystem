@@ -33,23 +33,26 @@ class TicketServiceImpl(
         statusEnum: TicketStatusEnum?,
         priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
-        val expert = if(expertEmail != null){
+        val expert = if (expertEmail != null) {
             staffRepository.findByEmailIgnoreCase(expertEmail)
         } else
             null
-        val customer = if(customerEmail != null){
+        val customer = if (customerEmail != null) {
             customerRepository.findByEmailIgnoreCase(customerEmail)
         } else
             null
 
-        val priorityLevel = if(priorityLevel != null){
+        val priorityLevel = if (priorityLevel != null) {
             priorityLevelRepository.findByName(priorityLevel.name)
         } else null
 
-        return ticketRepository.findAll((TicketSpecification.ofCustomer(customer).
-        and(TicketSpecification.ofExpert(expert))
-            .and(TicketSpecification.ofStatus(statusEnum)
-                .and(TicketSpecification.ofPriority(priorityLevel))))).map{ it.toOutDTO() }
+        return ticketRepository.findAll(
+            (TicketSpecification.ofCustomer(customer).and(TicketSpecification.ofExpert(expert))
+                .and(
+                    TicketSpecification.ofStatus(statusEnum)
+                        .and(TicketSpecification.ofPriority(priorityLevel))
+                ))
+        ).map { it.toOutDTO() }
 
     }
 
@@ -74,4 +77,5 @@ class TicketServiceImpl(
         val ticketCreated = ticketRepository.save(t)
         return ticketCreated.getId()!!
     }
+
 }

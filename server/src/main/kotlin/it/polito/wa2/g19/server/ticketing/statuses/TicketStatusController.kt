@@ -50,4 +50,21 @@ class TicketStatusController(
     fun postReopenTicket(@PathVariable ticketId: Int) {
         ticketStatusService.reopenTicket(ticketId)
     }
+
+    @GetMapping("/stats/ticketsClosed/{expertMail}")
+    fun getTicketClosedByExpert(
+        @PathVariable
+        expertMail: String
+    ): Int {
+        return ticketStatusService.getTicketClosedByExpert(expertMail)
+    }
+
+    @GetMapping("/stats/averageTime/{expertMail}")
+    fun getAverageTimedByExpert(
+        @PathVariable
+        expertMail: String
+    ): Float {
+        return ticketStatusService.getAverageTimedByExpert(expertMail)
+    }
+
 }
