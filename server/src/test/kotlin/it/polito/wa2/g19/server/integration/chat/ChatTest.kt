@@ -15,7 +15,6 @@ import it.polito.wa2.g19.server.ticketing.chat.ChatMessageRepository
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
 import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
-import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -26,7 +25,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
-import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -59,8 +57,6 @@ class ChatTest {
         }
     }
 
-    @LocalServerPort
-    protected var port: Int = 0
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
@@ -71,7 +67,6 @@ class ChatTest {
     private lateinit var expert: Expert
     private lateinit var otherExpert: Expert
 
-    private val ticket: Ticket = Util.mockTicket()
     @Autowired
     lateinit var customerRepository: CustomerRepository
     @Autowired
@@ -161,6 +156,29 @@ class ChatTest {
     @Test
     fun `get all messages for a non existent ticket`() {
         val responseGet: ResponseEntity<ProblemDetail> = restTemplate.exchange("$prefixEndPoint/1/chat-messages", HttpMethod.GET, null)
+        assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `get a non existent messages`() {
+        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val responseGet: ResponseEntity<ProblemDetail> = restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages/1", HttpMethod.GET, null)
+        assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `get a non existent attachment`() {
+        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val messageBody = "This is a test message"
+        val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(customer.email, messageBody))
+            })
+        val response = restTemplate.exchange<Void>(request)
+        assert(response.statusCode == HttpStatus.CREATED)
+        assert(response.headers.location.toString().isNotBlank())
+        val responseGet: ResponseEntity<ProblemDetail> = restTemplate.exchange("${response.headers.location}/attachments/1", HttpMethod.GET, null)
         assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
     }
 
