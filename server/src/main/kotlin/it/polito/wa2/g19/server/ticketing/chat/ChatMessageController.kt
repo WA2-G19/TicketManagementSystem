@@ -77,7 +77,7 @@ class ChatMessageController(
     ): ResponseEntity<ByteArrayResource>{
         val attachmentDTO = chatMessageService.getAttachment(ticketId, attachmentId)
         val headers = HttpHeaders()
-        headers.setContentDispositionFormData("attachment", attachmentDTO.name)
+        headers.set("content-disposition", "attachment; filename=${attachmentDTO.name}")
         headers.contentType = MediaType.parseMediaType(attachmentDTO.contentType)
         headers["TMS-Creation-Time"] = attachmentDTO.timestamp.toString()
         headers["TMS-Length"] = attachmentDTO.length.toString()

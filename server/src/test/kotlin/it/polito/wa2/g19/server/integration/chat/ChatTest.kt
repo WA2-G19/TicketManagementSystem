@@ -8,10 +8,10 @@ import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
-import it.polito.wa2.g19.server.ticketing.attachments.AttachmentDTO
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageInDTO
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageOutDTO
+import it.polito.wa2.g19.server.ticketing.chat.ChatMessageRepository
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
 import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
@@ -29,7 +29,6 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.*
-import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.util.LinkedMultiValueMap
@@ -86,7 +85,7 @@ class ChatTest {
     @Autowired
     lateinit var ticketStatusRepository: TicketStatusRepository
     @Autowired
-    lateinit var chatRepository: ProductRepository
+    lateinit var chatRepository: ChatMessageRepository
     @Autowired
     lateinit var attachmentRepository: AttachmentRepository
 
@@ -161,7 +160,7 @@ class ChatTest {
 
     @Test
     fun `get all messages for a non existent ticket`() {
-        val responseGet: ResponseEntity<Set<ChatMessageOutDTO>> = restTemplate.exchange("$prefixEndPoint/1/chat-messages", HttpMethod.GET, null)
+        val responseGet: ResponseEntity<ProblemDetail> = restTemplate.exchange("$prefixEndPoint/1/chat-messages", HttpMethod.GET, null)
         assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
     }
 
@@ -187,13 +186,19 @@ class ChatTest {
     fun `create a message for a ticket with attachments`() {
         val ticketId = insertTicket(TicketStatusEnum.Open)
         val messageBody = "This is a test message"
+        val file1Content = "test".toByteArray()
+        val file2Content = "test2".toByteArray()
         val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
                 add("message", ChatMessageInDTO(customer.email, messageBody))
-                add("files", MockMultipartFile("test.txt", "test.txt", MediaType.TEXT_PLAIN_VALUE, "test".toByteArray()))
-                add("files", MockMultipartFile("test2.txt", "test3.txt", MediaType.TEXT_PLAIN_VALUE, "test2".toByteArray()))
-            })
+                add("files", object : ByteArrayResource(file1Content) {
+                    override fun getFilename(): String = "test.txt"
+                })
+                add("files", object : ByteArrayResource(file2Content) {
+                    override fun getFilename(): String = "test2.txt"
+                })
+           })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
         assert(response.headers.location.toString().isNotBlank())
@@ -214,8 +219,9 @@ class ChatTest {
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
                 add("message", ChatMessageInDTO(customer.email, messageBody))
-                add("files", MockMultipartFile(fileName, fileName, MediaType.TEXT_PLAIN_VALUE, fileContent))
-            })
+                add("files", object : ByteArrayResource(fileContent) {
+                    override fun getFilename(): String = fileName
+                })})
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
         assert(response.headers.location.toString().isNotBlank())
@@ -229,6 +235,6 @@ class ChatTest {
         assert(responseGetAttachment.headers.contentType == MediaType.TEXT_PLAIN)
         assert(responseGetAttachment.headers.contentDisposition.isAttachment)
         assert(responseGetAttachment.headers.contentDisposition.filename == fileName)
-        assert(responseGetAttachment.body!!.equals(fileContent))
+        assert(responseGetAttachment.body!!.byteArray.contentEquals(fileContent))
     }
 }
