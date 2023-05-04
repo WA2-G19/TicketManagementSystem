@@ -7,11 +7,11 @@ import React, {useState} from "react"
 
 function ProfilesAPI() {
 
-    const prototype = new Profile("", "", "")
+    const prototype = new Profile("", "", "", "")
     const [statusCode, setStatusCode] = useState<number>(0)
     const [bodyPretty, setBodyPretty] = useState<Object[]>([])
     const [bodyRaw, setBodyRaw] = useState<string>("")
-    const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.email, p.name, p.surname))
+    const profile: Profile[] = bodyPretty.map((p: any) => new Profile(p.email, p.name, p.surname, p.address))
     return (<>
         <Container className="h-100 d-flex flex-column align-items-stretch dashboard-page">
             <Row className="mb-3">
@@ -101,10 +101,11 @@ function PostProfileCard(props: {
     const [email, setEmail] = useState<string>("")
     const [name, setName] = useState<string>("")
     const [surname, setSurname] = useState<string>("")
+    const [address, setAddress] = useState<string>("")
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const p = new Profile(email, name, surname)
+        const p = new Profile(email, name, surname, address)
         const response = await API.postProfile(p)
         const decodedResponse = await response.text()
         console.log(decodedResponse.length)
@@ -138,6 +139,10 @@ function PostProfileCard(props: {
                         <Form.Label>Surname</Form.Label>
                         <Form.Control value={surname} onChange={(e) => setSurname(e.target.value)} placeholder=""/>
                     </Form.Group>
+                    <Form.Group className="mb-3" controlId="postProfile">
+                        <Form.Label>Address</Form.Label>
+                        <Form.Control value={address} onChange={(e) => setAddress(e.target.value)} placeholder=""/>
+                    </Form.Group>
                     <Button variant="primary" type="submit">
                         Post Profile
                     </Button>
@@ -156,10 +161,11 @@ function PutProfileCard(props: {
     const [email, setEmail] = useState<string>("")
     const [name, setName] = useState<string>("")
     const [surname, setSurname] = useState<string>("")
+    const [address, setAddress] = useState<string>("")
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const p = new Profile(email, name, surname)
+        const p = new Profile(email, name, surname, address)
         const response = await API.putProfile(p)
         const decodedResponse = await response.text()
         console.log(decodedResponse.length)
@@ -181,17 +187,21 @@ function PutProfileCard(props: {
                     PUT
                 </Card.Title>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="postProfile">
+                    <Form.Group className="mb-3" controlId="putProfile">
                         <Form.Label>Email</Form.Label>
                         <Form.Control value={email} onChange={(e) => setEmail(e.target.value)} placeholder=""/>
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="postProfile">
+                    <Form.Group className="mb-3" controlId="putProfile">
                         <Form.Label>Name</Form.Label>
                         <Form.Control value={name} onChange={(e) => setName(e.target.value)} placeholder=""/>
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="postProfile">
+                    <Form.Group className="mb-3" controlId="putProfile">
                         <Form.Label>Surname</Form.Label>
                         <Form.Control value={surname} onChange={(e) => setSurname(e.target.value)} placeholder=""/>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="putProfile">
+                        <Form.Label>Address</Form.Label>
+                        <Form.Control value={address} onChange={(e) => setAddress(e.target.value)} placeholder=""/>
                     </Form.Group>
                     <Button variant="primary" type="submit">
                         Put Profile

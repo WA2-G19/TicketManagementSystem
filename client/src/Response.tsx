@@ -1,4 +1,4 @@
-import { Card, InputGroup, Button, Container, Spinner } from "react-bootstrap"
+import { Card, InputGroup, Button, Container } from "react-bootstrap"
 import APIObject from "./classes/APIObject"
 import PrettyOutput from "./PrettyOutput"
 import { useEffect, useState } from "react"

@@ -1,17 +1,13 @@
-import {Col, Button, Container} from 'react-bootstrap'
+import {Col, Button} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import React from "react";
 
 let tables = ["Product", "Profile"]
-
-
-type SidebarProps = {}
 
 function Sidebar(props: {
     setFilter: React.Dispatch<React.SetStateAction<string>>,
     filter: string
 }) {
-
-
 
     return (
         
