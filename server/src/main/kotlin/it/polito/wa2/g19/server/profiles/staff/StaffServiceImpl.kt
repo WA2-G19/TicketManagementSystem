@@ -3,8 +3,10 @@ package it.polito.wa2.g19.server.profiles.staff
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class StaffServiceImpl(
     private val staffRepository: StaffRepository
 ): StaffService {

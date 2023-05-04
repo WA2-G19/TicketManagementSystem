@@ -171,7 +171,6 @@ class TicketServiceImpl(
     /*
     * grande!!
     * */
-    @Transactional
     override fun closeTicket(ticketId: Int, closerEmail: String) {
         var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val closer = staffRepository.findByEmailIgnoreCase(closerEmail) ?: throw ProfileNotFoundException()
