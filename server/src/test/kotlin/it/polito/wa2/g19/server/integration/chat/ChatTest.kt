@@ -35,11 +35,12 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
-@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ChatTest {
 
     private val prefixEndPoint = "/API/tickets"
+
     companion object {
 
 
@@ -53,7 +54,7 @@ class ChatTest {
             registry.add("spring.datasource.url", postgres::getJdbcUrl)
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
-            registry.add("spring.jpa.hibernate.ddl-auto") {"create-drop"}
+            registry.add("spring.jpa.hibernate.ddl-auto") { "create-drop" }
         }
     }
 
@@ -69,39 +70,46 @@ class ChatTest {
 
     @Autowired
     lateinit var customerRepository: CustomerRepository
+
     @Autowired
     lateinit var staffRepository: StaffRepository
+
     @Autowired
     lateinit var productRepository: ProductRepository
+
     @Autowired
     lateinit var ticketRepository: TicketRepository
+
     @Autowired
     lateinit var priorityLevelRepository: PriorityLevelRepository
+
     @Autowired
     lateinit var ticketStatusRepository: TicketStatusRepository
+
     @Autowired
     lateinit var chatRepository: ChatMessageRepository
+
     @Autowired
     lateinit var attachmentRepository: AttachmentRepository
 
     @BeforeEach
-    fun populateDatabase(){
+    fun populateDatabase() {
         println("----populating database------")
-        Util.mockCustomers().forEach{
+        Util.mockCustomers().forEach {
             if (::customer.isInitialized)
                 otherCustomer = customer
             customer = customerRepository.save(it)
 
         }
-        Util.mockManagers().forEach{
+        Util.mockManagers().forEach {
             manager = staffRepository.save(it)
         }
-        Util.mockExperts().forEach{
-            if(::expert.isInitialized)
+        Util.mockExperts().forEach {
+            if (::expert.isInitialized)
                 otherExpert = expert
-            expert =  staffRepository.save(it)
+            expert = staffRepository.save(it)
         }
-        Util.mockPriorityLevels().forEach{
+        Util.mockPriorityLevels().forEach {
             priorityLevelRepository.save(it)
         }
         product = productRepository.save(Util.mockProduct())
@@ -109,7 +117,7 @@ class ChatTest {
     }
 
     @AfterEach
-    fun destroyDatabase(){
+    fun destroyDatabase() {
         println("----destroying database------")
         attachmentRepository.deleteAll()
         chatRepository.deleteAll()
@@ -146,7 +154,8 @@ class ChatTest {
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
         assert(response.headers.location.toString().isNotBlank())
-        val responseGet: ResponseEntity<Set<ChatMessageOutDTO>> = restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages", HttpMethod.GET, null)
+        val responseGet: ResponseEntity<Set<ChatMessageOutDTO>> =
+            restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages", HttpMethod.GET, null)
         assert(responseGet.statusCode == HttpStatus.OK)
         assert(responseGet.body!!.size == 1)
         assert(responseGet.body!!.elementAt(0).authorEmail == customer.email)
@@ -155,14 +164,16 @@ class ChatTest {
 
     @Test
     fun `get all messages for a non existent ticket`() {
-        val responseGet: ResponseEntity<ProblemDetail> = restTemplate.exchange("$prefixEndPoint/1/chat-messages", HttpMethod.GET, null)
+        val responseGet: ResponseEntity<ProblemDetail> =
+            restTemplate.exchange("$prefixEndPoint/1/chat-messages", HttpMethod.GET, null)
         assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
     }
 
     @Test
     fun `get a non existent messages`() {
         val ticketId = insertTicket(TicketStatusEnum.Open)
-        val responseGet: ResponseEntity<ProblemDetail> = restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages/1", HttpMethod.GET, null)
+        val responseGet: ResponseEntity<ProblemDetail> =
+            restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages/1", HttpMethod.GET, null)
         assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
     }
 
@@ -178,7 +189,8 @@ class ChatTest {
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
         assert(response.headers.location.toString().isNotBlank())
-        val responseGet: ResponseEntity<ProblemDetail> = restTemplate.exchange("${response.headers.location}/attachments/1", HttpMethod.GET, null)
+        val responseGet: ResponseEntity<ProblemDetail> =
+            restTemplate.exchange("${response.headers.location}/attachments/1", HttpMethod.GET, null)
         assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
     }
 
@@ -216,7 +228,7 @@ class ChatTest {
                 add("files", object : ByteArrayResource(file2Content) {
                     override fun getFilename(): String = "test2.txt"
                 })
-           })
+            })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
         assert(response.headers.location.toString().isNotBlank())
@@ -239,7 +251,8 @@ class ChatTest {
                 add("message", ChatMessageInDTO(customer.email, messageBody))
                 add("files", object : ByteArrayResource(fileContent) {
                     override fun getFilename(): String = fileName
-                })})
+                })
+            })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
         assert(response.headers.location.toString().isNotBlank())
@@ -248,7 +261,10 @@ class ChatTest {
         assert(responseGet.body!!.authorEmail == customer.email)
         assert(responseGet.body!!.body == messageBody)
         assert(responseGet.body!!.stubAttachments!!.size == 1)
-        val responseGetAttachment = restTemplate.getForEntity(responseGet.body!!.stubAttachments!!.elementAt(0).url, ByteArrayResource::class.java)
+        val responseGetAttachment = restTemplate.getForEntity(
+            responseGet.body!!.stubAttachments!!.elementAt(0).url,
+            ByteArrayResource::class.java
+        )
         assert(responseGetAttachment.statusCode == HttpStatus.OK)
         assert(responseGetAttachment.headers.contentType == MediaType.TEXT_PLAIN)
         assert(responseGetAttachment.headers.contentDisposition.isAttachment)

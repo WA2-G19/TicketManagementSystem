@@ -13,7 +13,7 @@ interface TicketStatusRepository: JpaRepository<TicketStatus, Int> {
     @Query(value = "select ts from TicketStatus ts where ts.ticket.id = ?1 and ts.timestamp = (select max(ts2.timestamp) from TicketStatus ts2 where ts2.ticket.id = ?1)")
     fun findByTicketAndTimestampIsMaximum(ticketId: Int): TicketStatus
 
-    @Query(value = "select count(*) as ticket_closed from TicketStatus ts where ts.ticket.expert.id = ?1 and ts.ticket.status = ?2")
+    @Query(value = "select count(*) as ticket_closed from ClosedTicketStatus ts where ts.by.id = ?1 and ts.ticket.status = ?2")
     fun getTicketsStatusByExpert(expertId: Int, ticketStatus: TicketStatusEnum): Int
 
     @Query(value = "select ts from TicketStatus ts where ts.ticket.expert.id = ?1 and ts.ticket.status=?2 or ts.ticket.status=?3 order by ts.ticket.id, ts.timestamp asc")
