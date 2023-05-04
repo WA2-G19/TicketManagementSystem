@@ -24,21 +24,20 @@ class TicketStatusServiceImpl(
 
     override fun getTicketClosedByExpert(expertMail: String): Int {
         val expert = staffRepository.findByEmailIgnoreCase(expertMail) ?: throw ProfileNotFoundException()
-        return ticketStatusRepository.getTicketsStatusByExpert(
+        return ticketStatusRepository.getTicketsClosedByExpert(
             expert.getId()!!,
-            TicketStatusEnum.Closed
         )
     }
 
     override fun getAverageTimedByExpert(expertMail: String): Float {
         val expert = staffRepository.findByEmailIgnoreCase(expertMail) ?: throw ProfileNotFoundException()
+
         val ticketStatusList = ticketStatusRepository.getTicketStatusByExpert(
-            expert.getId()!!,
-            TicketStatusEnum.InProgress,
-            TicketStatusEnum.Closed)
+            expert.getId()!!)
         var diff = 0f
         var count = 0
         ticketStatusList.groupBy { it.ticket.getId()!! }.values.forEach {
+            println("----------------------------------")
             val normalizedSize = if(it.size%2 ==0) it.size else it.size - 1
             for(i in 0 until normalizedSize step 2) {
                 diff += Duration.between(
@@ -48,6 +47,7 @@ class TicketStatusServiceImpl(
                 count ++
             }
         }
+
         return if(count == 0) 0f else diff/count
     }
 }

@@ -16,6 +16,7 @@ import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
 import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
+import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import it.polito.wa2.g19.server.ticketing.tickets.TicketOutDTO
 import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import org.junit.jupiter.api.AfterEach
@@ -133,83 +134,64 @@ class StatsTest {
         println("---------------------------------")
     }
 
-    fun insertTicket(status: TicketStatusEnum): Int {
+    fun insertTicket(status: TicketStatusEnum): Ticket {
         val ticket = Util.mockTicket()
         ticket.status = status
         ticket.customer = customer
         ticket.product = product
-        val ticketStatus = Util.mockOpenTicketStatus()
+        val ticketStatus = Util.mockInProgressTicketStatus()
+        ticketStatus.priority = priorityLevelRepository.findByName("HIGH")
         ticketStatus.ticket = ticket
-        val ticketID = ticketRepository.save(ticket).getId()!!
-        ticketStatusRepository.save(ticketStatus)
-        return ticketID
+        ticketStatus.expert = expert
+        ticket.statusHistory = mutableSetOf()
+        ticket.statusHistory.add(ticketStatus)
+        return ticketRepository.save(ticket)
     }
 
     @Test
     fun `get count for closed tickets by expert`() {
         for (i in 0 until 20) {
-            val ticketID = insertTicket(TicketStatusEnum.Open)
-            val ticketStatusDTO = TicketStatusDTO(
-                ticketID,
-                TicketStatusEnum.Closed,
-                by = expert.email,
-            )
-            val ticket = ticketRepository.findByIdOrNull(ticketID)!!
-            ticketStatusRepository.save(ClosedTicketStatus().apply {
+            val ticket = insertTicket(TicketStatusEnum.Open)
+            ticket.statusHistory.add(ClosedTicketStatus().apply {
                 this.ticket = ticket
                 this.by = expert
             })
-            val body = HttpEntity(ticketStatusDTO)
-            val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, Void::class.java)
-            assert(response.statusCode.value() == 200)
-            println(response)
-            val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
-            assert(closedTicket.id == ticketID)
-            assert(closedTicket.status == TicketStatusEnum.Closed)
+            ticketRepository.save(ticket)
         }
-        val response = restTemplate.exchange<Int>("$prefixStatsEndPoint/ticketsClosed/${expert.email}", HttpMethod.GET, null)
+        val response = restTemplate.exchange<Int>("$prefixStatsEndPoint/tickets-closed/${expert.email}", HttpMethod.GET, null)
         assert(response.body == 20)
     }
 
     @Test
     fun `get closed tickets is unsuccessful`() {
-        val response = restTemplate.getForEntity("$prefixStatsEndPoint/ticketsClosed/fakeprofile@test.it",ProblemDetail::class.java)
+        val response = restTemplate.getForEntity("$prefixStatsEndPoint/tickets-closed/fakeprofile@test.it",ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.NOT_FOUND)
         assert(response.body!!.detail == ProfileNotFoundException().message)
     }
 
     @Test
-    fun `get averege time for closed tickets by expert`() {
+    fun `get average time for closed tickets by expert`() {
         for (i in 0 until 20) {
-            val ticketID = insertTicket(TicketStatusEnum.Open)
-            val ticketStatusDTO = TicketStatusDTO(
-                ticketID,
-                TicketStatusEnum.Closed,
-                by = expert.email,
-                timestamp = LocalDateTime.now().plusDays((i).toLong())
-            )
-            val ticket = ticketRepository.findByIdOrNull(ticketID)!!
+            val ticket = insertTicket(TicketStatusEnum.InProgress)
             val ticketStatus = ticketStatusRepository.save(ClosedTicketStatus().apply {
                 this.ticket = ticket
                 this.by = expert
             })
-            ticketStatus.timestamp = LocalDateTime.now().plusDays((1).toLong())
-            ticketStatusRepository.save(ticketStatus)
-            val body = HttpEntity(ticketStatusDTO)
-            val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, Void::class.java)
-            assert(response.statusCode.value() == 200)
-            println(response)
-            val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
-            assert(closedTicket.id == ticketID)
-            assert(closedTicket.status == TicketStatusEnum.Closed)
+            ticket.statusHistory.add(ticketStatusRepository.save(ticketStatus.let {
+                it.timestamp = LocalDateTime.now().plusDays((1).toLong())
+                it
+            }))
+            ticketRepository.save(ticket)
         }
-        val response = restTemplate.exchange<Int>("$prefixStatsEndPoint/averageTime/${expert.email}", HttpMethod.GET, null)
+        println("---------------")
+        val response = restTemplate.exchange<Int>("$prefixStatsEndPoint/average-time/${expert.email}", HttpMethod.GET, null)
+
         assert(response.body!! == 1*24*3600)
     }
 
     @Test
     fun `get average time is unsuccessful`() {
-        val response = restTemplate.getForEntity("$prefixStatsEndPoint/averageTime/fakeprofile@test.it",ProblemDetail::class.java)
+        val response = restTemplate.getForEntity("$prefixStatsEndPoint/average-time/fakeprofile@test.it",ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.NOT_FOUND)
         assert(response.body!!.detail == ProfileNotFoundException().message)
     }

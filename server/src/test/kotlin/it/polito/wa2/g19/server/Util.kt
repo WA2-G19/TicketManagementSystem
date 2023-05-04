@@ -86,6 +86,14 @@ class Util {
             }
         }
 
+        fun mockInProgressTicketStatus(): InProgressTicketStatus{
+            return InProgressTicketStatus().let {
+                it.ticket = mockTicket()
+
+                it
+            }
+        }
+
     }
 
 }

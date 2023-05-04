@@ -18,7 +18,7 @@ class TicketStatusController(
 ) {
 
 
-    @GetMapping("/stats/ticketsClosed/{expertMail}")
+    @GetMapping("/stats/tickets-closed/{expertMail}")
     fun getTicketClosedByExpert(
         @PathVariable
         expertMail: String
@@ -26,7 +26,7 @@ class TicketStatusController(
         return ticketStatusService.getTicketClosedByExpert(expertMail)
     }
 
-    @GetMapping("/stats/averageTime/{expertMail}")
+    @GetMapping("/stats/average-time/{expertMail}")
     fun getAverageTimedByExpert(
         @PathVariable
         expertMail: String
