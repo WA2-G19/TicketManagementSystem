@@ -16,40 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody
 class TicketStatusController(
     private val ticketStatusService: TicketStatusService
 ) {
-    @GetMapping("/ticket/{ticketId}/statusHistory")
-    fun getStatusHistory(@PathVariable ticketId: Int): Set<TicketStatusDTO> {
-        return ticketStatusService.getStatusHistory(ticketId)
-    }
 
-    @GetMapping("/ticket/{ticketId}/status")
-    fun getCurrentStatus(@PathVariable ticketId: Int): TicketStatusDTO {
-        return ticketStatusService.getCurrentStatus(ticketId)
-    }
-
-    @PostMapping("/ticket/{ticketId}/stopProgress")
-    fun postOpenTicket(@PathVariable ticketId: Int) {
-        ticketStatusService.stopProgressTicket(ticketId)
-    }
-
-    @PostMapping("/ticket/{ticketId}/startProgress")
-    fun postInProgressTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
-        ticketStatusService.startProgressTicket(ticketId, status.expert!!, status!!)
-    }
-
-    @PostMapping("/tickets/{ticketId}/reopen")
-    fun postCloseTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
-        ticketStatusService.closeTicket(ticketId, status.by!!)
-    }
-
-    @PostMapping("/ticket/{ticketId}/resolve")
-    fun postResolveTicket(@PathVariable ticketId: Int, @RequestBody @Valid status: TicketStatusDTO) {
-        ticketStatusService.resolveTicket(ticketId, status.by!!)
-    }
-
-    @PostMapping("/ticket/{ticketId}/reopen")
-    fun postReopenTicket(@PathVariable ticketId: Int) {
-        ticketStatusService.reopenTicket(ticketId)
-    }
 
     @GetMapping("/stats/ticketsClosed/{expertMail}")
     fun getTicketClosedByExpert(

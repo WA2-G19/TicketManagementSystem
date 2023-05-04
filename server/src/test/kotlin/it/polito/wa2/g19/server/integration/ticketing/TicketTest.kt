@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.integration.ticketing
 
 import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.HttpClientBuilder
+import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.HttpClients
 import it.polito.wa2.g19.server.Util
 import it.polito.wa2.g19.server.equalsTo
 import it.polito.wa2.g19.server.products.Product
@@ -89,8 +90,6 @@ class TicketTest {
     lateinit var priorityLevelRepository: PriorityLevelRepository
     @Autowired
     lateinit var ticketStatusRepository: TicketStatusRepository
-    @Autowired
-    lateinit var entityManager: EntityManager
 
 
 

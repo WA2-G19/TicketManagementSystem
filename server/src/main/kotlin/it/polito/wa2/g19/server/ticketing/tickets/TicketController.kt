@@ -19,7 +19,6 @@ import java.net.URI
 @RequestMapping("/API")
 class TicketController(
     private val ticketService: TicketService,
-    private val ticketStatusService: TicketStatusService,
     private val handlerMapping: RequestMappingHandlerMapping
 ) {
 
@@ -50,7 +49,11 @@ class TicketController(
     }
 
 
-
+    /*
+       Since a PUT method should ensure the idempotency property, actually this should be a PATCH method,
+       however, the RestTemplate object used for testing does not allow us to issue PATCH request.
+       Just for the sake of testing we use treat this method as it handle a PUT method.
+    */
     @PutMapping("/tickets/{ticketId}")
     fun putTicket(
         @PathVariable
@@ -60,10 +63,10 @@ class TicketController(
         ticketStatus: TicketStatusDTO
     ){
         when(ticketStatus.status){
-            TicketStatusEnum.Reopened -> ticketStatusService.reopenTicket(ticketId)
-            TicketStatusEnum.InProgress -> ticketStatusService.startProgressTicket(ticketId, ticketStatus.by!!, ticketStatus)
-            TicketStatusEnum.Closed -> ticketStatusService.closeTicket(ticketId, ticketStatus.by!!)
-            TicketStatusEnum.Resolved -> ticketStatusService.resolveTicket(ticketId, ticketStatus.by!!)
+            TicketStatusEnum.Reopened -> ticketService.reopenTicket(ticketId)
+            TicketStatusEnum.InProgress -> ticketService.startProgressTicket(ticketId, ticketStatus.by!!, ticketStatus)
+            TicketStatusEnum.Closed -> ticketService.closeTicket(ticketId, ticketStatus.by!!)
+            TicketStatusEnum.Resolved -> ticketService.resolveTicket(ticketId, ticketStatus.by!!)
             else -> {}
         }
     }
