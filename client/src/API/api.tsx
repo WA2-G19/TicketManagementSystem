@@ -1,19 +1,33 @@
+import Profile from "../classes/Profile"
 
 async function getAllProducts(): Promise<Response>{
-    
-    const response = await fetch("/API/products")
-    return response
-
+    return await fetch("/API/products")
 }
 
 async function getProductByEAN(ean: string): Promise<Response>{
-    const response = await fetch("/API/products/" + ean )
-    return response
-    
+    return await fetch("/API/products/" + ean)
+
 }
 
+async function getProfileByEmail(email: string): Promise<Response> {
+    return await fetch("/API/profiles/" + email)
+}
 
+async function postProfile(profile: Profile): Promise<Response> {
+    return await fetch("/API/profiles", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: JSON.stringify({email: profile.email, name: profile.name, surname: profile.surname, address: profile.address})
+    })
+}
 
+async function putProfile(profile: Profile): Promise<Response> {
+    return await fetch("/API/profiles/" + profile.email, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: JSON.stringify({email: profile.email, name: profile.name, surname: profile.surname, address: profile.address})
+    })
+}
 
-const API = {getAllProducts, getProductByEAN}
+const API = {getAllProducts, getProductByEAN, getProfileByEmail, postProfile, putProfile}
 export default API
