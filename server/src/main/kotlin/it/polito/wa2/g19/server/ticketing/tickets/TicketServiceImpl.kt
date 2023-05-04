@@ -45,7 +45,7 @@ class TicketServiceImpl(
         } else
             null
 
-        val priorityLevel = if (priorityLevel != null) {
+        val priorityLevelVal = if (priorityLevel != null) {
             priorityLevelRepository.findByName(priorityLevel.name)
         } else null
 
@@ -53,7 +53,7 @@ class TicketServiceImpl(
             (TicketSpecification.ofCustomer(customer).and(TicketSpecification.ofExpert(expert))
                 .and(
                     TicketSpecification.ofStatus(statusEnum)
-                        .and(TicketSpecification.ofPriority(priorityLevel))
+                        .and(TicketSpecification.ofPriority(priorityLevelVal))
                 ))
         ).map { it.toOutDTO() }
 

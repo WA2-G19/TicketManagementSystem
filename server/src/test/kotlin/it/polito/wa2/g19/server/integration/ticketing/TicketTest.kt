@@ -181,7 +181,7 @@ class TicketTest {
         val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as ClosedTicketStatus).by== manager)
@@ -201,7 +201,7 @@ class TicketTest {
         val openedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
         assert(openedTicket.id == ticketID)
         assert(openedTicket.status == TicketStatusEnum.Open)
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus is OpenTicketStatus))
@@ -223,7 +223,7 @@ class TicketTest {
         val inProgressTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
         assert(inProgressTicket.id == ticketID)
         assert(inProgressTicket.status == TicketStatusEnum.InProgress)
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as InProgressTicketStatus).expert== expert)
@@ -245,7 +245,7 @@ class TicketTest {
         assert(inProgressTicket.id == ticketID)
         assert(inProgressTicket.status == TicketStatusEnum.Resolved)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as ResolvedTicketStatus).by == expert)
@@ -269,7 +269,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as ClosedTicketStatus).by == manager)
@@ -295,7 +295,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.InProgress)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
     }
 
@@ -314,7 +314,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Resolved)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as ResolvedTicketStatus).by== expert)
@@ -343,7 +343,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.InProgress)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
     }
 
@@ -371,7 +371,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
 
     }
@@ -397,7 +397,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
     }
 
@@ -422,7 +422,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
     }
 
@@ -445,7 +445,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Reopened)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus is ReopenedTicketStatus))
@@ -471,7 +471,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Reopened)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
     }
 
@@ -495,7 +495,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as ClosedTicketStatus).by== manager)
@@ -523,7 +523,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.InProgress)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as InProgressTicketStatus).expert== expert)
@@ -551,7 +551,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Resolved)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
     }
 
@@ -575,7 +575,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus as ClosedTicketStatus).by== expert)
@@ -595,7 +595,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Reopened)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
         assert((lastStatus is ReopenedTicketStatus))
@@ -624,7 +624,7 @@ class TicketTest {
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Resolved)
 
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)!!
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 1)
     }
 
