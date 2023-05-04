@@ -11,8 +11,7 @@ abstract class Staff(): Profile() {
         joinColumns = [JoinColumn(name="staff_id")],
         inverseJoinColumns = [JoinColumn(name="skill_id")]
     )
-    @Basic(fetch = FetchType.EAGER)
-    val skills: MutableSet<Skill> = mutableSetOf()
+    open lateinit var skills: MutableSet<Skill>
 }
 
 @Entity

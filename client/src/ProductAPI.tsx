@@ -2,7 +2,7 @@ import {Container, Button, Form, Row, Col, Card} from "react-bootstrap"
 import Response from "./Response"
 import Product from "./classes/Product"
 import API from "./API/api"
-import {useState} from "react"
+import React, {useState} from "react"
 
 
 function ProductAPI() {

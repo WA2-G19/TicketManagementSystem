@@ -1,7 +1,5 @@
-
-import { Col, Row, ListGroupItem, ListGroup, DropdownButton, Container } from "react-bootstrap"
+import { Container } from "react-bootstrap"
 import APIObject from "./classes/APIObject"
-import { prototype } from "events"
 import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 
 function PrettyOutput(props: {
@@ -25,8 +23,7 @@ function PrettyOutput(props: {
      
     return (
     <Container className="" style={{height: 56*8}}>
-              <DataGrid rows={rows} columns={columns}    disableColumnSelector scrollbarSize={25}
-/>
+        <DataGrid rows={rows} columns={columns} disableColumnSelector scrollbarSize={25} />
     </Container>
     )
 }

@@ -4,21 +4,24 @@ import it.polito.wa2.g19.server.products.ProductNotFoundException
 import it.polito.wa2.g19.server.products.ProductRepository
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import it.polito.wa2.g19.server.profiles.staff.Expert
+import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
-import it.polito.wa2.g19.server.ticketing.statuses.OpenTicketStatus
-import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
+import it.polito.wa2.g19.server.ticketing.statuses.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
+@Transactional
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
     private val productRepository: ProductRepository,
     private val staffRepository: StaffRepository,
     private val priorityLevelRepository: PriorityLevelRepository,
+    private val ticketStatusRepository: TicketStatusRepository
 ): TicketService {
     override fun getTicket(id: Int): TicketOutDTO {
         if (ticketRepository.existsById(id)) {
@@ -42,7 +45,7 @@ class TicketServiceImpl(
         } else
             null
 
-        val priorityLevel = if (priorityLevel != null) {
+        val priorityLevelVal = if (priorityLevel != null) {
             priorityLevelRepository.findByName(priorityLevel.name)
         } else null
 
@@ -50,7 +53,7 @@ class TicketServiceImpl(
             (TicketSpecification.ofCustomer(customer).and(TicketSpecification.ofExpert(expert))
                 .and(
                     TicketSpecification.ofStatus(statusEnum)
-                        .and(TicketSpecification.ofPriority(priorityLevel))
+                        .and(TicketSpecification.ofPriority(priorityLevelVal))
                 ))
         ).map { it.toOutDTO() }
 
@@ -70,12 +73,120 @@ class TicketServiceImpl(
             priorityLevel = null
 
         }
+
         t.statusHistory.add(OpenTicketStatus().apply {
             this.ticket = t
             this.timestamp = LocalDateTime.now()
         })
         val ticketCreated = ticketRepository.save(t)
         return ticketCreated.getId()!!
+    }
+
+    override fun stopProgressTicket(ticketId: Int) {
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
+        val current = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
+        if (current is InProgressTicketStatus) {
+            ticketStatusRepository.save(OpenTicketStatus().apply {
+                this.ticket = ticket
+                timestamp = LocalDateTime.now()
+            })
+        } else {
+            throw InvalidTicketStatusTransitionException(current.toDTO().status, TicketStatusEnum.Open)
+        }
+    }
+
+    /*
+        grande!!
+     */
+    override fun reopenTicket(ticketId: Int) {
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
+
+        if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
+            ticket.status = TicketStatusEnum.Reopened
+            ticket.statusHistory.add(ReopenedTicketStatus().apply {
+                this.ticket = ticket
+                timestamp = LocalDateTime.now()
+            })
+            ticketRepository.save(ticket)
+        } else {
+            throw InvalidTicketStatusTransitionException(ticket.toOutDTO().status, TicketStatusEnum.Reopened)
+        }
+    }
+
+
+
+
+    override fun startProgressTicket(ticketId: Int, managerEmail: String, ticketStatus: TicketStatusDTO) {
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
+        val expert = staffRepository.findByEmailIgnoreCase(ticketStatus.expert!!) ?: throw ProfileNotFoundException()
+        if (expert !is Expert) {
+            throw ProfileNotFoundException()
+        }
+        val manager = staffRepository.findByEmailIgnoreCase(managerEmail) ?: throw ProfileNotFoundException()
+        if (manager !is Manager) {
+            throw ProfileNotFoundException()
+        }
+        if (ticket.status == TicketStatusEnum.Open || ticket.status == TicketStatusEnum.Reopened) {
+            ticket.expert = expert
+            ticket.status = TicketStatusEnum.InProgress
+            ticket.priorityLevel = priorityLevelRepository.findByName(ticketStatus.priorityLevel!!.name)
+            ticket.statusHistory.add(InProgressTicketStatus().apply {
+                this.ticket = ticket
+                this.expert = expert
+                by = manager
+                timestamp = LocalDateTime.now()
+                priority = ticket.priorityLevel!!
+            })
+            ticketRepository.save(ticket)
+
+        } else {
+            throw InvalidTicketStatusTransitionException(ticket.status, TicketStatusEnum.InProgress)
+        }
+    }
+
+    /*
+    * grande!!
+    * */
+
+    override fun resolveTicket(ticketId: Int, resolverEmail: String) {
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
+        val resolver = staffRepository.findByEmailIgnoreCase(resolverEmail) ?: throw ProfileNotFoundException()
+        if (ticket.status == TicketStatusEnum.Open || ticket.status == TicketStatusEnum.Reopened || ticket.status == TicketStatusEnum.InProgress){
+            ticket.status = TicketStatusEnum.Resolved
+            ticket.statusHistory.add(ResolvedTicketStatus().apply {
+                this.ticket = ticket
+                by = resolver
+                timestamp = LocalDateTime.now()
+            })
+            ticketRepository.save(ticket)
+        } else {
+            throw InvalidTicketStatusTransitionException(ticket.status, TicketStatusEnum.Resolved)
+        }
+    }
+
+    /*
+    * grande!!
+    * */
+    override fun closeTicket(ticketId: Int, closerEmail: String) {
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val closer = staffRepository.findByEmailIgnoreCase(closerEmail) ?: throw ProfileNotFoundException()
+
+        if (ticket.status != TicketStatusEnum.Closed) {
+            ticket.status = TicketStatusEnum.Closed
+            ticket.expert = null
+            ticket.priorityLevel = null
+            ticket.statusHistory.add(ClosedTicketStatus().apply {
+                this.ticket = ticket
+                by = closer
+            })
+            ticketRepository.save(ticket)
+        } else {
+            throw InvalidTicketStatusTransitionException(ticket.status, TicketStatusEnum.Closed)
+        }
     }
 
 }
