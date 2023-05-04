@@ -6,6 +6,7 @@ import it.polito.wa2.g19.server.Util
 import it.polito.wa2.g19.server.equalsTo
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductRepository
+import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.Expert
@@ -638,7 +639,6 @@ class TicketTest {
         (0 until otherSize).forEach{ _ ->
             ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
         }
-
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint", HttpMethod.GET, null)
         assert(myTicketsDTO.body!!.size == mySize + otherSize )
     }
@@ -652,7 +652,6 @@ class TicketTest {
         (0 until 12).forEach{ _ ->
             ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
         }
-
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?customer=${customer.email}", HttpMethod.GET, null)
         assert(myTicketsDTO.body!!.size == mySize)
         (myTicketsDTO.body!!.forEach{println(it.customerEmail)})
@@ -759,6 +758,89 @@ class TicketTest {
                     && it.status == myStatus && it.priorityLevel == PriorityLevelEnum.valueOf(myPriorityLevel.name)
         })
 
+    }
+
+    @Test
+    fun `try to close a ticket without expert indication`(){
+
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Closed
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID",HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(ProfileNotFoundException().message == response.body!!.message)
+    }
+
+    @Test
+    fun `try to start progress on an open ticket is not successful without expert indication`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.InProgress,
+            priorityLevel = PriorityLevelEnum.CRITICAL
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(ProfileNotFoundException().message == response.body!!.message)
+    }
+
+    @Test
+    fun `try to start progress on an open ticket is not successful without 'by' indication`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.InProgress,
+            expert = expert.email,
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(response.body!!.message!! == ProfileNotFoundException().message)
+    }
+
+    @Test
+    fun `try to start progress on an open ticket is not successful without any indication`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.InProgress,
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        assert(response.statusCode.value() == 400)
+        assert(response.body!!.message!! == ProfileNotFoundException().message)
+    }
+
+    @Test
+    fun `close a ticket that does not exist`() {
+        val ticketID = 10
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Closed,
+            by = manager.email,
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProblemDetail::class.java,)
+        assert(response.statusCode.value() == 404)
+        assert(response.body!!.detail == TicketNotFoundException().message!!)
+    }
+
+    @Test
+    fun `close a ticket with a profile not existing`() {
+        val ticketID = insertTicket(TicketStatusEnum.Open)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Closed,
+            by = "profileNotFound@gmail.com",
+        )
+        val body = HttpEntity(ticketStatusDTO)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProblemDetail::class.java,)
+        assert(response.statusCode.value() == 404)
+        assert(response.body!!.detail!! == ProfileNotFoundException().message!!)
     }
 
 
