@@ -10,9 +10,11 @@ import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
+@Transactional
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
@@ -70,6 +72,7 @@ class TicketServiceImpl(
             priorityLevel = null
 
         }
+
         t.statusHistory.add(OpenTicketStatus().apply {
             this.ticket = t
             this.timestamp = LocalDateTime.now()

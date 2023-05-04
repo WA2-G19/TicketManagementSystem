@@ -5,13 +5,15 @@ import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.tickets.*
-import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.time.LocalDateTime
 
 @Service
+@Transactional
+
 class TicketStatusServiceImpl(
     private val ticketRepository: TicketRepository,
     private val ticketStatusRepository: TicketStatusRepository,
@@ -45,13 +47,12 @@ class TicketStatusServiceImpl(
     }
 
     override fun stopProgressTicket(ticketId: Int) {
-        if (!ticketRepository.existsById(ticketId)) {
-            throw TicketNotFoundException()
-        }
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
         val current = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
         if (current is InProgressTicketStatus) {
             ticketStatusRepository.save(OpenTicketStatus().apply {
-                ticket = ticketRepository.findByIdOrNull(ticketId)!!
+                this.ticket = ticket
                 timestamp = LocalDateTime.now()
             })
         } else {
@@ -63,14 +64,13 @@ class TicketStatusServiceImpl(
         grande!!
      */
     override fun reopenTicket(ticketId: Int) {
-        if (!ticketRepository.existsById(ticketId)) {
-            throw TicketNotFoundException()
-        }
-        val ticket = ticketRepository.findByIdOrNull(ticketId)!!
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
 
         if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
             ticket.status = TicketStatusEnum.Reopened
             ticket.statusHistory.add(ReopenedTicketStatus().apply {
+                this.ticket = ticket
                 timestamp = LocalDateTime.now()
             })
             ticketRepository.save(ticket)
@@ -85,10 +85,8 @@ class TicketStatusServiceImpl(
     * grande!!
     * */
     override fun startProgressTicket(ticketId: Int, managerEmail: String, ticketStatus: TicketStatusDTO) {
-        if (!ticketRepository.existsById(ticketId)) {
-            throw TicketNotFoundException()
-        }
-        val ticket = ticketRepository.findByIdOrNull(ticketId)!!
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
         val expert = staffRepository.findByEmailIgnoreCase(ticketStatus.expert!!) ?: throw ProfileNotFoundException()
         if (expert !is Expert) {
             throw ProfileNotFoundException()
@@ -120,14 +118,13 @@ class TicketStatusServiceImpl(
     * */
 
     override fun resolveTicket(ticketId: Int, resolverEmail: String) {
-        if (!ticketRepository.existsById(ticketId)) {
-            throw TicketNotFoundException()
-        }
-        val ticket = ticketRepository.findByIdOrNull(ticketId)!!
+        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+
         val resolver = staffRepository.findByEmailIgnoreCase(resolverEmail) ?: throw ProfileNotFoundException()
         if (ticket.status == TicketStatusEnum.Open || ticket.status == TicketStatusEnum.Reopened || ticket.status == TicketStatusEnum.InProgress){
             ticket.status = TicketStatusEnum.Resolved
             ticket.statusHistory.add(ResolvedTicketStatus().apply {
+                this.ticket = ticket
                 by = resolver
                 timestamp = LocalDateTime.now()
             })
@@ -144,19 +141,19 @@ class TicketStatusServiceImpl(
     override fun closeTicket(ticketId: Int, closerEmail: String) {
         var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val closer = staffRepository.findByEmailIgnoreCase(closerEmail) ?: throw ProfileNotFoundException()
+
         if (ticket.status != TicketStatusEnum.Closed) {
             ticket.status = TicketStatusEnum.Closed
             ticket.expert = null
             ticket.priorityLevel = null
-            ticketStatusRepository.save(ClosedTicketStatus().apply {
-                ticket = ticket
+            ticket.statusHistory.add(ClosedTicketStatus().apply {
+                this.ticket = ticket
                 by = closer
             })
             ticketRepository.save(ticket)
         } else {
             throw InvalidTicketStatusTransitionException(ticket.status, TicketStatusEnum.Closed)
         }
-
     }
 
     override fun getTicketClosedByExpert(expertMail: String): Int {
