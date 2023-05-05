@@ -13,7 +13,7 @@ class TicketSpecification{
 
     companion object{
         fun ofExpert(expert: Staff?): Specification<Ticket>{
-                return Specification<Ticket> { root, query, builder ->
+                return Specification<Ticket> { root, _, builder ->
                     if(expert != null)
                         builder.equal(root.get<Staff>("expert"), expert)
                     else {
@@ -23,7 +23,7 @@ class TicketSpecification{
         }
 
         fun ofCustomer(customer: Customer?): Specification<Ticket>{
-            return Specification<Ticket> { root, query, builder ->
+            return Specification<Ticket> { root, _, builder ->
                 if(customer != null)
                     builder.equal(root.get<Customer>("customer"), customer)
                 else {
@@ -33,7 +33,7 @@ class TicketSpecification{
         }
 
         fun ofPriority(priorityLevel: PriorityLevel?): Specification<Ticket>{
-            return Specification<Ticket> { root, query, builder ->
+            return Specification<Ticket> { root, _, builder ->
                 if(priorityLevel != null)
                     builder.equal(root.get<PriorityLevel>("priorityLevel"), priorityLevel)
                 else {
@@ -43,7 +43,7 @@ class TicketSpecification{
         }
 
         fun ofStatus(status: TicketStatusEnum?): Specification<Ticket>{
-            return Specification<Ticket> { root, query, builder ->
+            return Specification<Ticket> { root, _, builder ->
                 if(status != null)
                     builder.equal(root.get<TicketStatusEnum>("status"), status)
                 else {
