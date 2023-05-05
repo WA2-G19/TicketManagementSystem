@@ -1,7 +1,5 @@
 package it.polito.wa2.g19.server.integration.ticketing
 
-import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.HttpClientBuilder
-import com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.HttpClients
 import it.polito.wa2.g19.server.Util
 import it.polito.wa2.g19.server.equalsTo
 import it.polito.wa2.g19.server.products.Product
@@ -14,7 +12,6 @@ import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import it.polito.wa2.g19.server.ticketing.tickets.*
-import jakarta.persistence.EntityManager
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,17 +22,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.context.annotation.Bean
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.client.RestTemplate
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -639,7 +631,7 @@ class TicketTest {
         (0 until otherSize).forEach{ _ ->
             ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
         }
-        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint", HttpMethod.GET, null)
+        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange(prefixEndPoint, HttpMethod.GET, null)
         assert(myTicketsDTO.body!!.size == mySize + otherSize )
     }
 
@@ -664,17 +656,17 @@ class TicketTest {
     fun `filtering by expert and customer`(){
         val mySize = 10
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status = TicketStatusEnum.InProgress; it.expert = expert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
 
@@ -690,22 +682,22 @@ class TicketTest {
         val myStatus = TicketStatusEnum.Closed
         val otherStatus = TicketStatusEnum.Reopened
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status = myStatus; it.expert = expert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status =  myStatus; it.expert = otherExpert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status =  otherStatus; it.expert = otherExpert;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}", HttpMethod.GET, null)
@@ -722,27 +714,27 @@ class TicketTest {
         val myPriorityLevel = priorityLevelRepository.findByName("HIGH")
         val otherPriorityLevel = priorityLevelRepository.findByName("LOW")
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status = myStatus; it.expert = expert; it.priorityLevel = myPriorityLevel; it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status =  myStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = otherPriorityLevel;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product;
+            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it.priorityLevel = otherPriorityLevel; it})
         }
 
@@ -769,7 +761,12 @@ class TicketTest {
             TicketStatusEnum.Closed
         )
         val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID",HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        val response = restTemplate.exchange(
+            "$prefixEndPoint/$ticketID",
+            HttpMethod.PUT,
+            body,
+            ProfileNotFoundException::class.java,
+        )
         assert(response.statusCode.value() == 400)
         assert(ProfileNotFoundException().message == response.body!!.message)
     }
@@ -783,7 +780,12 @@ class TicketTest {
             priorityLevel = PriorityLevelEnum.CRITICAL
         )
         val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        val response = restTemplate.exchange(
+            "$prefixEndPoint/$ticketID",
+            HttpMethod.PUT,
+            body,
+            ProfileNotFoundException::class.java,
+        )
         assert(response.statusCode.value() == 400)
         assert(ProfileNotFoundException().message == response.body!!.message)
     }
@@ -797,7 +799,12 @@ class TicketTest {
             expert = expert.email,
         )
         val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        val response = restTemplate.exchange(
+            "$prefixEndPoint/$ticketID",
+            HttpMethod.PUT,
+            body,
+            ProfileNotFoundException::class.java,
+        )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.message!! == ProfileNotFoundException().message)
     }
@@ -810,7 +817,12 @@ class TicketTest {
             TicketStatusEnum.InProgress,
         )
         val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProfileNotFoundException::class.java,)
+        val response = restTemplate.exchange(
+            "$prefixEndPoint/$ticketID",
+            HttpMethod.PUT,
+            body,
+            ProfileNotFoundException::class.java,
+        )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.message!! == ProfileNotFoundException().message)
     }
@@ -824,7 +836,12 @@ class TicketTest {
             by = manager.email,
         )
         val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProblemDetail::class.java,)
+        val response = restTemplate.exchange(
+            "$prefixEndPoint/$ticketID",
+            HttpMethod.PUT,
+            body,
+            ProblemDetail::class.java,
+        )
         assert(response.statusCode.value() == 404)
         assert(response.body!!.detail == TicketNotFoundException().message!!)
     }
@@ -838,7 +855,12 @@ class TicketTest {
             by = "profileNotFound@gmail.com",
         )
         val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProblemDetail::class.java,)
+        val response = restTemplate.exchange(
+            "$prefixEndPoint/$ticketID",
+            HttpMethod.PUT,
+            body,
+            ProblemDetail::class.java,
+        )
         assert(response.statusCode.value() == 404)
         assert(response.body!!.detail!! == ProfileNotFoundException().message!!)
     }

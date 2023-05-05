@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface StaffRepository: JpaRepository<Staff, Int> {
 
-    fun findByEmailIgnoreCase(email: String): Staff?;
-    fun existsByEmailIgnoreCase(email: String): Boolean;
+    fun findByEmailIgnoreCase(email: String): Staff?
+    fun existsByEmailIgnoreCase(email: String): Boolean
 }

@@ -17,7 +17,7 @@ import java.time.LocalDateTime
         Index(name = "IX_ticket_status_ticket_id", columnList = "ticket_id DESC")
     ]
 )
-abstract class TicketStatus(): EntityBase<Int>(), Comparable<TicketStatus> {
+abstract class TicketStatus : EntityBase<Int>(), Comparable<TicketStatus> {
 
     @ManyToOne
     @JoinColumn(name = "ticket_id")
@@ -36,12 +36,12 @@ abstract class TicketStatus(): EntityBase<Int>(), Comparable<TicketStatus> {
 }
 
 @Entity
-class OpenTicketStatus(): TicketStatus() {
+class OpenTicketStatus : TicketStatus() {
     override fun toDTO() = TicketStatusDTO(ticket.getId()!!, TicketStatusEnum.Open, null, null, null, timestamp)
 }
 
 @Entity
-class ResolvedTicketStatus(): TicketStatus() {
+class ResolvedTicketStatus : TicketStatus() {
     @ManyToOne
     lateinit var by: Staff
 
@@ -49,7 +49,7 @@ class ResolvedTicketStatus(): TicketStatus() {
 }
 
 @Entity
-class ClosedTicketStatus(): TicketStatus() {
+class ClosedTicketStatus : TicketStatus() {
     @ManyToOne
     lateinit var by: Staff
 
@@ -57,7 +57,7 @@ class ClosedTicketStatus(): TicketStatus() {
 }
 
 @Entity
-class InProgressTicketStatus(): TicketStatus() {
+class InProgressTicketStatus : TicketStatus() {
 
     @ManyToOne
     lateinit var expert: Expert
@@ -70,14 +70,14 @@ class InProgressTicketStatus(): TicketStatus() {
 }
 
 @Entity
-class ReopenedTicketStatus(): TicketStatus() {
+class ReopenedTicketStatus : TicketStatus() {
 
     override fun toDTO() = TicketStatusDTO(ticket.getId()!!, TicketStatusEnum.Reopened, null, null, null, timestamp)
 }
 
 @Entity
 @Table(name = "priority_level")
-class PriorityLevel(): EntityBase<Int>() {
+class PriorityLevel : EntityBase<Int>() {
 
     @Column(unique = true, nullable = false)
     var name: String = ""

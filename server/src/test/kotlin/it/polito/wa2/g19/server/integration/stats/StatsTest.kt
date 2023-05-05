@@ -12,24 +12,22 @@ import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageRepository
 import it.polito.wa2.g19.server.ticketing.statuses.ClosedTicketStatus
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
 import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
-import it.polito.wa2.g19.server.ticketing.tickets.TicketOutDTO
 import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.*
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer

@@ -3,10 +3,8 @@ package it.polito.wa2.g19.server.ticketing.chat
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentProjection
 import it.polito.wa2.g19.server.ticketing.attachments.StubAttachmentDTO
 import it.polito.wa2.g19.server.ticketing.attachments.toStubDTO
-import jakarta.persistence.Id
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import java.io.File
 import java.time.LocalDateTime
 
 abstract class ChatMessageDTO(
@@ -30,6 +28,6 @@ fun ChatMessage.toOutDTO(attachmentsProjection: List<AttachmentProjection>) = Ch
     getId()!!,
     author.email,
     body,
-    attachmentsProjection.map { it.toStubDTO()!! }.toSet(),
+    attachmentsProjection.map { it.toStubDTO() }.toSet(),
     timestamp
 )

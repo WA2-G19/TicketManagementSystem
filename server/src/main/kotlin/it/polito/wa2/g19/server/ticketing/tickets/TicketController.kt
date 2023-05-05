@@ -4,7 +4,6 @@ import it.polito.wa2.g19.server.common.Util
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusService
 import jakarta.validation.Valid
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -33,7 +32,7 @@ class TicketController(
     }
 
     @GetMapping("/tickets/{ticketId}")
-    fun getTicketById(@PathVariable ticketId: Int, ): TicketOutDTO {
+    fun getTicketById(@PathVariable ticketId: Int): TicketOutDTO {
         return ticketService.getTicket(ticketId)
     }
 

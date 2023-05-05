@@ -32,6 +32,7 @@ class CustomerServiceImpl(
             p.email = profile.email.trim().lowercase()
             p.name = profile.name
             p.surname = profile.surname
+            p.address = profile.address
             customerRepository.save(p)
         }
     }

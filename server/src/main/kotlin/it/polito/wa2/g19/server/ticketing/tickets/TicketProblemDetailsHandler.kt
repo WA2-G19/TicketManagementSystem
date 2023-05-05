@@ -1,6 +1,5 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
-import it.polito.wa2.g19.server.products.ProductNotFoundException
 import it.polito.wa2.g19.server.ticketing.statuses.InvalidTicketStatusTransitionException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
@@ -15,5 +14,6 @@ class TicketProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleInvalidTicketStatusTransition(e: InvalidTicketStatusTransitionException) = ProblemDetail
         .forStatusAndDetail( HttpStatus.BAD_REQUEST, e.message!! )
 
-
+    @ExceptionHandler(TicketNotFoundException::class)
+    fun handleTicketNotFoundException(e: TicketNotFoundException) = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
 }

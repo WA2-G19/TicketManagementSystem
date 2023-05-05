@@ -14,11 +14,11 @@ open class TicketDTO(
     var description: String
 )
 
-class TicketOutDTO(id: Int?, customerEmail: String, productEan: String, description: String, priorityLevel: PriorityLevelEnum?, expertEmail: String?, status: TicketStatusEnum = TicketStatusEnum.Open)
+class TicketOutDTO(id: Int?, customerEmail: String, productEan: String, description: String,
+                   var priorityLevel: PriorityLevelEnum?, var expertEmail: String?,
+                   var status: TicketStatusEnum = TicketStatusEnum.Open
+)
     : TicketDTO(id, customerEmail, productEan, description){
-    var priorityLevel: PriorityLevelEnum? = priorityLevel
-    var expertEmail: String? = expertEmail
-    var status: TicketStatusEnum = status
 }
 
 fun Ticket.toDTO() = TicketDTO(

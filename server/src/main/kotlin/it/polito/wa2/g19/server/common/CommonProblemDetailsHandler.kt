@@ -3,7 +3,6 @@ package it.polito.wa2.g19.server.common
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import jakarta.validation.ConstraintViolationException
 import org.json.JSONObject
-import org.springframework.beans.factory.parsing.Problem
 import org.springframework.http.*
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError

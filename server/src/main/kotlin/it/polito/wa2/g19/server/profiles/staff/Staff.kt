@@ -4,7 +4,7 @@ import it.polito.wa2.g19.server.profiles.Profile
 import jakarta.persistence.*
 
 @Entity
-abstract class Staff(): Profile() {
+abstract class Staff : Profile() {
 
     @ManyToMany
     @JoinTable(name="staff_skill",

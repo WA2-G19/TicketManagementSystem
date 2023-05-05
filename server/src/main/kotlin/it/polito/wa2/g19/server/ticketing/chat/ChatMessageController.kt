@@ -2,7 +2,6 @@ package it.polito.wa2.g19.server.ticketing.chat
 
 import it.polito.wa2.g19.server.common.Util
 import jakarta.validation.Valid
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -12,7 +11,6 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
-import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 

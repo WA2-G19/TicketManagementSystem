@@ -31,26 +31,19 @@ class ChatMessageServiceImpl(
     override fun getChatMessage(ticketId: Int, chatMessageId: Int): ChatMessageOutDTO {
         ticketRepository.existsById(ticketId).let {if(!it) throw TicketNotFoundException()}
 
-        val message = chatMessageRepository.findByTicketIdAndId(ticketId, chatMessageId).let{
-            if(it.isEmpty) throw MessageNotFoundException()
-            else it.get()
-        }
+        val message = chatMessageRepository.findByTicketIdAndId(ticketId, chatMessageId) ?: throw MessageNotFoundException()
         val attachmentProjections = attachmentRepository.findByMessage(message)
         return message.toOutDTO(attachmentProjections)
 
     }
 
     override fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO> {
-        ticketRepository.existsById(ticketId).let {if(!it) throw TicketNotFoundException()}
-        return chatMessageRepository.findByTicketId(ticketId)
-            .let{
-                if(it.isEmpty) throw TicketNotFoundException()
-                it.get()
-            }
+        if (!ticketRepository.existsById(ticketId))
+            throw TicketNotFoundException()
+        return chatMessageRepository.findByTicketId(ticketId)!!
             .map {
-            val attachmentsProjection = attachmentRepository.findByMessage(it)
-            it.toOutDTO(attachmentsProjection)
-        }.toSet()
+                it.toOutDTO(attachmentRepository.findByMessage(it))
+            }.toSet()
     }
 
     override fun insertChatMessage(ticketId: Int,messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
@@ -83,15 +76,9 @@ class ChatMessageServiceImpl(
     }
 
     override fun getAttachment(ticketId: Int, attachmentId: Int): AttachmentDTO {
-        val ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val attachment = attachmentRepository.findByIdOrNull(attachmentId) ?: throw AttachmentNotFoundException()
 
         return attachment.toDTO()
-    //
-
-
     }
-
-
-
 }

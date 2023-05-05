@@ -51,7 +51,7 @@ class ProfileTest {
 
     @Test
     fun containerIsRunning() {
-        assertThat(postgres.isRunning).isTrue;
+        assertThat(postgres.isRunning).isTrue
     }
     @Test
     fun postProfile(){

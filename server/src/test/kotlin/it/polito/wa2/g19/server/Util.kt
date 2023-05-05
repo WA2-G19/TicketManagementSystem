@@ -47,9 +47,12 @@ class Util {
             }
         }
 
-        fun mockProduct(): Product{
-            val p1 = Product("4935531465706","JMT X-ring 530x2 Gold 104 Open Chain With Rivet Link for Kawasaki KH 400 a 1976", "JMT")
-            return p1
+        fun mockProduct(): Product {
+            return Product(
+                "4935531465706",
+                "JMT X-ring 530x2 Gold 104 Open Chain With Rivet Link for Kawasaki KH 400 a 1976",
+                "JMT"
+            )
         }
 
         fun mockTicketDTO(): TicketDTO{
