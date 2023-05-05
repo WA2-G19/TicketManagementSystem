@@ -8,16 +8,18 @@ import jakarta.persistence.MappedSuperclass
 open class Profile(): EntityBase<Int>() {
 
     @Column(unique = true, nullable = false, name = "email")
-    var email: String = ""
+    open var email: String = ""
     @Column(nullable = false)
-    var name: String = ""
+    open var name: String = ""
     @Column(nullable = false)
-    var surname: String = ""
+    open var surname: String = ""
 
     constructor(email: String, name: String, surname: String) : this() {
-        this.email = email
-        this.name = name
-        this.surname = surname
+        this.apply {
+            this.email = email
+            this.name = name
+            this.surname = surname
+        }
     }
 
 }
