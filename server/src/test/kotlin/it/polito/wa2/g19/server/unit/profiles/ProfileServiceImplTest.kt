@@ -93,10 +93,15 @@ internal class ProfileServiceImplTest {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
 
+
+
         every { repo.existsByEmailIgnoreCase(p.email) } answers {
             false
         }
-        every { repo.save(p) } answers {
+
+
+
+        every { repo.save(any()) } answers {
             p
         }
 
