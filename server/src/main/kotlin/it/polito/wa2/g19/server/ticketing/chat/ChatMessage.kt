@@ -17,7 +17,7 @@ import java.time.LocalDateTime
         Index(name = "IX_chat_message_author_id", columnList = "author_id DESC")
     ]
 )
-class ChatMessage(): EntityBase<Int>() {
+class ChatMessage : EntityBase<Int>() {
 
     @ManyToOne
     @JoinColumn(name = "ticket_id", nullable = false)

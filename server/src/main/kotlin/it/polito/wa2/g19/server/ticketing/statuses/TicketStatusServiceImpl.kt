@@ -1,15 +1,12 @@
 package it.polito.wa2.g19.server.ticketing.statuses
 
-import it.polito.wa2.g19.server.profiles.staff.Expert
-import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
-import it.polito.wa2.g19.server.ticketing.tickets.*
-import org.springframework.data.repository.findByIdOrNull
+import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
+import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
-import java.time.LocalDateTime
 
 @Service
 @Transactional

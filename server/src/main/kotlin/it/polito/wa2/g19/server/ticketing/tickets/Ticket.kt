@@ -11,7 +11,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "ticket")
-class Ticket(): EntityBase<Int>() {
+class Ticket : EntityBase<Int>() {
 
     @ManyToOne
     @JoinColumn(nullable = false)

@@ -59,7 +59,6 @@ class TicketServiceImpl(
 
     }
 
-
     override fun createTicket(ticket: TicketDTO): Int {
         val c = customerRepository.findByEmailIgnoreCase(ticket.customerEmail) ?: throw ProfileNotFoundException()
         val p = productRepository.findByEan(ticket.productEan) ?: throw ProductNotFoundException()
@@ -83,7 +82,7 @@ class TicketServiceImpl(
     }
 
     override fun stopProgressTicket(ticketId: Int) {
-        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
 
         val current = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
         if (current is InProgressTicketStatus) {
@@ -96,11 +95,8 @@ class TicketServiceImpl(
         }
     }
 
-    /*
-        grande!!
-     */
     override fun reopenTicket(ticketId: Int) {
-        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
 
 
         if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
@@ -115,11 +111,8 @@ class TicketServiceImpl(
         }
     }
 
-
-
-
     override fun startProgressTicket(ticketId: Int, managerEmail: String, ticketStatus: TicketStatusDTO) {
-        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
 
         val expert = staffRepository.findByEmailIgnoreCase(ticketStatus.expert!!) ?: throw ProfileNotFoundException()
         if (expert !is Expert) {
@@ -147,12 +140,8 @@ class TicketServiceImpl(
         }
     }
 
-    /*
-    * grande!!
-    * */
-
     override fun resolveTicket(ticketId: Int, resolverEmail: String) {
-        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
 
         val resolver = staffRepository.findByEmailIgnoreCase(resolverEmail) ?: throw ProfileNotFoundException()
         if (ticket.status == TicketStatusEnum.Open || ticket.status == TicketStatusEnum.Reopened || ticket.status == TicketStatusEnum.InProgress){
@@ -168,11 +157,8 @@ class TicketServiceImpl(
         }
     }
 
-    /*
-    * grande!!
-    * */
     override fun closeTicket(ticketId: Int, closerEmail: String) {
-        var ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val closer = staffRepository.findByEmailIgnoreCase(closerEmail) ?: throw ProfileNotFoundException()
 
         if (ticket.status != TicketStatusEnum.Closed) {

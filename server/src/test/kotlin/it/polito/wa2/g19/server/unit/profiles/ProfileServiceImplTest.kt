@@ -89,7 +89,7 @@ internal class ProfileServiceImplTest {
 
 
     @Test
-    fun `inserting a profile should returns nothing`() {
+    fun `inserting a profile should return nothing`() {
         val repo = mockk<CustomerRepository>()
         val p = Customer("test@email.it", "testName", "testSurname", "testAddress")
 

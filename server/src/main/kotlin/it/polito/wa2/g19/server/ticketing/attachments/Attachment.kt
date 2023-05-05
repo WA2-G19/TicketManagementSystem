@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "attachment")
-class Attachment(): EntityBase<Int>() {
+class Attachment : EntityBase<Int>() {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id", nullable = false)
