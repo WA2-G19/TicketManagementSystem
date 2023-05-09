@@ -24,10 +24,11 @@ class ProfileController {
         @RequestBody(required = true)
         password: String): String {
         val restTemplate = RestTemplate()
-        val request = RequestEntity.post("http://localhost:8081/realms/ticket_management_system/protocol/openid-connect/auth?response_type=code&client_id=TicketManagementSystem")
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
-            })
+//        val request = RequestEntity.post("http://localhost:8081/realms/ticket_management_system/protocol/openid-connect/auth?response_type=code&client_id=TicketManagementSystem")
+//            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//            .body(LinkedMultiValueMap<String, Any>().apply {
+//                add("message", ChatMessageInDTO(customer.email, messageBody))
+//            })
+        return ""
     }
 }

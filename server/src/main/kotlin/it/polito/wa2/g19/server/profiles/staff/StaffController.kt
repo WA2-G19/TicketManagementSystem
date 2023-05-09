@@ -13,6 +13,8 @@ class StaffController(
 
     private val staffService: StaffServiceImpl
 ){
+
+    // manager and Expert (its profile)
     @GetMapping("/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(

@@ -23,6 +23,9 @@ class ChatMessageController(
 ) {
 
 
+    // User is authenticated
+    //  - Manager can do everything
+    // - Expert should be assigned to ticket
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}")
     @ResponseStatus(HttpStatus.OK)
     fun getMessage(@PathVariable ticketId: Int,
@@ -34,7 +37,10 @@ class ChatMessageController(
         }
     }
 
-
+    // User is authenticated
+    //  - Manager can do everything
+    // - Expert should be assigned to ticket (InProgress or Closed)
+    // - Client can see ONLY its ticket
     @GetMapping("/{ticketId}/chat-messages")
     @ResponseStatus(HttpStatus.OK)
     fun getMessages(
@@ -49,6 +55,9 @@ class ChatMessageController(
         return messages
     }
 
+    // User is authenticated
+    //  - Manager can do everything
+    // - Expert should be assigned to ticket
     @PostMapping("/{ticketId}/chat-messages",
         consumes =  [MediaType.MULTIPART_FORM_DATA_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -64,6 +73,10 @@ class ChatMessageController(
         headers.location = URI.create( Util.getUri(handlerMapping, ::getMessage.name,ticketId,id) )
         return ResponseEntity(null, headers, HttpStatus.CREATED)
     }
+
+    // User is authenticated
+    //  - Manager can do everything
+    // - Expert should be assigned to ticket
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}/attachments/{attachmentId}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)

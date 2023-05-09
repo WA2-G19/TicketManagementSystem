@@ -13,7 +13,7 @@ class TicketStatusController(
     private val ticketStatusService: TicketStatusService
 ) {
 
-
+    // Only Manager
     @GetMapping("/stats/tickets-closed/{expertMail}")
     fun getTicketClosedByExpert(
         @PathVariable
@@ -22,6 +22,7 @@ class TicketStatusController(
         return ticketStatusService.getTicketClosedByExpert(expertMail)
     }
 
+    // Only Manager
     @GetMapping("/stats/average-time/{expertMail}")
     fun getAverageTimedByExpert(
         @PathVariable

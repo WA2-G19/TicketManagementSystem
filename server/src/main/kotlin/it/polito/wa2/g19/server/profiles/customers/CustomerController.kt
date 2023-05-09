@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.*
 class CustomerController(
     private val profileService: CustomerService
 ) {
+
+    // Only Manager
     @GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<CustomerDTO> {
         return profileService.getAll()
     }
 
+    // Manager (for all)
+    // Client and Expert only for its profile
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
@@ -30,6 +34,7 @@ class CustomerController(
         return profileService.getProfile(email)
     }
 
+    // Manager
     @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
     fun postProfile(
@@ -40,6 +45,7 @@ class CustomerController(
         return profileService.insertProfile(profile)
     }
 
+    // Client
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun putProfile(

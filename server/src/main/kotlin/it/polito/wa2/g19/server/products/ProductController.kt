@@ -15,11 +15,13 @@ class ProductController(
     private val productService: ProductService
 ) {
 
+    // All
     @GetMapping("/products")
     fun getAll(): List<ProductDTO> {
         return productService.getAll()
     }
 
+    // All
     @GetMapping("/products/{ean}")
     fun getProduct(
         @Valid

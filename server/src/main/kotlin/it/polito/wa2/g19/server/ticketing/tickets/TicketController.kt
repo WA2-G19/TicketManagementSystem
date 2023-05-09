@@ -21,6 +21,7 @@ class TicketController(
     private val handlerMapping: RequestMappingHandlerMapping
 ) {
 
+    // Experts (If the ticket is assigned more than once, check the last status), Manager and Client but ONLY owns tickets
     @GetMapping("/tickets")
     fun getTickets(
         @RequestParam(required = false) customer: String?,
@@ -31,11 +32,15 @@ class TicketController(
         return ticketService.getTickets(customer, expert, status, priorityLevel)
     }
 
+    // Manager All
+    // Experts (If the ticket is assigned more than once, check the last status)
+    // Client ONLY its tickets
     @GetMapping("/tickets/{ticketId}")
     fun getTicketById(@PathVariable ticketId: Int): TicketOutDTO {
         return ticketService.getTicket(ticketId)
     }
 
+    // Client
     @PostMapping("/tickets")
     fun postTicket(@Valid
                    @RequestBody
@@ -53,6 +58,9 @@ class TicketController(
        however, the RestTemplate object used for testing does not allow us to issue PATCH request.
        Just for the sake of testing we use treat this method as it handle a PUT method. 
     */
+    // Client (Just Reopened)
+    // Manager (Can do Anything)
+    // Expert (Progress To close, Progress to Open, Progress to Resolve)
     @PutMapping("/tickets/{ticketId}")
     fun putTicket(
         @PathVariable
