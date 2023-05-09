@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.statuses
 
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,6 +15,7 @@ class TicketStatusController(
 ) {
 
     // Only Manager
+    @PreAuthorize("hasRole('Manager')")
     @GetMapping("/stats/tickets-closed/{expertMail}")
     fun getTicketClosedByExpert(
         @PathVariable
@@ -23,6 +25,7 @@ class TicketStatusController(
     }
 
     // Only Manager
+    @PreAuthorize("hasRole('Manager')")
     @GetMapping("/stats/average-time/{expertMail}")
     fun getAverageTimedByExpert(
         @PathVariable

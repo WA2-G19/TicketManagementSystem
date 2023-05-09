@@ -4,6 +4,7 @@ import it.polito.wa2.g19.server.profiles.NotMatchingEmailException
 import jakarta.validation.constraints.Email
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -15,6 +16,7 @@ class CustomerController(
 ) {
 
     // Only Manager
+    @PreAuthorize("hasRole('Manager')")
     @GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<CustomerDTO> {
@@ -23,6 +25,7 @@ class CustomerController(
 
     // Manager (for all)
     // Client and Expert only for its profile
+    @PreAuthorize("hasRole('Manager') || (#email == authentication.principal.getName())")
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
@@ -35,6 +38,7 @@ class CustomerController(
     }
 
     // Manager
+    @PreAuthorize("hasRole('Manager')")
     @PostMapping("/profiles")
     @ResponseStatus(HttpStatus.CREATED)
     fun postProfile(
@@ -46,6 +50,7 @@ class CustomerController(
     }
 
     // Client
+    @PreAuthorize("#email == authentication.principal.getName()")
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun putProfile(
@@ -62,6 +67,5 @@ class CustomerController(
             throw NotMatchingEmailException()
         }
         profileService.updateProfile(email, profile)
-
     }
 }
