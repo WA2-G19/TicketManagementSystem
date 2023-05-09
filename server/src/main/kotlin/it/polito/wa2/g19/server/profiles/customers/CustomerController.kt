@@ -25,7 +25,7 @@ class CustomerController(
 
     // Manager (for all)
     // Client and Expert only for its profile
-    @PreAuthorize("hasRole('Manager') || (#email == authentication.principal.getName())")
+    @PreAuthorize("hasRole('Manager') or #email == principal.username")
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
@@ -50,7 +50,7 @@ class CustomerController(
     }
 
     // Client
-    @PreAuthorize("#email == authentication.principal.getName()")
+    @PreAuthorize("#email == principal.username")
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun putProfile(

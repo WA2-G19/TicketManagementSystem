@@ -17,7 +17,7 @@ class StaffController(
 
     // manager and Expert (its profile)
 
-    @PreAuthorize("#email == authentication.principal.getName() && (hasRole('Manager') || hasRole('Expert'))")
+    @PreAuthorize("#email == principal.username and hasAnyRole('Manager', 'Expert')")
     @GetMapping("/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(

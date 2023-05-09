@@ -16,18 +16,16 @@ import org.springframework.web.client.RestTemplate
 class ProfileController {
 
     @PreAuthorize("!isAuthenticated()")
-    @GetMapping("/customers/login")
+    @GetMapping("/login")
     fun loginCustomer(
         @RequestBody(required = true)
-        username: String,
-        @RequestBody(required = true)
-        password: String): String {
+        login: LoginDTO): String {
         val restTemplate = RestTemplate()
         val request = RequestEntity.post("http://localhost:8081/realms/ticket_management_system/protocol/openid-connect/token")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(LinkedMultiValueMap<String, String>().apply {
-                add("username", username)
-                add("password", password)
+                add("username", login.username)
+                add("password", login.password)
                 add("client_id", "TicketManagementSystem")
                 add("grant_type", "password")
                 add("client_secret", "eoM7Xo7Ft93eyph81RnfSiNcJ9Cawvfw")
