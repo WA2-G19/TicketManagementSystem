@@ -5,6 +5,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType
 import org.springframework.http.RequestEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -24,6 +25,7 @@ class ProfileController {
     fun loginCustomer(
         @RequestBody(required = true)
         login: LoginDTO): String {
+
         val restTemplate = RestTemplate()
         val request = RequestEntity.post("${keycloakBaseUrl}/realms/ticket_management_system/protocol/openid-connect/token")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)

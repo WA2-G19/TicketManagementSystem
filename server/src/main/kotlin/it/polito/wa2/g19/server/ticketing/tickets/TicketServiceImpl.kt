@@ -23,6 +23,7 @@ class TicketServiceImpl(
     private val priorityLevelRepository: PriorityLevelRepository,
     private val ticketStatusRepository: TicketStatusRepository
 ): TicketService {
+
     override fun getTicket(id: Int): TicketOutDTO {
         if (ticketRepository.existsById(id)) {
             return ticketRepository.findByIdOrNull(id)!!.toOutDTO()
@@ -173,6 +174,11 @@ class TicketServiceImpl(
         } else {
             throw InvalidTicketStatusTransitionException(ticket.status, TicketStatusEnum.Closed)
         }
+    }
+
+    override fun getFinalStatus(ticketId: Int): TicketStatus {
+        val statuses = ticketStatusRepository.findAllByTicketId(ticketId)
+        return statuses.last()
     }
 
 }

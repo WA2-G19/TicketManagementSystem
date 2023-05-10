@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
+import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 
@@ -21,5 +22,6 @@ interface TicketService {
 
     fun closeTicket(ticketId: Int, closerEmail: String)
 
+    fun getFinalStatus(ticketId: Int): TicketStatus
 
 }
