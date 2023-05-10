@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -25,14 +26,15 @@ class CustomerController(
 
     // Manager (for all)
     // Client and Expert only for its profile
-    @PreAuthorize("hasRole('Manager') or #email == principal.username")
+    @PreAuthorize("hasRole('Manager') or #email == #token.tokenAttributes['email']")
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
         @Valid
         @PathVariable
         @Email(message = "provide a valid email")
-        email: String
+        email: String,
+        token: AbstractOAuth2TokenAuthenticationToken<*>
     ): CustomerDTO? {
         return profileService.getProfile(email)
     }
@@ -50,7 +52,7 @@ class CustomerController(
     }
 
     // Client
-    @PreAuthorize("#email == principal.username")
+    @PreAuthorize("#email == #token.tokenAttributes['email']")
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun putProfile(
@@ -60,7 +62,8 @@ class CustomerController(
         email: String,
         @Valid
         @RequestBody
-        profile: CustomerDTO
+        profile: CustomerDTO,
+        token: AbstractOAuth2TokenAuthenticationToken<*>
     )
     {
         if (email.trim() != profile.email.trim()) {

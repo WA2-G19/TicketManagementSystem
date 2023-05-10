@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate
 @RequestMapping("/API")
 class ProfileController {
 
-    @PreAuthorize("!isAuthenticated()")
+    @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
     fun loginCustomer(
         @RequestBody(required = true)
