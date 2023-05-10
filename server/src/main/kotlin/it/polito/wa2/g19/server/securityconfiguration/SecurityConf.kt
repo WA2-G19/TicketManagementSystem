@@ -29,7 +29,9 @@ class ResourceServerConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
 
-        http.cors().disable()
+        http
+            .cors().disable()
+            .csrf().disable()
             .authorizeHttpRequests()
             .requestMatchers("/public").permitAll()
             .requestMatchers("/expert").hasRole("Expert")

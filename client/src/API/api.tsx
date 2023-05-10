@@ -45,18 +45,20 @@ async function login(username: string, password: string) {
         "username": username,
         "password": password
     }
-    const response = await fetch("http://localhost:8080/auth/login/", {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user)
-    })
-    if(response.ok) {
+
+    try {
+        const response = await fetch("/auth/login", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
         return await response.json()
-    } else {
-        throw response.statusText
+    } catch (e) {
+        throw e
     }
+
 }
 
 const API = {getAllProducts, getProductByEAN, getProfileByEmail, postProfile, putProfile, login}

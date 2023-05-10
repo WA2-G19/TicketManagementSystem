@@ -13,7 +13,7 @@ function LoginForm() {
         try {
             const user = await API.login(email, pwd)
             console.log(user)
-            if (user === false) {
+            if (user === null) {
                 return
             }
         } catch (e) {

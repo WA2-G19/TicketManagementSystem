@@ -1,12 +1,10 @@
 package it.polito.wa2.g19.server.testingauth
 
-import com.nimbusds.jose.proc.SecurityContext
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
-import org.springframework.http.RequestEntity
-import org.springframework.security.access.annotation.Secured
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.ObjectMapper
+import it.polito.wa2.g19.server.ticketing.chat.ChatMessageInDTO
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.*
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
@@ -14,8 +12,8 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
-import java.security.Principal
+import org.springframework.web.util.UriComponentsBuilder
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @RestController
 class TestingAuthController {
@@ -50,28 +48,41 @@ class TestingAuthController {
 
     @PostMapping("/auth/login")
     fun login(
-        @RequestBody userName: String,
-        @RequestBody password: String
-    ): String {
-
+        @RequestBody user: Map<String, String>,
+    ): Test {
         val url = "http://localhost:8081/realms/ticket_management_system/protocol/openid-connect/token"
         val restTemplate = RestTemplate()
-        val map = LinkedMultiValueMap<String, String>()
-        map.add("username", userName)
-        map.add("username", password)
 
+        val map: MultiValueMap<String, String> = LinkedMultiValueMap()
+        map.add("username", user["username"])
+        map.add("password", user["password"])
         map.add("client_id", "TicketManagementSystem")
         map.add("client_secret", "eoM7Xo7Ft93eyph81RnfSiNcJ9Cawvfw")
         map.add("grant_type", "password")
 
-        val request = RequestEntity
-            .post(url)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(map)
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
 
-        val response = restTemplate.exchange<Any>(request)
-        return response.toString()
+        val request = HttpEntity(map, headers)
+        val response = restTemplate.postForObject(
+            url,
+            request,
+            String::class.java
+        )
+
+        return ObjectMapper().readValue(response, Test::class.java)
 
     }
 
 }
+
+data class Test (
+    @JsonProperty("access_token") val accessToken: String,
+    @JsonProperty("refresh_expires_in") val refreshExpires: Int,
+    @JsonProperty("expires_in") val expiresIn: Int,
+    @JsonProperty("refresh_token") val refreshToken: String,
+    @JsonProperty("not-before-policy") val notBeforePolicy: Int,
+    @JsonProperty("session_state") val sessionState: String,
+    @JsonProperty("scope") val scope: String,
+    @JsonProperty("token_type") val tokenType: String
+)
