@@ -58,7 +58,6 @@ async function login(username: string, password: string) {
     } catch (e) {
         throw e
     }
-
 }
 
 const API = {getAllProducts, getProductByEAN, getProfileByEmail, postProfile, putProfile, login}
