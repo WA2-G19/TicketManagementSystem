@@ -11,9 +11,10 @@ function LoginForm() {
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const user = await API.login(email, pwd)
-            console.log(user)
-            if (user === null) {
+            const token = await API.login(email, pwd)
+            console.log(token)
+            localStorage.setItem("jwt", token)
+            if (!token) {
                 return
             }
         } catch (e) {
