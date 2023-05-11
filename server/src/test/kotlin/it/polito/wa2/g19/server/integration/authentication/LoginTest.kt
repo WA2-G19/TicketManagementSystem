@@ -167,7 +167,9 @@ class LoginTest {
         val body = HttpEntity(loginDTO)
         val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
         assert(response.statusCode.value() == 200)
-        assert(jwtDecoder.decode(response.body).claims.get("email") == loginDTO.username)
+        val jwt = jwtDecoder.decode(response.body)
+        assert(jwt.claims.get("email") == loginDTO.username)
+        assert((jwt.claims.get("role") as List<String>)[0] == "Client")
 
     }
 }
