@@ -37,6 +37,7 @@ dependencies {
 	testImplementation ("org.testcontainers:junit-jupiter:1.16.3")
 	testImplementation("org.testcontainers:postgresql:1.17.6")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation ("com.github.dasniko:testcontainers-keycloak:2.5.0")
 
 }
 
