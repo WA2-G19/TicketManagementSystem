@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
+import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.common.Util
 import org.springframework.security.oauth2.jwt.Jwt
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
@@ -28,24 +30,27 @@ class TicketController(
     @GetMapping("/tickets")
     @PreAuthorize("isAuthenticated()")
     fun getTickets(
+        principal: JwtAuthenticationToken,
         @RequestParam(required = false) customer: String?,
         @RequestParam(required = false) expert: String?,
         @RequestParam(required = false) status: TicketStatusEnum?,
         @RequestParam(required = false) priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
-        val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
-        val role = authToken.getClaim<List<String>>("role")[0]
+
+        println(principal.authorities.stream().findFirst().get().authority)
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val email = principal.name
         val tickets = ticketService.getTickets(customer, expert, status, priorityLevel)
 
         when (role) {
-            "Client" -> {
-                if (customer == authToken.getClaim("email"))
+            Role.ROLE_Client -> {
+                if (customer == email)
                     return tickets
                 else
                     throw TicketNotFoundException()
             }
-            "Expert" -> {
-                if(expert == authToken.getClaim("email")) {
+            Role.ROLE_Expert -> {
+                if(expert == email) {
                     val list = mutableListOf<TicketOutDTO>()
                     tickets.forEach {
                         if(ticketService.getFinalStatus(it.id!!).ticket.expert?.email == expert) {
@@ -66,20 +71,22 @@ class TicketController(
     // Client ONLY its tickets
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/tickets/{ticketId}")
-    fun getTicketById(@PathVariable ticketId: Int): TicketOutDTO {
-        val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
-        val role = authToken.getClaim<List<String>>("role")[0]
+    fun getTicketById(
+        principal: JwtAuthenticationToken,
+        @PathVariable ticketId: Int): TicketOutDTO {
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val email = principal.name
         val ticket = ticketService.getTicket(ticketId)
         when (role) {
-            "Client" -> {
-                if (ticket.customerEmail == authToken.getClaim("email"))
+            Role.ROLE_Client -> {
+                if (ticket.customerEmail == email)
                     return ticket
                 else
                     throw TicketNotFoundException()
             }
-            "Expert" -> {
+            Role.ROLE_Expert -> {
                 val status = ticketService.getFinalStatus(ticketId)
-                if(status.ticket.expert?.email == authToken.getClaim("email")) {
+                if(status.ticket.expert?.email == email) {
                     return ticket
                 } else {
                     throw TicketNotFoundException()
@@ -94,12 +101,14 @@ class TicketController(
     @PreAuthorize("hasRole('Client')")
     @PostMapping("/tickets")
     fun postTicket(
+        principal: JwtAuthenticationToken,
         @Valid
         @RequestBody
         ticket: TicketDTO
     ): ResponseEntity<Void> {
-        val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
-        ticket.customerEmail = authToken.getClaim("email")
+        val role = principal.authorities.stream().findFirst().get().authority
+        val email = principal.name
+        ticket.customerEmail = email
         val id = ticketService.createTicket(ticket)
         val headers = HttpHeaders()
         headers.location = URI.create(Util.getUri(handlerMapping, ::getTicketById.name, id))
@@ -118,30 +127,30 @@ class TicketController(
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/tickets/{ticketId}")
     fun putTicket(
+        principal: JwtAuthenticationToken,
         @PathVariable
         ticketId: Int,
         @Valid
         @RequestBody
         ticketStatus: TicketStatusDTO
     ) {
-        val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
-        val email = authToken.getClaim<String>("email")
-        val role = authToken.getClaim<List<String>>("role")[0]
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val email = principal.name
         when (ticketStatus.status) {
             TicketStatusEnum.Reopened -> ticketService.reopenTicket(ticketId)
             TicketStatusEnum.InProgress -> {
-                if (role != "Client" && role != "Expert")
+                if (role != Role.ROLE_Client && role != Role.ROLE_Expert)
 
                     ticketService.startProgressTicket(ticketId, email, ticketStatus)
             }
 
             TicketStatusEnum.Closed -> {
-                if (role != "Client")
+                if (role != Role.ROLE_Client)
                     ticketService.closeTicket(ticketId, email)
             }
 
             TicketStatusEnum.Resolved -> {
-                if (role != "Client")
+                if (role != Role.ROLE_Client)
                     ticketService.resolveTicket(ticketId, email)
             }
 

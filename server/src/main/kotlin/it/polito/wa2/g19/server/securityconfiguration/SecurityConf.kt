@@ -38,6 +38,8 @@ class ResourceServerConfig {
         return http.build()
     }
 
+
+
     @Bean
     fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
         val grantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter()
@@ -45,6 +47,7 @@ class ResourceServerConfig {
         grantedAuthoritiesConverter.setAuthoritiesClaimName("role")
         val jwtAuthenticationConverter = JwtAuthenticationConverter()
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter)
+        jwtAuthenticationConverter.setPrincipalClaimName("email")
         return jwtAuthenticationConverter
     }
 
