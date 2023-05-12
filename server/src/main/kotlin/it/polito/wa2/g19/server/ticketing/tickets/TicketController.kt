@@ -2,7 +2,6 @@ package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.common.Util
-import org.springframework.security.oauth2.jwt.Jwt
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
@@ -11,7 +10,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -106,7 +104,6 @@ class TicketController(
         @RequestBody
         ticket: TicketDTO
     ): ResponseEntity<Void> {
-        val role = principal.authorities.stream().findFirst().get().authority
         val email = principal.name
         ticket.customerEmail = email
         val id = ticketService.createTicket(ticket)
