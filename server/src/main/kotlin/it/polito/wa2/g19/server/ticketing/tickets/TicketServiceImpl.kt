@@ -177,8 +177,8 @@ class TicketServiceImpl(
     }
 
     override fun getFinalStatus(ticketId: Int): TicketStatus {
-        val statuses = ticketStatusRepository.findAllByTicketId(ticketId)
-        return statuses.last()
+        val statuses = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
+        return statuses
     }
 
 }

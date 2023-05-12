@@ -34,7 +34,7 @@ class TicketController(
         @RequestParam(required = false) priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
         val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
-        val role = authToken.getClaim<String>("role")
+        val role = authToken.getClaim<List<String>>("role")[0]
         val tickets = ticketService.getTickets(customer, expert, status, priorityLevel)
 
         when (role) {
@@ -68,9 +68,8 @@ class TicketController(
     @GetMapping("/tickets/{ticketId}")
     fun getTicketById(@PathVariable ticketId: Int): TicketOutDTO {
         val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
-        val role = authToken.getClaim<String>("role")
+        val role = authToken.getClaim<List<String>>("role")[0]
         val ticket = ticketService.getTicket(ticketId)
-
         when (role) {
             "Client" -> {
                 if (ticket.customerEmail == authToken.getClaim("email"))
@@ -99,6 +98,8 @@ class TicketController(
         @RequestBody
         ticket: TicketDTO
     ): ResponseEntity<Void> {
+        val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
+        ticket.customerEmail = authToken.getClaim("email")
         val id = ticketService.createTicket(ticket)
         val headers = HttpHeaders()
         headers.location = URI.create(Util.getUri(handlerMapping, ::getTicketById.name, id))
@@ -124,22 +125,24 @@ class TicketController(
         ticketStatus: TicketStatusDTO
     ) {
         val authToken = SecurityContextHolder.getContext().authentication.principal as Jwt
-        val role = authToken.getClaim<String>("role")
+        val email = authToken.getClaim<String>("email")
+        val role = authToken.getClaim<List<String>>("role")[0]
         when (ticketStatus.status) {
             TicketStatusEnum.Reopened -> ticketService.reopenTicket(ticketId)
             TicketStatusEnum.InProgress -> {
                 if (role != "Client" && role != "Expert")
-                    ticketService.startProgressTicket(ticketId, ticketStatus.by!!, ticketStatus)
+
+                    ticketService.startProgressTicket(ticketId, email, ticketStatus)
             }
 
             TicketStatusEnum.Closed -> {
                 if (role != "Client")
-                    ticketService.closeTicket(ticketId, ticketStatus.by!!)
+                    ticketService.closeTicket(ticketId, email)
             }
 
             TicketStatusEnum.Resolved -> {
                 if (role != "Client")
-                    ticketService.resolveTicket(ticketId, ticketStatus.by!!)
+                    ticketService.resolveTicket(ticketId, email)
             }
 
             else -> {}

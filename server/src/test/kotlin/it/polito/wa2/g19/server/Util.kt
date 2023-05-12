@@ -27,6 +27,10 @@ class Util {
             }
         }
 
+        fun mockMainCustomer(): Customer{
+            return Customer("client@test.it", "customerName", "customerSurname", "customerAddress")
+        }
+
         fun mockExperts(): List<Expert>{
             return mutableListOf<Expert>().let {
                 for (i in 0..3){
@@ -37,6 +41,10 @@ class Util {
             }
         }
 
+        fun mockMainExpert(): Expert{
+            return Expert("expert@test.it", "expertName", "expertSurname")
+        }
+
         fun mockManagers(): List<Manager>{
             return mutableListOf<Manager>().let {
                 for (i in 0..3){
@@ -45,6 +53,10 @@ class Util {
                 }
                 it
             }
+        }
+
+        fun mockMainManager(): Manager{
+            return  Manager("manager@test.it", "managerName", "managerSurname")
         }
 
         fun mockProduct(): Product {

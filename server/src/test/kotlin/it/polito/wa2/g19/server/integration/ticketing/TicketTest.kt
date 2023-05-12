@@ -1,9 +1,12 @@
 package it.polito.wa2.g19.server.integration.ticketing
 
+import dasniko.testcontainers.keycloak.KeycloakContainer
 import it.polito.wa2.g19.server.Util
 import it.polito.wa2.g19.server.equalsTo
+import it.polito.wa2.g19.server.integration.authentication.LoginTest
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductRepository
+import it.polito.wa2.g19.server.profiles.LoginDTO
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
@@ -23,7 +26,9 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpRequest
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -31,6 +36,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import kotlin.math.exp
 
 
 @Testcontainers
@@ -47,6 +53,9 @@ class TicketTest {
         @Container
         val postgres = PostgreSQLContainer("postgres:latest")
 
+        @Container
+        val keycloak = KeycloakContainer("quay.io/keycloak/keycloak:latest")
+            .withRealmImportFile("keycloak/realm.json")
 
         @JvmStatic
         @DynamicPropertySource
@@ -55,6 +64,10 @@ class TicketTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate.ddl-auto") {"create-drop"}
+            val keycloackBaseUrl = keycloak.authServerUrl
+            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloackBaseUrl}/realms/ticket_management_system" })
+            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloackBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
+
         }
     }
 
@@ -69,6 +82,11 @@ class TicketTest {
     private lateinit var manager: Manager
     private lateinit var expert: Expert
     private lateinit var otherExpert: Expert
+
+    private lateinit var customerToken: String
+    private lateinit var expertToken: String
+    private lateinit var managerToken: String
+
 
     private val ticket: Ticket = Util.mockTicket()
     @Autowired
@@ -93,24 +111,27 @@ class TicketTest {
             if (::customer.isInitialized)
                 otherCustomer = customer
             customer = customerRepository.save(it)
-
         }
+        customer = customerRepository.save(Util.mockMainCustomer())
 
         Util.mockManagers().forEach{
             manager = staffRepository.save(it)
         }
+        manager = staffRepository.save(Util.mockMainManager())
+
         Util.mockExperts().forEach{
             if(::expert.isInitialized)
                 otherExpert = expert
             expert =  staffRepository.save(it)
         }
+        expert = staffRepository.save(Util.mockMainExpert())
         Util.mockPriorityLevels().forEach{
             priorityLevelRepository.save(it)
         }
-
         product = productRepository.save(Util.mockProduct())
         println("---------------------------------")
     }
+
 
     @AfterEach
     fun destroyDatabase(){
@@ -125,9 +146,34 @@ class TicketTest {
 
     }
 
+    @BeforeEach
+    fun refreshCustomerToken(){
+        val loginDTO = LoginDTO(customer.email, "password")
+        val body = HttpEntity(loginDTO)
+        val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
+        customerToken = response.body!!
+    }
+
+    @BeforeEach
+    fun refreshExpertToken(){
+        val loginDTO = LoginDTO(expert.email, "password")
+        val body = HttpEntity(loginDTO)
+        val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
+        expertToken = response.body!!
+    }
+
+    @BeforeEach
+    fun refreshManagerToken(){
+        val loginDTO = LoginDTO(manager.email, "password")
+        val body = HttpEntity(loginDTO)
+        val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
+        managerToken = response.body!!
+    }
+
     fun insertTicket(status: TicketStatusEnum): Int {
         val ticket = Util.mockTicket()
         ticket.status = status
+        ticket.expert = expert
         ticket.customer = customer
         ticket.product = product
         val ticketStatus = Util.mockOpenTicketStatus()
@@ -140,20 +186,22 @@ class TicketTest {
     @Test
     fun `open a ticket is successful`(){
         val newTicket = Util.mockTicketDTO()
-        val body = HttpEntity(newTicket)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(newTicket, headers)
         assert(ticketStatusRepository.findAll().size == 0)
-
-        val responsePost = restTemplate.postForEntity<Void>(prefixEndPoint, body, HttpMethod.POST)
+        val responsePost = restTemplate.postForEntity<Void>(prefixEndPoint, request, HttpMethod.POST)
         assert(responsePost.statusCode.value() == 201)
         val location = responsePost.headers.location
-        val responseGet = restTemplate.getForEntity(location, TicketOutDTO::class.java )
+        val responseGet = restTemplate.exchange(location, HttpMethod.GET, HttpEntity(null, headers),TicketOutDTO::class.java  )
         val createdTicket = responseGet.body!!
         newTicket.id = createdTicket.id
         assert(newTicket.id == createdTicket.id)
         assert(newTicket.description == createdTicket.description)
-        assert(newTicket.customerEmail == createdTicket.customerEmail)
+        println(customer.email)
+        println(createdTicket.customerEmail)
+        assert(customer.email == createdTicket.customerEmail)
         assert(newTicket.productEan == createdTicket.productEan)
-        assert(newTicket.equalsTo(createdTicket))
         assert( createdTicket.priorityLevel == null)
         assert(createdTicket.status == TicketStatusEnum.Open)
         assert(createdTicket.expertEmail == null)
@@ -168,10 +216,12 @@ class TicketTest {
             TicketStatusEnum.Closed,
             by = manager.email
         )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, Void::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, Void::class.java)
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers), TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
@@ -187,11 +237,13 @@ class TicketTest {
             ticketID,
             TicketStatusEnum.Reopened,
         )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID",HttpMethod.PUT, body, ProblemDetail::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID",HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.Open, TicketStatusEnum.Reopened).message)
-        val openedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val openedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers), TicketOutDTO::class.java).body!!
         assert(openedTicket.id == ticketID)
         assert(openedTicket.status == TicketStatusEnum.Open)
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
@@ -202,6 +254,7 @@ class TicketTest {
 
     @Test
     fun `start progress on an open ticket is successful`() {
+
         val ticketID = insertTicket(TicketStatusEnum.Open)
         val ticketStatusDTO = TicketStatusDTO(
             ticketID,
@@ -210,10 +263,12 @@ class TicketTest {
             by = manager.email,
             priorityLevel = PriorityLevelEnum.CRITICAL
         )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, Void::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, Void::class.java)
         assert(response.statusCode.value() == 200)
-        val inProgressTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val inProgressTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers), TicketOutDTO::class.java).body!!
         assert(inProgressTicket.id == ticketID)
         assert(inProgressTicket.status == TicketStatusEnum.InProgress)
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
@@ -229,21 +284,20 @@ class TicketTest {
         val ticketStatusDTO = TicketStatusDTO(
             ticketID,
             TicketStatusEnum.Resolved,
-            by = expert.email
+            by = manager.email
         )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, Void::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, Void::class.java)
         assert(response.statusCode.value() == 200)
-        val inProgressTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val inProgressTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers), TicketOutDTO::class.java).body!!
         assert(inProgressTicket.id == ticketID)
         assert(inProgressTicket.status == TicketStatusEnum.Resolved)
-
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as ResolvedTicketStatus).by == expert)
-
-
+        assert((lastStatus as ResolvedTicketStatus).by == manager)
     }
 
 
@@ -255,13 +309,14 @@ class TicketTest {
             TicketStatusEnum.Closed,
             by = manager.email,
         )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, Void::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, Void::class.java)
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers), TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
-
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
@@ -275,16 +330,18 @@ class TicketTest {
             ticketID,
             TicketStatusEnum.Reopened,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.InProgress, TicketStatusEnum.Reopened).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.InProgress)
 
@@ -300,10 +357,12 @@ class TicketTest {
             TicketStatusEnum.Resolved,
             by = expert.email
         )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, Void::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, Void::class.java)
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Resolved)
 
@@ -323,16 +382,18 @@ class TicketTest {
             by = manager.email,
             priorityLevel = PriorityLevelEnum.CRITICAL
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.InProgress, TicketStatusEnum.InProgress).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.InProgress)
 
@@ -351,16 +412,18 @@ class TicketTest {
             by = manager.email,
             priorityLevel = PriorityLevelEnum.CRITICAL
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.Closed, TicketStatusEnum.InProgress).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET, HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
@@ -377,16 +440,19 @@ class TicketTest {
             TicketStatusEnum.Closed,
             by = manager.email,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.Closed, TicketStatusEnum.Closed).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,
+            HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
@@ -402,16 +468,18 @@ class TicketTest {
             TicketStatusEnum.Resolved,
             by = manager.email,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.Closed, TicketStatusEnum.Resolved).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
@@ -426,15 +494,17 @@ class TicketTest {
             ticketID,
             TicketStatusEnum.Reopened,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Reopened)
 
@@ -451,16 +521,18 @@ class TicketTest {
             ticketID,
             TicketStatusEnum.Reopened,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.Reopened, TicketStatusEnum.Reopened).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Reopened)
 
@@ -476,16 +548,17 @@ class TicketTest {
             TicketStatusEnum.Closed,
             by = manager.email
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
-        assert(closedTicket.id == ticketID)
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
@@ -504,16 +577,18 @@ class TicketTest {
             by = manager.email,
             priorityLevel = PriorityLevelEnum.CRITICAL
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
-        assert(closedTicket.id == ticketID)
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.status == TicketStatusEnum.InProgress)
 
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
@@ -531,17 +606,18 @@ class TicketTest {
             TicketStatusEnum.Resolved,
             by = expert.email
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.Resolved, TicketStatusEnum.Resolved).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
-        assert(closedTicket.id == ticketID)
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.status == TicketStatusEnum.Resolved)
 
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
@@ -556,15 +632,18 @@ class TicketTest {
             TicketStatusEnum.Closed,
             by = expert.email
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        headers.setBearerAuth(managerToken)
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Closed)
 
@@ -581,10 +660,12 @@ class TicketTest {
             ticketID,
             TicketStatusEnum.Reopened,
         )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, body, ProblemDetail::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode.value() == 200)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
+        val closedTicket = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.id == ticketID)
         assert(closedTicket.status == TicketStatusEnum.Reopened)
 
@@ -604,17 +685,19 @@ class TicketTest {
             expert = expert.email,
             priorityLevel = PriorityLevelEnum.CRITICAL
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java
         )
         assert(response.statusCode.value() == 400)
         assert(response.body!!.detail == InvalidTicketStatusTransitionException(TicketStatusEnum.Resolved, TicketStatusEnum.InProgress).message)
-        val closedTicket = restTemplate.getForEntity("$prefixEndPoint/$ticketID", TicketOutDTO::class.java).body!!
-        assert(closedTicket.id == ticketID)
+        val closedTicket =
+            restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),TicketOutDTO::class.java).body!!
         assert(closedTicket.status == TicketStatusEnum.Resolved)
 
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
@@ -631,7 +714,9 @@ class TicketTest {
         (0 until otherSize).forEach{ _ ->
             ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
         }
-        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange(prefixEndPoint, HttpMethod.GET, null)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange(prefixEndPoint, HttpMethod.GET, HttpEntity(null, headers))
         assert(myTicketsDTO.body!!.size == mySize + otherSize )
     }
 
@@ -644,7 +729,9 @@ class TicketTest {
         (0 until 12).forEach{ _ ->
             ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
         }
-        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?customer=${customer.email}", HttpMethod.GET, null)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?customer=${customer.email}", HttpMethod.GET, HttpEntity(null, headers))
         assert(myTicketsDTO.body!!.size == mySize)
         (myTicketsDTO.body!!.forEach{println(it.customerEmail)})
         assert(myTicketsDTO.body!!.all { it.customerEmail == customer.email })
@@ -670,7 +757,9 @@ class TicketTest {
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
 
-        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}", HttpMethod.GET, null)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}", HttpMethod.GET, HttpEntity(null, headers))
         println(myTicketsDTO.body!!.size)
         assert(myTicketsDTO.body!!.size == mySize)
         assert(myTicketsDTO.body!!.all { it.expertEmail == expert.email && it.customerEmail == customer.email })
@@ -700,7 +789,9 @@ class TicketTest {
             ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
-        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}", HttpMethod.GET, null)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}", HttpMethod.GET, HttpEntity(null, headers))
         assert(myTicketsDTO.body!!.size == mySize)
         assert(myTicketsDTO.body!!.all { it.expertEmail == expert.email && it.customerEmail == customer.email && it.status == myStatus })
     }
@@ -738,11 +829,12 @@ class TicketTest {
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it.priorityLevel = otherPriorityLevel; it})
         }
 
-
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange(
             "$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}&priorityLevel=${myPriorityLevel.name}",
             HttpMethod.GET,
-            null
+            HttpEntity(null, headers)
         )
         assert(myTicketsDTO.body!!.size == mySize)
         assert(myTicketsDTO.body!!.all {
@@ -753,18 +845,20 @@ class TicketTest {
     }
 
     @Test
-    fun `try to close a ticket without expert indication`(){
+    fun `try to close a ticket without by indication`(){
 
         val ticketID = insertTicket(TicketStatusEnum.Open)
         val ticketStatusDTO = TicketStatusDTO(
             ticketID,
             TicketStatusEnum.Closed
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProfileNotFoundException::class.java,
         )
         assert(response.statusCode.value() == 400)
@@ -772,18 +866,20 @@ class TicketTest {
     }
 
     @Test
-    fun `try to start progress on an open ticket is not successful without expert indication`() {
+    fun `try to start progress on an open ticket is not successful without by and expert indication`() {
         val ticketID = insertTicket(TicketStatusEnum.Open)
         val ticketStatusDTO = TicketStatusDTO(
             ticketID,
             TicketStatusEnum.InProgress,
             priorityLevel = PriorityLevelEnum.CRITICAL
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProfileNotFoundException::class.java,
         )
         assert(response.statusCode.value() == 400)
@@ -798,11 +894,13 @@ class TicketTest {
             TicketStatusEnum.InProgress,
             expert = expert.email,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProfileNotFoundException::class.java,
         )
         assert(response.statusCode.value() == 400)
@@ -816,11 +914,13 @@ class TicketTest {
             ticketID,
             TicketStatusEnum.InProgress,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProfileNotFoundException::class.java,
         )
         assert(response.statusCode.value() == 400)
@@ -835,35 +935,20 @@ class TicketTest {
             TicketStatusEnum.Closed,
             by = manager.email,
         )
-        val body = HttpEntity(ticketStatusDTO)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange(
             "$prefixEndPoint/$ticketID",
             HttpMethod.PUT,
-            body,
+            request,
             ProblemDetail::class.java,
         )
         assert(response.statusCode.value() == 404)
         assert(response.body!!.detail == TicketNotFoundException().message!!)
     }
 
-    @Test
-    fun `close a ticket with a profile not existing`() {
-        val ticketID = insertTicket(TicketStatusEnum.Open)
-        val ticketStatusDTO = TicketStatusDTO(
-            ticketID,
-            TicketStatusEnum.Closed,
-            by = "profileNotFound@gmail.com",
-        )
-        val body = HttpEntity(ticketStatusDTO)
-        val response = restTemplate.exchange(
-            "$prefixEndPoint/$ticketID",
-            HttpMethod.PUT,
-            body,
-            ProblemDetail::class.java,
-        )
-        assert(response.statusCode.value() == 404)
-        assert(response.body!!.detail!! == ProfileNotFoundException().message!!)
-    }
+
 
 
 }
