@@ -68,9 +68,12 @@ class LoginTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate.ddl-auto") { "create-drop" }
-            val keycloackBaseUrl = keycloak.authServerUrl
-            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloackBaseUrl}/realms/ticket_management_system" })
-            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloackBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
+
+            val keycloakBaseUrl = keycloak.authServerUrl
+            registry.add("keycloakBaseUrl") {"$keycloakBaseUrl"}
+            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri") { "${keycloakBaseUrl}/realms/ticket_management_system" }
+            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri") { "${keycloakBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs" }
+
         }
     }
 
@@ -113,6 +116,9 @@ class LoginTest {
 
     @BeforeEach
     fun populateDatabase() {
+        println(keycloak.isRunning)
+        println(keycloak.authServerUrl)
+
         println("----populating database------")
         Util.mockCustomers().forEach {
             if (::customer.isInitialized)
