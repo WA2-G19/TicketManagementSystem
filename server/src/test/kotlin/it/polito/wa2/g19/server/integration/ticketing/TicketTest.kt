@@ -2,8 +2,6 @@ package it.polito.wa2.g19.server.integration.ticketing
 
 import dasniko.testcontainers.keycloak.KeycloakContainer
 import it.polito.wa2.g19.server.Util
-import it.polito.wa2.g19.server.equalsTo
-import it.polito.wa2.g19.server.integration.authentication.LoginTest
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductRepository
 import it.polito.wa2.g19.server.profiles.LoginDTO
@@ -25,18 +23,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpRequest
-import org.springframework.http.ProblemDetail
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import kotlin.math.exp
 
 
 @Testcontainers
@@ -64,10 +56,10 @@ class TicketTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate.ddl-auto") {"create-drop"}
-            val keycloackBaseUrl = keycloak.authServerUrl
-            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloackBaseUrl}/realms/ticket_management_system" })
-            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloackBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
-
+            val keycloakBaseUrl = keycloak.authServerUrl
+            registry.add("keycloakBaseUrl", {"$keycloakBaseUrl"})
+            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloakBaseUrl}/realms/ticket_management_system" })
+            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloakBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
         }
     }
 
@@ -88,7 +80,6 @@ class TicketTest {
     private lateinit var managerToken: String
 
 
-    private val ticket: Ticket = Util.mockTicket()
     @Autowired
     lateinit var customerRepository: CustomerRepository
     @Autowired
@@ -106,6 +97,9 @@ class TicketTest {
 
     @BeforeEach
     fun populateDatabase(){
+        if(!keycloak.isRunning()){
+            keycloak.start();
+        }
         println("----populating database------")
         Util.mockCustomers().forEach{
             if (::customer.isInitialized)

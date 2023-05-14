@@ -12,8 +12,6 @@ import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
-import it.polito.wa2.g19.server.ticketing.chat.ChatMessageInDTO
-import it.polito.wa2.g19.server.ticketing.chat.ChatMessageOutDTO
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageRepository
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
@@ -27,26 +25,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.exchange
-import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.boot.test.web.client.postForEntity
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.*
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.util.LinkedMultiValueMap
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.nio.file.Paths
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class LoginTest {
-
-    private val prefixEndPoint = "/API/tickets"
 
     companion object {
 
@@ -68,9 +59,10 @@ class LoginTest {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate.ddl-auto") { "create-drop" }
-            val keycloackBaseUrl = keycloak.authServerUrl
-            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloackBaseUrl}/realms/ticket_management_system" })
-            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloackBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
+            val keycloakBaseUrl = keycloak.authServerUrl
+            registry.add("keycloakBaseUrl", {"$keycloakBaseUrl"})
+            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloakBaseUrl}/realms/ticket_management_system" })
+            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloakBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
         }
     }
 

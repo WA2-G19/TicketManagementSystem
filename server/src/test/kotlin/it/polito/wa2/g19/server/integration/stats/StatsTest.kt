@@ -1,22 +1,18 @@
 package it.polito.wa2.g19.server.integration.stats
 
 import it.polito.wa2.g19.server.Util
+import dasniko.testcontainers.keycloak.KeycloakContainer
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductRepository
+import it.polito.wa2.g19.server.profiles.LoginDTO
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
-import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
-import it.polito.wa2.g19.server.ticketing.chat.ChatMessageRepository
-import it.polito.wa2.g19.server.ticketing.statuses.ClosedTicketStatus
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
-import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
-import it.polito.wa2.g19.server.ticketing.tickets.Ticket
-import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
+import it.polito.wa2.g19.server.ticketing.statuses.*
+import it.polito.wa2.g19.server.ticketing.tickets.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,9 +21,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
-import org.springframework.http.ProblemDetail
+import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
@@ -36,11 +32,10 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDateTime
 
 @Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
 class StatsTest {
 
-    private val prefixEndPoint = "/API/tickets"
     private val prefixStatsEndPoint = "/API/stats"
 
     companion object {
@@ -49,6 +44,9 @@ class StatsTest {
         @Container
         val postgres = PostgreSQLContainer("postgres:latest")
 
+        @Container
+        val keycloak = KeycloakContainer("quay.io/keycloak/keycloak:latest")
+            .withRealmImportFile("keycloak/realm.json")
 
         @JvmStatic
         @DynamicPropertySource
@@ -56,10 +54,16 @@ class StatsTest {
             registry.add("spring.datasource.url", postgres::getJdbcUrl)
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
-            registry.add("spring.jpa.hibernate.ddl-auto") { "create-drop" }
+            registry.add("spring.jpa.hibernate.ddl-auto") {"create-drop"}
+            val keycloakBaseUrl = keycloak.authServerUrl
+            registry.add("keycloakBaseUrl", {"$keycloakBaseUrl"})
+            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloakBaseUrl}/realms/ticket_management_system" })
+            registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloakBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
         }
     }
 
+    @LocalServerPort
+    protected var port: Int = 0
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
@@ -69,6 +73,9 @@ class StatsTest {
     private lateinit var manager: Manager
     private lateinit var expert: Expert
     private lateinit var otherExpert: Expert
+
+    private lateinit var managerToken: String
+
 
     @Autowired
     lateinit var customerRepository: CustomerRepository
@@ -88,30 +95,33 @@ class StatsTest {
     @Autowired
     lateinit var ticketStatusRepository: TicketStatusRepository
 
-    @Autowired
-    lateinit var chatRepository: ChatMessageRepository
 
-    @Autowired
-    lateinit var attachmentRepository: AttachmentRepository
 
     @BeforeEach
-    fun populateDatabase() {
+    fun populateDatabase(){
+        if(!keycloak.isRunning()){
+            keycloak.start();
+        }
         println("----populating database------")
-        Util.mockCustomers().forEach {
+        Util.mockCustomers().forEach{
             if (::customer.isInitialized)
                 otherCustomer = customer
             customer = customerRepository.save(it)
-
         }
-        Util.mockManagers().forEach {
+        customer = customerRepository.save(Util.mockMainCustomer())
+
+        Util.mockManagers().forEach{
             manager = staffRepository.save(it)
         }
-        Util.mockExperts().forEach {
-            if (::expert.isInitialized)
+        manager = staffRepository.save(Util.mockMainManager())
+
+        Util.mockExperts().forEach{
+            if(::expert.isInitialized)
                 otherExpert = expert
-            expert = staffRepository.save(it)
+            expert =  staffRepository.save(it)
         }
-        Util.mockPriorityLevels().forEach {
+        expert = staffRepository.save(Util.mockMainExpert())
+        Util.mockPriorityLevels().forEach{
             priorityLevelRepository.save(it)
         }
         product = productRepository.save(Util.mockProduct())
@@ -121,8 +131,6 @@ class StatsTest {
     @AfterEach
     fun destroyDatabase() {
         println("----destroying database------")
-        attachmentRepository.deleteAll()
-        chatRepository.deleteAll()
         ticketStatusRepository.deleteAll()
         ticketRepository.deleteAll()
         priorityLevelRepository.deleteAll()
@@ -146,8 +154,18 @@ class StatsTest {
         return ticketRepository.save(ticket)
     }
 
+    @BeforeEach
+    fun refreshManagerToken(){
+        val loginDTO = LoginDTO(manager.email, "password")
+        val body = HttpEntity(loginDTO)
+        val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
+        managerToken = response.body!!
+    }
+
     @Test
     fun `get count for closed tickets by expert`() {
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
         for (i in 0 until 20) {
             val ticket = insertTicket(TicketStatusEnum.Open)
             ticket.statusHistory.add(ClosedTicketStatus().apply {
@@ -156,19 +174,31 @@ class StatsTest {
             })
             ticketRepository.save(ticket)
         }
-        val response = restTemplate.exchange<Int>("$prefixStatsEndPoint/tickets-closed/${expert.email}", HttpMethod.GET, null)
+        val response = restTemplate.exchange("$prefixStatsEndPoint/tickets-closed/${expert.email}", HttpMethod.GET, HttpEntity(null, headers), Int::class.java)
         assert(response.body == 20)
     }
 
     @Test
     fun `get closed tickets is unsuccessful`() {
-        val response = restTemplate.getForEntity("$prefixStatsEndPoint/tickets-closed/fakeprofile@test.it",ProblemDetail::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val response = restTemplate.exchange(
+            "$prefixStatsEndPoint/tickets-closed/fakeprofile@test.it",HttpMethod.GET,HttpEntity(null,headers),ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.NOT_FOUND)
         assert(response.body!!.detail == ProfileNotFoundException().message)
     }
 
     @Test
+    fun `test privacy of tickets closed`() {
+        val response = restTemplate.exchange(
+            "$prefixStatsEndPoint/tickets-closed/${expert.email}",HttpMethod.GET,HttpEntity(null,null),ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
     fun `get average time for closed tickets by expert`() {
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
         for (i in 0 until 20) {
             val ticket = insertTicket(TicketStatusEnum.InProgress)
             val ticketStatus = ticketStatusRepository.save(ClosedTicketStatus().apply {
@@ -182,15 +212,40 @@ class StatsTest {
             ticketRepository.save(ticket)
         }
         println("---------------")
-        val response = restTemplate.exchange<Int>("$prefixStatsEndPoint/average-time/${expert.email}", HttpMethod.GET, null)
-
-        assert(response.body!! == 1*24*3600)
+        val response =
+            restTemplate.exchange<Int>("$prefixStatsEndPoint/average-time/${expert.email}", HttpMethod.GET, HttpEntity(null,headers))
+        assert(response.body!! == 1 * 24 * 3600)
     }
 
     @Test
     fun `get average time is unsuccessful`() {
-        val response = restTemplate.getForEntity("$prefixStatsEndPoint/average-time/fakeprofile@test.it",ProblemDetail::class.java)
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val response = restTemplate.exchange(
+            "$prefixStatsEndPoint/average-time/fakeprofile@test.it",HttpMethod.GET,HttpEntity(null,headers),
+            ProblemDetail::class.java
+        )
         assert(response.statusCode == HttpStatus.NOT_FOUND)
         assert(response.body!!.detail == ProfileNotFoundException().message)
+    }
+
+    @Test
+    fun `test privacy of average time`() {
+        for (i in 0 until 20) {
+            val ticket = insertTicket(TicketStatusEnum.InProgress)
+            val ticketStatus = ticketStatusRepository.save(ClosedTicketStatus().apply {
+                this.ticket = ticket
+                this.by = expert
+            })
+            ticket.statusHistory.add(ticketStatusRepository.save(ticketStatus.let {
+                it.timestamp = LocalDateTime.now().plusDays((1).toLong())
+                it
+            }))
+            ticketRepository.save(ticket)
+        }
+        println("---------------")
+        val response =
+            restTemplate.exchange<Int>("$prefixStatsEndPoint/average-time/${expert.email}", HttpMethod.GET, HttpEntity(null,null))
+        assert(response.statusCode == HttpStatus.UNAUTHORIZED)
     }
 }
