@@ -193,6 +193,15 @@ class StatsTest {
     }
 
     @Test
+    fun `get with invalid token of tickets closed is unsuccessful`() {
+        val headers = HttpHeaders()
+        headers.setBearerAuth("test")
+        val response = restTemplate.exchange(
+            "$prefixStatsEndPoint/tickets-closed/${expert.email}",HttpMethod.GET,HttpEntity(null,headers),ProblemDetail::class.java)
+      assert(response.statusCode == HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
     fun `get average time for closed tickets by expert`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(managerToken)
@@ -245,4 +254,26 @@ class StatsTest {
             restTemplate.exchange<Int>("$prefixStatsEndPoint/average-time/${expert.email}", HttpMethod.GET, HttpEntity(null,null))
         assert(response.statusCode == HttpStatus.UNAUTHORIZED)
     }
+
+    @Test
+    fun `get with invalid token of average time is unsuccessful`() {
+        val headers = HttpHeaders()
+        headers.setBearerAuth("test")
+        for (i in 0 until 20) {
+            val ticket = insertTicket(TicketStatusEnum.InProgress)
+            val ticketStatus = ticketStatusRepository.save(ClosedTicketStatus().apply {
+                this.ticket = ticket
+                this.by = expert
+            })
+            ticket.statusHistory.add(ticketStatusRepository.save(ticketStatus.let {
+                it.timestamp = LocalDateTime.now().plusDays((1).toLong())
+                it
+            }))
+            ticketRepository.save(ticket)
+        }
+        println("---------------")
+        val response =
+            restTemplate.exchange<Int>("$prefixStatsEndPoint/average-time/${expert.email}", HttpMethod.GET, HttpEntity(null,headers))
+        assert(response.statusCode == HttpStatus.UNAUTHORIZED)
+        }
 }
