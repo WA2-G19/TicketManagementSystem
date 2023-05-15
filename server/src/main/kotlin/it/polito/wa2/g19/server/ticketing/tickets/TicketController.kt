@@ -51,7 +51,7 @@ class TicketController(
                 if(expert == email) {
                     val list = mutableListOf<TicketOutDTO>()
                     tickets.forEach {
-                        if(ticketService.getFinalStatus(it.id!!).ticket.expert?.email == expert) {
+                        if(ticketService.getFinalStatus(it.id!!).expert == expert) {
                             list.add(it)
                         }
                     }
@@ -84,7 +84,7 @@ class TicketController(
             }
             Role.ROLE_Expert -> {
                 val status = ticketService.getFinalStatus(ticketId)
-                if(status.ticket.expert?.email == email) {
+                if(status.expert == email) {
                     return ticket
                 } else {
                     throw TicketNotFoundException()

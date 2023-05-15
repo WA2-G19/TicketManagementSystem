@@ -22,6 +22,6 @@ interface TicketService {
 
     fun closeTicket(ticketId: Int, closerEmail: String)
 
-    fun getFinalStatus(ticketId: Int): TicketStatus
+    fun getFinalStatus(ticketId: Int): TicketStatusDTO
 
 }
