@@ -49,7 +49,7 @@ class ChatMessageController(
         }
         when (role) {
             Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId)
+                val ticket = ticketService.getTicket(ticketId, principal)
                 if (ticket.customerEmail == email) {
                     return chatMessage
                 }
@@ -57,7 +57,7 @@ class ChatMessageController(
 
             Role.ROLE_Expert -> {
                 val status = ticketService.getFinalStatus(ticketId)
-                if (status.ticket.expert?.email == email) {
+                if (status.expert == email) {
                     return chatMessage
                 }
             }
@@ -90,7 +90,7 @@ class ChatMessageController(
         }
         when (role) {
             Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId)
+                val ticket = ticketService.getTicket(ticketId, principal )
                 if (ticket.customerEmail == email) {
                     return messages
                 }
@@ -98,7 +98,7 @@ class ChatMessageController(
 
             Role.ROLE_Expert -> {
                 val status = ticketService.getFinalStatus(ticketId)
-                if (status.ticket.expert?.email == email && (status.ticket.status == TicketStatusEnum.Closed || status.ticket.status == TicketStatusEnum.InProgress)) {
+                if (status.expert == email && (status.status == TicketStatusEnum.Closed || status.status == TicketStatusEnum.InProgress)) {
                     return messages
                 }
             }
@@ -133,7 +133,7 @@ class ChatMessageController(
         headers.location = URI.create(Util.getUri(handlerMapping, ::getMessage.name, ticketId, id))
         when (role) {
             Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId)
+                val ticket = ticketService.getTicket(ticketId, principal)
                 if (ticket.customerEmail == email) {
                     return ResponseEntity(null, headers, HttpStatus.CREATED)
                 }
@@ -141,7 +141,7 @@ class ChatMessageController(
 
             Role.ROLE_Expert -> {
                 val status = ticketService.getFinalStatus(ticketId)
-                if (status.ticket.expert?.email == email) {
+                if (status.expert == email) {
                     return ResponseEntity(null, headers, HttpStatus.CREATED)
                 }
             }
@@ -177,7 +177,7 @@ class ChatMessageController(
         headers["TMS-Length"] = attachmentDTO.length.toString()
         when (role) {
             Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId)
+                val ticket = ticketService.getTicket(ticketId, principal)
                 if (ticket.customerEmail == email) {
                     return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
                 }
@@ -185,7 +185,7 @@ class ChatMessageController(
 
             Role.ROLE_Expert -> {
                 val status = ticketService.getFinalStatus(ticketId)
-                if (status.ticket.expert?.email == email) {
+                if (status.expert == email) {
                     return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
                 }
             }

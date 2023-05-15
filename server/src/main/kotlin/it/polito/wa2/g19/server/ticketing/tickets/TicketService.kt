@@ -4,11 +4,13 @@ import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
+import java.security.Principal
 
 interface TicketService {
-    fun getTicket(id: Int): TicketOutDTO
+    fun getTicket(id: Int, principal: JwtAuthenticationToken): TicketOutDTO
 
-    fun getTickets(customerEmail: String?, expertEmail: String?, statusEnum: TicketStatusEnum?, priorityLevel: PriorityLevelEnum?): List<TicketOutDTO>
+    fun getTickets( customerEmail: String?, expertEmail: String?, statusEnum: TicketStatusEnum?, priorityLevel: PriorityLevelEnum?): List<TicketOutDTO>
 
     fun createTicket(ticket: TicketDTO) : Int
 

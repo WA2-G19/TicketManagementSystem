@@ -35,30 +35,16 @@ class TicketController(
         @RequestParam(required = false) priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
 
-        println(principal.authorities.stream().findFirst().get().authority)
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
-        val tickets = ticketService.getTickets(customer, expert, status, priorityLevel)
 
-        when (role) {
-            Role.ROLE_Client -> {
-                if (customer == email)
-                    return tickets
-                else
-                    throw TicketNotFoundException()
-            }
-            Role.ROLE_Expert -> {
-                if(expert == email) {
-                    val list = mutableListOf<TicketOutDTO>()
-                    tickets.forEach {
-                        if(ticketService.getFinalStatus(it.id!!).expert == expert) {
-                            list.add(it)
-                        }
-                    }
-                    return list.ifEmpty { throw TicketNotFoundException() }
-                }
-            }
-            else -> {}
+
+        val tickets = when(role){
+            /*If the customer param is specified ignores it*/
+            Role.ROLE_Client -> ticketService.getTickets(email, expert, status, priorityLevel)
+            /*If the expert param is specified ignores it*/
+            Role.ROLE_Expert -> ticketService.getTickets(customer, email, status, priorityLevel)
+            Role.ROLE_Manager -> ticketService.getTickets(customer, expert, status, priorityLevel)
         }
 
         return tickets
@@ -72,26 +58,9 @@ class TicketController(
     fun getTicketById(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int): TicketOutDTO {
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
-        val email = principal.name
-        val ticket = ticketService.getTicket(ticketId)
-        when (role) {
-            Role.ROLE_Client -> {
-                if (ticket.customerEmail == email)
-                    return ticket
-                else
-                    throw TicketNotFoundException()
-            }
-            Role.ROLE_Expert -> {
-                val status = ticketService.getFinalStatus(ticketId)
-                if(status.expert == email) {
-                    return ticket
-                } else {
-                    throw TicketNotFoundException()
-                }
-            }
-            else -> {}
-        }
+
+        val ticket = ticketService.getTicket(ticketId, principal)
+
 
         return ticket
     }

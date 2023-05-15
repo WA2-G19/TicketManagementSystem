@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
+import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.products.ProductNotFoundException
 import it.polito.wa2.g19.server.products.ProductRepository
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
@@ -9,6 +10,7 @@ import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -24,11 +26,18 @@ class TicketServiceImpl(
     private val ticketStatusRepository: TicketStatusRepository
 ): TicketService {
 
-    override fun getTicket(id: Int): TicketOutDTO {
-        if (ticketRepository.existsById(id)) {
-            return ticketRepository.findByIdOrNull(id)!!.toOutDTO()
-        }
-        throw TicketNotFoundException()
+    override fun getTicket(id: Int, principal: JwtAuthenticationToken): TicketOutDTO {
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val email = principal.name
+
+        val ticket =
+            when(role){
+                Role.ROLE_Client -> ticketRepository.findTicketByIdAndCustomerEmail(id, email)
+                Role.ROLE_Expert -> ticketRepository.findTicketByIdAndExpertEmail(id, email)
+                Role.ROLE_Manager -> ticketRepository.findByIdOrNull(id)
+            } ?: throw TicketNotFoundException()
+
+        return ticket.toOutDTO()
     }
 
     override fun getTickets(
@@ -37,6 +46,9 @@ class TicketServiceImpl(
         statusEnum: TicketStatusEnum?,
         priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
+
+
+
         val expert = if (expertEmail != null) {
             staffRepository.findByEmailIgnoreCase(expertEmail)
         } else
@@ -49,6 +61,8 @@ class TicketServiceImpl(
         val priorityLevelVal = if (priorityLevel != null) {
             priorityLevelRepository.findByName(priorityLevel.name)
         } else null
+
+
 
         return ticketRepository.findAll(
             (TicketSpecification.ofCustomer(customer).and(TicketSpecification.ofExpert(expert))
