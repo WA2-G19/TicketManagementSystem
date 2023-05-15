@@ -18,7 +18,7 @@ class StaffController(
 
     // manager and Expert (its profile)
 
-    @PreAuthorize("#email == #token.tokenAttributes['email'] and hasAnyRole('Manager', 'Expert')")
+    @PreAuthorize("isAuthenticated() and #email == #token.tokenAttributes['email'] and hasAnyRole('Manager', 'Expert')")
     @GetMapping("/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(

@@ -2,13 +2,10 @@ package it.polito.wa2.g19.server.testingauth
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
-import it.polito.wa2.g19.server.ticketing.chat.ChatMessageInDTO
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.*
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import org.springframework.http.MediaType
-import org.springframework.http.RequestEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
@@ -17,9 +14,6 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
-import org.springframework.web.client.exchange
 
 @RestController
 class TestingAuthController {
@@ -39,7 +33,7 @@ class TestingAuthController {
         return jwtObj.claims["email"]!!.toString()
     }
 
-    @PreAuthorize("#email == #token.tokenAttributes['email']")
+    @PreAuthorize("isAuthenticated() and #email == #token.tokenAttributes['email']")
     @GetMapping("/personal/{email}")
     fun personalApi(
         @Valid

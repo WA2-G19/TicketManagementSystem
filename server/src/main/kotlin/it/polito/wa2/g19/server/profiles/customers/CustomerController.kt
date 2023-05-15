@@ -26,7 +26,7 @@ class CustomerController(
 
     // Manager (for all)
     // Client and Expert only for its profile
-    @PreAuthorize("hasRole('Manager') or #email == #token.tokenAttributes['email']")
+    @PreAuthorize("isAuthenticated() and hasRole('Manager') or #email == #token.tokenAttributes['email']")
     @GetMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun getProfile(
@@ -52,7 +52,7 @@ class CustomerController(
     }
 
     // Client
-    @PreAuthorize("#email == #token.tokenAttributes['email']")
+    @PreAuthorize("isAuthenticated() and #email == #token.tokenAttributes['email']")
     @PutMapping("/profiles/{email}")
     @ResponseStatus(HttpStatus.OK)
     fun putProfile(
