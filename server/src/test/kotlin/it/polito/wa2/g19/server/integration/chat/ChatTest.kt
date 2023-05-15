@@ -111,14 +111,20 @@ class ChatTest {
             customer = customerRepository.save(it)
 
         }
+        customer = customerRepository.save(Util.mockMainCustomer())
+
         Util.mockManagers().forEach {
             manager = staffRepository.save(it)
         }
+        manager = staffRepository.save(Util.mockMainManager())
+
         Util.mockExperts().forEach {
             if (::expert.isInitialized)
                 otherExpert = expert
             expert = staffRepository.save(it)
         }
+        expert = staffRepository.save(Util.mockMainExpert())
+
         Util.mockPriorityLevels().forEach {
             priorityLevelRepository.save(it)
         }
