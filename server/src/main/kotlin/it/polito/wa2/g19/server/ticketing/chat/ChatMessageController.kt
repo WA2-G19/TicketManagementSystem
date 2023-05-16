@@ -1,9 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.chat
 
-import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.common.Util
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
-import it.polito.wa2.g19.server.ticketing.tickets.TicketService
 import jakarta.validation.Valid
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
@@ -25,7 +22,6 @@ import java.net.URI
 class ChatMessageController(
     private val chatMessageService: ChatMessageService,
     private val handlerMapping: RequestMappingHandlerMapping,
-    private val ticketService: TicketService,
 ) {
 
 
@@ -40,33 +36,11 @@ class ChatMessageController(
         @PathVariable ticketId: Int,
         @PathVariable chatMessageId: Int
     ): ChatMessageOutDTO {
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
-        val email = principal.name
-        val chatMessage = chatMessageService.getChatMessage(ticketId, chatMessageId).apply {
+        return chatMessageService.getChatMessage(ticketId, chatMessageId).apply {
             stubAttachments?.forEach { stub ->
                 stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId, chatMessageId, stub.url)
             }
         }
-        when (role) {
-            Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId, principal)
-                if (ticket.customerEmail == email) {
-                    return chatMessage
-                }
-            }
-
-            Role.ROLE_Expert -> {
-                val status = ticketService.getFinalStatus(ticketId)
-                if (status.expert == email) {
-                    return chatMessage
-                }
-            }
-
-            Role.ROLE_Manager -> {
-                return chatMessage
-            }
-        }
-        throw NotAllowedToThisMethodException()
     }
 
     // User is authenticated
@@ -80,34 +54,13 @@ class ChatMessageController(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int
     ): Set<ChatMessageOutDTO> {
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
-        val email = principal.name
         val messages = chatMessageService.getChatMessages(ticketId)
         messages.forEach {
             it.stubAttachments?.forEach { stub ->
                 stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId, it.id, stub.url)
             }
         }
-        when (role) {
-            Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId, principal )
-                if (ticket.customerEmail == email) {
-                    return messages
-                }
-            }
-
-            Role.ROLE_Expert -> {
-                val status = ticketService.getFinalStatus(ticketId)
-                if (status.expert == email && (status.status == TicketStatusEnum.Closed || status.status == TicketStatusEnum.InProgress)) {
-                    return messages
-                }
-            }
-
-            Role.ROLE_Manager -> {
-                return messages
-            }
-        }
-        throw NotAllowedToThisMethodException()
+        return messages
     }
 
     // User is authenticated
@@ -126,31 +79,10 @@ class ChatMessageController(
         @RequestPart message: ChatMessageInDTO,
         @RequestPart(required = false) files: List<MultipartFile>?,
     ): ResponseEntity<Void> {
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
-        val email = principal.name
         val id = chatMessageService.insertChatMessage(ticketId, message, files)
         val headers = HttpHeaders()
         headers.location = URI.create(Util.getUri(handlerMapping, ::getMessage.name, ticketId, id))
-        when (role) {
-            Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId, principal)
-                if (ticket.customerEmail == email) {
-                    return ResponseEntity(null, headers, HttpStatus.CREATED)
-                }
-            }
-
-            Role.ROLE_Expert -> {
-                val status = ticketService.getFinalStatus(ticketId)
-                if (status.expert == email) {
-                    return ResponseEntity(null, headers, HttpStatus.CREATED)
-                }
-            }
-
-            Role.ROLE_Manager -> {
-                return ResponseEntity(null, headers, HttpStatus.CREATED)
-            }
-        }
-        throw NotAllowedToThisMethodException()
+        return ResponseEntity(null, headers, HttpStatus.CREATED)
     }
 
     // User is authenticated
@@ -167,33 +99,12 @@ class ChatMessageController(
         @PathVariable(required = true) chatMessageId: ChatMessage,
         @PathVariable(required = true) attachmentId: Int,
     ): ResponseEntity<ByteArrayResource> {
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
-        val email = principal.name
         val attachmentDTO = chatMessageService.getAttachment(ticketId, attachmentId)
         val headers = HttpHeaders()
         headers.set("content-disposition", "attachment; filename=${attachmentDTO.name}")
         headers.contentType = MediaType.parseMediaType(attachmentDTO.contentType)
         headers["TMS-Creation-Time"] = attachmentDTO.timestamp.toString()
         headers["TMS-Length"] = attachmentDTO.length.toString()
-        when (role) {
-            Role.ROLE_Client -> {
-                val ticket = ticketService.getTicket(ticketId, principal)
-                if (ticket.customerEmail == email) {
-                    return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
-                }
-            }
-
-            Role.ROLE_Expert -> {
-                val status = ticketService.getFinalStatus(ticketId)
-                if (status.expert == email) {
-                    return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
-                }
-            }
-
-            Role.ROLE_Manager -> {
-                return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
-            }
-        }
-        throw NotAllowedToThisMethodException()
+        return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
     }
 }

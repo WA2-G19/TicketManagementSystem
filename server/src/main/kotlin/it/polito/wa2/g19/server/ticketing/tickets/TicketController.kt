@@ -59,10 +59,8 @@ class TicketController(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int): TicketOutDTO {
 
-        val ticket = ticketService.getTicket(ticketId, principal)
 
-
-        return ticket
+        return ticketService.getTicket(ticketId)
     }
 
     @PreAuthorize("hasRole('Client')")

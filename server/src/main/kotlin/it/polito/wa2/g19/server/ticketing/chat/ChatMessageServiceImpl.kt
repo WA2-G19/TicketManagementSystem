@@ -7,8 +7,8 @@ import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentDTO
 import it.polito.wa2.g19.server.ticketing.attachments.toDTO
-import it.polito.wa2.g19.server.ticketing.tickets.TicketNotFoundException
 import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
+import it.polito.wa2.g19.server.ticketing.tickets.TicketService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -28,20 +28,18 @@ class ChatMessageServiceImpl(
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
     private val staffRepository: StaffRepository,
-) : ChatMessageService {
+    private val ticketService: TicketService,
+    ) : ChatMessageService {
 
     override fun getChatMessage(ticketId: Int, chatMessageId: Int): ChatMessageOutDTO {
-        ticketRepository.existsById(ticketId).let {if(!it) throw TicketNotFoundException()}
-
+        ticketService.getTicket(ticketId)
         val message = chatMessageRepository.findByTicketIdAndId(ticketId, chatMessageId) ?: throw MessageNotFoundException()
         val attachmentProjections = attachmentRepository.findByMessage(message)
         return message.toOutDTO(attachmentProjections)
-
     }
 
     override fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO> {
-        if (!ticketRepository.existsById(ticketId))
-            throw TicketNotFoundException()
+        ticketService.getTicket(ticketId)
         return chatMessageRepository.findByTicketId(ticketId)!!
             .map {
                 it.toOutDTO(attachmentRepository.findByMessage(it))
@@ -49,7 +47,8 @@ class ChatMessageServiceImpl(
     }
 
     override fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
-        val referredTicket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        ticketService.getTicket(ticketId)
+        val referredTicket = ticketRepository.findById(ticketId).get()
         val profile = customerRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
             ?: staffRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
             ?: throw ProfileNotFoundException()
@@ -79,9 +78,8 @@ class ChatMessageServiceImpl(
     }
 
     override fun getAttachment(ticketId: Int, attachmentId: Int): AttachmentDTO {
-        ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        ticketService.getTicket(ticketId)
         val attachment = attachmentRepository.findByIdOrNull(attachmentId) ?: throw AttachmentNotFoundException()
-
         return attachment.toDTO()
     }
 }
