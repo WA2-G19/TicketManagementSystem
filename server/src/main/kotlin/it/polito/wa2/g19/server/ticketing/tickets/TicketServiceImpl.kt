@@ -196,4 +196,17 @@ class TicketServiceImpl(
         return statuses.toDTO()
     }
 
+    override fun checkAuthorAndUser(ticketId: Int, author: String): Boolean {
+        val principal = SecurityContextHolder.getContext().authentication
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val ticket = getTicket(ticketId)
+        val flag =
+            when (role) {
+                Role.ROLE_Client -> ticket.customerEmail == author
+                Role.ROLE_Expert -> ticket.expertEmail == author
+                Role.ROLE_Manager -> true
+            }
+        return flag
+    }
+
 }

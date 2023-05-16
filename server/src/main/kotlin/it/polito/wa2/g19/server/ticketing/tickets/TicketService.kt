@@ -23,4 +23,6 @@ interface TicketService {
 
     fun getFinalStatus(ticketId: Int): TicketStatusDTO
 
+    fun checkAuthorAndUser(ticketId: Int, author: String): Boolean
+
 }

@@ -47,7 +47,8 @@ class ChatMessageServiceImpl(
     }
 
     override fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
-        ticketService.getTicket(ticketId)
+        if(!ticketService.checkAuthorAndUser(ticketId,messageToSave.authorEmail))
+            throw AuthorAndUserAreDifferentException()
         val referredTicket = ticketRepository.findById(ticketId).get()
         val profile = customerRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
             ?: staffRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
