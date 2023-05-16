@@ -29,6 +29,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -171,11 +172,23 @@ class ChatTest {
         managerToken = response.body!!
     }
 
-    fun insertTicket(status: TicketStatusEnum): Int {
+    fun insertTicket(): Int {
         val ticket = Util.mockTicket()
-        ticket.status = status
+        ticket.status = TicketStatusEnum.Open
         ticket.customer = customer
         ticket.product = product
+        val ticketStatus = Util.mockOpenTicketStatus()
+        ticketStatus.ticket = ticket
+        ticket.statusHistory = mutableSetOf()
+        ticket.statusHistory.add(ticketStatus)
+        val ticketID = ticketRepository.save(ticket).getId()!!
+        ticketStatusRepository.save(ticketStatus)
+        return ticketID
+    }
+
+    fun assignTicket(ticketId: Int, expert: Expert, by: Manager) {
+        val ticket = ticketRepository.findByIdOrNull(ticketId)!!
+        ticket.status = TicketStatusEnum.InProgress
         ticket.expert = expert
         val ticketStatus = Util.mockInProgressTicketStatus()
         ticketStatus.priority = priorityLevelRepository.findByName("HIGH")
@@ -184,14 +197,13 @@ class ChatTest {
         ticketStatus.by = manager
         ticket.statusHistory = mutableSetOf()
         ticket.statusHistory.add(ticketStatus)
-        val ticketID = ticketRepository.save(ticket).getId()!!
+        ticketRepository.save(ticket)
         ticketStatusRepository.save(ticketStatus)
-        return ticketID
     }
 
     @Test
     fun `get all messages for a ticket`() {
-        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val ticketId = insertTicket()
         val messageBody = "This is a test message"
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
@@ -214,7 +226,8 @@ class ChatTest {
 
     @Test
     fun `get all messages for a ticket as an Expert`() {
-        val ticketId = insertTicket(TicketStatusEnum.InProgress)
+        val ticketId = insertTicket()
+        assignTicket(ticketId, expert, manager)
         val messageBody = "This is a test message"
         val headers = HttpHeaders()
         headers.setBearerAuth(expertToken)
@@ -236,6 +249,53 @@ class ChatTest {
     }
 
     @Test
+    fun `get messages for a not assigned ticket as an Expert`() {
+        val ticketId = insertTicket()
+        val messageBody = "This is a test message"
+        val headers1 = HttpHeaders()
+        headers1.setBearerAuth(customerToken)
+        val request1 = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .headers(headers1)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(customer.email, messageBody))
+            })
+        val response1 = restTemplate.exchange<Void>(request1)
+        assert(response1.statusCode == HttpStatus.CREATED)
+        assert(response1.headers.location.toString().isNotBlank())
+        val headers2 = HttpHeaders()
+        headers2.setBearerAuth(expertToken)
+        val response2: ResponseEntity<ProblemDetail> =
+            restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages", HttpMethod.GET, HttpEntity(null, headers2))
+        assert(response2.statusCode == HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `get messages for a ticket as a Manager`() {
+        val ticketId = insertTicket()
+        val messageBody = "This is a test message"
+        val headers1 = HttpHeaders()
+        headers1.setBearerAuth(customerToken)
+        val request1 = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .headers(headers1)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(customer.email, messageBody))
+            })
+        val response1 = restTemplate.exchange<Void>(request1)
+        assert(response1.statusCode == HttpStatus.CREATED)
+        assert(response1.headers.location.toString().isNotBlank())
+        val headers2 = HttpHeaders()
+        headers2.setBearerAuth(managerToken)
+        val response2: ResponseEntity<Set<ChatMessageOutDTO>> =
+            restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages", HttpMethod.GET, HttpEntity(null, headers2))
+        assert(response2.statusCode == HttpStatus.OK)
+        assert(response2.body!!.size == 1)
+        assert(response2.body!!.elementAt(0).authorEmail == customer.email)
+        assert(response2.body!!.elementAt(0).body == messageBody)
+    }
+
+    @Test
     fun `get all messages for a non existent ticket`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
@@ -248,7 +308,7 @@ class ChatTest {
     fun `get a non existent messages`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
-        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val ticketId = insertTicket()
         val responseGet: ResponseEntity<ProblemDetail> =
             restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages/1", HttpMethod.GET, HttpEntity(null, headers))
         assert(responseGet.statusCode == HttpStatus.NOT_FOUND)
@@ -258,7 +318,7 @@ class ChatTest {
     fun `get a non existent attachment`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
-        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val ticketId = insertTicket()
         val messageBody = "This is a test message"
         val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
             .headers(headers)
@@ -275,10 +335,10 @@ class ChatTest {
     }
 
     @Test
-    fun `create a simple message for a ticket`() {
+    fun `create a simple message for a ticket as Customer`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
-        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val ticketId = insertTicket()
         val messageBody = "This is a test message"
         val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
             .headers(headers)
@@ -296,10 +356,32 @@ class ChatTest {
     }
 
     @Test
+    fun `create a simple message for a ticket as Expert`() {
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val ticketId = insertTicket()
+        assignTicket(ticketId, expert, manager)
+        val messageBody = "This is a test message"
+        val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .headers(headers)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(expert.email, messageBody))
+            })
+        val response = restTemplate.exchange<Void>(request)
+        assert(response.statusCode == HttpStatus.CREATED)
+        assert(response.headers.location.toString().isNotBlank())
+        val responseGet = restTemplate.exchange(response.headers.location, HttpMethod.GET, HttpEntity(null, headers),  ChatMessageOutDTO::class.java)
+        assert(responseGet.statusCode == HttpStatus.OK)
+        assert(responseGet.body!!.authorEmail == expert.email)
+        assert(responseGet.body!!.body == messageBody)
+    }
+
+    @Test
     fun `create a message for a ticket with attachments`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
-        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val ticketId = insertTicket()
         val messageBody = "This is a test message"
         val file1Content = "test".toByteArray()
         val file2Content = "test2".toByteArray()
@@ -329,7 +411,7 @@ class ChatTest {
     fun `create a message for a ticket with attachments and get the attachments`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
-        val ticketId = insertTicket(TicketStatusEnum.Open)
+        val ticketId = insertTicket()
         val messageBody = "This is a test message"
         val fileName = "test.txt"
         val fileContent = "test".toByteArray()
@@ -354,6 +436,123 @@ class ChatTest {
             responseGet.body!!.stubAttachments!!.elementAt(0).url,
             HttpMethod.GET,
             HttpEntity(null, headers),
+            ByteArrayResource::class.java
+        )
+        assert(responseGetAttachment.statusCode == HttpStatus.OK)
+        assert(responseGetAttachment.headers.contentType == MediaType.TEXT_PLAIN)
+        assert(responseGetAttachment.headers.contentDisposition.isAttachment)
+        assert(responseGetAttachment.headers.contentDisposition.filename == fileName)
+        assert(responseGetAttachment.body!!.byteArray.contentEquals(fileContent))
+    }
+
+    @Test
+    fun `create a message for a ticket with attachments and get the attachments as an Expert`() {
+        val headers1 = HttpHeaders()
+        headers1.setBearerAuth(customerToken)
+        val ticketId = insertTicket()
+        assignTicket(ticketId, expert, manager)
+        val messageBody = "This is a test message"
+        val fileName = "test.txt"
+        val fileContent = "test".toByteArray()
+        val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .headers(headers1)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("files", object : ByteArrayResource(fileContent) {
+                    override fun getFilename(): String = fileName
+                })
+            })
+        val response = restTemplate.exchange<Void>(request)
+        assert(response.statusCode == HttpStatus.CREATED)
+        assert(response.headers.location.toString().isNotBlank())
+        val headers2 = HttpHeaders()
+        headers2.setBearerAuth(expertToken)
+        val responseGet = restTemplate.exchange(response.headers.location, HttpMethod.GET, HttpEntity(null, headers2), ChatMessageOutDTO::class.java)
+        assert(responseGet.statusCode == HttpStatus.OK)
+        assert(responseGet.body!!.authorEmail == customer.email)
+        assert(responseGet.body!!.body == messageBody)
+        assert(responseGet.body!!.stubAttachments!!.size == 1)
+        val responseGetAttachment = restTemplate.exchange(
+            responseGet.body!!.stubAttachments!!.elementAt(0).url,
+            HttpMethod.GET,
+            HttpEntity(null, headers2),
+            ByteArrayResource::class.java
+        )
+        assert(responseGetAttachment.statusCode == HttpStatus.OK)
+        assert(responseGetAttachment.headers.contentType == MediaType.TEXT_PLAIN)
+        assert(responseGetAttachment.headers.contentDisposition.isAttachment)
+        assert(responseGetAttachment.headers.contentDisposition.filename == fileName)
+        assert(responseGetAttachment.body!!.byteArray.contentEquals(fileContent))
+    }
+
+    @Test
+    fun `create a message for a non assigned ticket with attachments and get the attachments as an Expert`() {
+        val headers1 = HttpHeaders()
+        headers1.setBearerAuth(customerToken)
+        val ticketId = insertTicket()
+        val messageBody = "This is a test message"
+        val fileName = "test.txt"
+        val fileContent = "test".toByteArray()
+        val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .headers(headers1)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("files", object : ByteArrayResource(fileContent) {
+                    override fun getFilename(): String = fileName
+                })
+            })
+        val response = restTemplate.exchange<Void>(request)
+        assert(response.statusCode == HttpStatus.CREATED)
+        assert(response.headers.location.toString().isNotBlank())
+        val headers2 = HttpHeaders()
+        headers2.setBearerAuth(expertToken)
+        val responseGet = restTemplate.exchange(response.headers.location, HttpMethod.GET, HttpEntity(null, headers1), ChatMessageOutDTO::class.java)
+        assert(responseGet.statusCode == HttpStatus.OK)
+        assert(responseGet.body!!.authorEmail == customer.email)
+        assert(responseGet.body!!.body == messageBody)
+        assert(responseGet.body!!.stubAttachments!!.size == 1)
+        val responseGetAttachment = restTemplate.exchange(
+            responseGet.body!!.stubAttachments!!.elementAt(0).url,
+            HttpMethod.GET,
+            HttpEntity(null, headers2),
+            ProblemDetail::class.java
+        )
+        assert(responseGetAttachment.statusCode == HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `create a message for a ticket with attachments and get the attachments as an Manager`() {
+        val headers1 = HttpHeaders()
+        headers1.setBearerAuth(customerToken)
+        val ticketId = insertTicket()
+        val messageBody = "This is a test message"
+        val fileName = "test.txt"
+        val fileContent = "test".toByteArray()
+        val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .headers(headers1)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("files", object : ByteArrayResource(fileContent) {
+                    override fun getFilename(): String = fileName
+                })
+            })
+        val response = restTemplate.exchange<Void>(request)
+        assert(response.statusCode == HttpStatus.CREATED)
+        assert(response.headers.location.toString().isNotBlank())
+        val headers2 = HttpHeaders()
+        headers2.setBearerAuth(managerToken)
+        val responseGet = restTemplate.exchange(response.headers.location, HttpMethod.GET, HttpEntity(null, headers2), ChatMessageOutDTO::class.java)
+        assert(responseGet.statusCode == HttpStatus.OK)
+        assert(responseGet.body!!.authorEmail == customer.email)
+        assert(responseGet.body!!.body == messageBody)
+        assert(responseGet.body!!.stubAttachments!!.size == 1)
+        val responseGetAttachment = restTemplate.exchange(
+            responseGet.body!!.stubAttachments!!.elementAt(0).url,
+            HttpMethod.GET,
+            HttpEntity(null, headers2),
             ByteArrayResource::class.java
         )
         assert(responseGetAttachment.statusCode == HttpStatus.OK)
