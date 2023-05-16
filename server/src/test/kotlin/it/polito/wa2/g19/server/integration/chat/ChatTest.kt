@@ -77,6 +77,8 @@ class ChatTest {
     private lateinit var expert: Expert
     private lateinit var otherExpert: Expert
     private lateinit var customerToken: String
+    private lateinit var expertToken: String
+    private lateinit var managerToken: String
 
     @Autowired
     lateinit var customerRepository: CustomerRepository
@@ -104,27 +106,26 @@ class ChatTest {
 
     @BeforeEach
     fun populateDatabase() {
+        if(!keycloak.isRunning){
+            keycloak.start()
+        }
         println("----populating database------")
         Util.mockCustomers().forEach {
             if (::customer.isInitialized)
                 otherCustomer = customer
             customer = customerRepository.save(it)
-
         }
         customer = customerRepository.save(Util.mockMainCustomer())
-
         Util.mockManagers().forEach {
             manager = staffRepository.save(it)
         }
         manager = staffRepository.save(Util.mockMainManager())
-
         Util.mockExperts().forEach {
             if (::expert.isInitialized)
                 otherExpert = expert
             expert = staffRepository.save(it)
         }
         expert = staffRepository.save(Util.mockMainExpert())
-
         Util.mockPriorityLevels().forEach {
             priorityLevelRepository.save(it)
         }
@@ -154,13 +155,35 @@ class ChatTest {
         customerToken = response.body!!
     }
 
+    @BeforeEach
+    fun refreshExpertToken(){
+        val loginDTO = LoginDTO(expert.email, "password")
+        val body = HttpEntity(loginDTO)
+        val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
+        expertToken = response.body!!
+    }
+
+    @BeforeEach
+    fun refreshManagerToken(){
+        val loginDTO = LoginDTO(manager.email, "password")
+        val body = HttpEntity(loginDTO)
+        val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
+        managerToken = response.body!!
+    }
+
     fun insertTicket(status: TicketStatusEnum): Int {
         val ticket = Util.mockTicket()
         ticket.status = status
         ticket.customer = customer
         ticket.product = product
-        val ticketStatus = Util.mockOpenTicketStatus()
+        ticket.expert = expert
+        val ticketStatus = Util.mockInProgressTicketStatus()
+        ticketStatus.priority = priorityLevelRepository.findByName("HIGH")
         ticketStatus.ticket = ticket
+        ticketStatus.expert = expert
+        ticketStatus.by = manager
+        ticket.statusHistory = mutableSetOf()
+        ticket.statusHistory.add(ticketStatus)
         val ticketID = ticketRepository.save(ticket).getId()!!
         ticketStatusRepository.save(ticketStatus)
         return ticketID
@@ -186,6 +209,29 @@ class ChatTest {
         assert(responseGet.statusCode == HttpStatus.OK)
         assert(responseGet.body!!.size == 1)
         assert(responseGet.body!!.elementAt(0).authorEmail == customer.email)
+        assert(responseGet.body!!.elementAt(0).body == messageBody)
+    }
+
+    @Test
+    fun `get all messages for a ticket as an Expert`() {
+        val ticketId = insertTicket(TicketStatusEnum.InProgress)
+        val messageBody = "This is a test message"
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = RequestEntity.post("$prefixEndPoint/$ticketId/chat-messages")
+            .headers(headers)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply {
+                add("message", ChatMessageInDTO(expert.email, messageBody))
+            })
+        val response = restTemplate.exchange<Void>(request)
+        assert(response.statusCode == HttpStatus.CREATED)
+        assert(response.headers.location.toString().isNotBlank())
+        val responseGet: ResponseEntity<Set<ChatMessageOutDTO>> =
+            restTemplate.exchange("$prefixEndPoint/$ticketId/chat-messages", HttpMethod.GET, HttpEntity(null, headers))
+        assert(responseGet.statusCode == HttpStatus.OK)
+        assert(responseGet.body!!.size == 1)
+        assert(responseGet.body!!.elementAt(0).authorEmail == expert.email)
         assert(responseGet.body!!.elementAt(0).body == messageBody)
     }
 

@@ -4,6 +4,7 @@ import it.polito.wa2.g19.server.ticketing.attachments.Attachment
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentDTO
 import it.polito.wa2.g19.server.ticketing.attachments.toDTO
 import it.polito.wa2.g19.server.ticketing.tickets.TicketNotFoundException
@@ -26,6 +27,7 @@ class ChatMessageServiceImpl(
     private val attachmentRepository: AttachmentRepository,
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
+    private val staffRepository: StaffRepository,
 ) : ChatMessageService {
 
     override fun getChatMessage(ticketId: Int, chatMessageId: Int): ChatMessageOutDTO {
@@ -46,12 +48,13 @@ class ChatMessageServiceImpl(
             }.toSet()
     }
 
-    override fun insertChatMessage(ticketId: Int,messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
+    override fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
         val referredTicket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-        val referredCustomer = customerRepository.findByEmailIgnoreCase(messageToSave.authorEmail) ?: throw ProfileNotFoundException()
-        val createdMessage = ChatMessage().apply {
+        val profile = customerRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
+            ?: staffRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
+            ?: throw ProfileNotFoundException()
+        val createdMessage = ChatMessage.withAuthor(profile).apply {
             ticket = referredTicket
-            author = referredCustomer
             body = messageToSave.body
         }
         chatMessageRepository.save(createdMessage)
