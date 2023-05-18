@@ -39,7 +39,6 @@ class TicketServiceImpl(
                 Role.ROLE_Expert -> ticketRepository.findTicketByIdAndExpertEmail(id, email)
                 Role.ROLE_Manager -> ticketRepository.findByIdOrNull(id)
             } ?: throw TicketNotFoundException()
-
         return ticket.toOutDTO()
     }
 
