@@ -100,7 +100,6 @@ class TicketServiceImpl(
     }
 
     //SOLO MANAGER O EXPERT (SE EXPERT BISOGNA VERIFICARE CHE IL TICKET SIA SUO)
-    // Credo di aver risolto
     @PreAuthorize("hasAnyRole('Manager', 'Expert')")
     override fun stopProgressTicket(ticketId: Int) {
 

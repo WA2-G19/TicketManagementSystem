@@ -25,6 +25,7 @@ import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.event.annotation.BeforeTestMethod
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -1564,6 +1565,62 @@ class TicketTest {
         val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.FORBIDDEN)
+    }
+
+    @Test
+    fun `resolve an open ticket is unsuccessful for another expert`(){
+
+        val ticket = Util.mockTicket()
+        ticket.status = TicketStatusEnum.Open
+        ticket.expert = otherExpert
+        ticket.customer = customer
+        ticket.product = product
+        val ticketStatus = Util.mockOpenTicketStatus()
+        ticketStatus.ticket = ticket
+        ticket.statusHistory = mutableSetOf()
+        ticket.statusHistory.add(ticketStatus)
+        val ticketID = ticketRepository.save(ticket).getId()
+
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID!!,
+            TicketStatusEnum.Resolved,
+            by = expert.email
+        )
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.NOT_FOUND)
+        assert(response.body!!.detail!! == TicketNotFoundException().message)
+
+    }
+
+    @Test
+    fun `close an open ticket is unsuccessful for another expert`(){
+
+        val ticket = Util.mockTicket()
+        ticket.status = TicketStatusEnum.Resolved
+        ticket.expert = otherExpert
+        ticket.customer = customer
+        ticket.product = product
+        val ticketStatus = Util.mockOpenTicketStatus()
+        ticketStatus.ticket = ticket
+        ticket.statusHistory = mutableSetOf()
+        ticket.statusHistory.add(ticketStatus)
+        val ticketID = ticketRepository.save(ticket).getId()
+
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID!!,
+            TicketStatusEnum.Closed,
+            by = expert.email
+        )
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.NOT_FOUND)
+        assert(response.body!!.detail == TicketNotFoundException().message)
+
     }
 
 
