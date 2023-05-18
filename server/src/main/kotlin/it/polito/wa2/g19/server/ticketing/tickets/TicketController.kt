@@ -102,14 +102,12 @@ class TicketController(
         @RequestBody
         ticketStatus: TicketStatusDTO
     ) {
-        val principal = SecurityContextHolder.getContext().authentication
-        val email = principal.name
 
         when(ticketStatus.status) {
             TicketStatusEnum.Reopened -> ticketService.reopenTicket(ticketId)
-            TicketStatusEnum.InProgress -> ticketService.startProgressTicket(ticketId, email, ticketStatus)
-            TicketStatusEnum.Closed -> ticketService.closeTicket(ticketId, email)
-            TicketStatusEnum.Resolved -> ticketService.resolveTicket(ticketId, email)
+            TicketStatusEnum.InProgress -> ticketService.startProgressTicket(ticketId, principal.name, ticketStatus)
+            TicketStatusEnum.Closed -> ticketService.closeTicket(ticketId, principal.name)
+            TicketStatusEnum.Resolved -> ticketService.resolveTicket(ticketId, principal.name)
             else -> throw ForbiddenException()
         }
     }
