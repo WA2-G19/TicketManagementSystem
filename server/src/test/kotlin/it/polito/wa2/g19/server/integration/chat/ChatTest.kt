@@ -202,7 +202,7 @@ class ChatTest {
     }
 
     @Test
-    fun `get all messages for a ticket`() {
+    fun `get all messages for a ticket as a Customer`() {
         val ticketId = insertTicket()
         val messageBody = "This is a test message"
         val headers = HttpHeaders()
@@ -335,7 +335,7 @@ class ChatTest {
     }
 
     @Test
-    fun `create a simple message for a ticket as Customer`() {
+    fun `create a simple message for a ticket as a Customer`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(customerToken)
         val ticketId = insertTicket()
@@ -356,7 +356,7 @@ class ChatTest {
     }
 
     @Test
-    fun `create a simple message for a ticket as Expert`() {
+    fun `create a simple message for a ticket as an Expert`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(expertToken)
         val ticketId = insertTicket()
@@ -523,7 +523,7 @@ class ChatTest {
     }
 
     @Test
-    fun `create a message for a ticket with attachments and get the attachments as an Manager`() {
+    fun `create a message for a ticket with attachments and get the attachments as a Manager`() {
         val headers1 = HttpHeaders()
         headers1.setBearerAuth(customerToken)
         val ticketId = insertTicket()
