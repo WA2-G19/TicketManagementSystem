@@ -8,11 +8,13 @@ import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import jakarta.validation.Valid
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.MethodNotAllowedException
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.net.URI
 
@@ -103,24 +105,37 @@ class TicketController(
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
         when (ticketStatus.status) {
-            TicketStatusEnum.Reopened -> ticketService.reopenTicket(ticketId)
+            TicketStatusEnum.Reopened -> {
+                if(role == Role.ROLE_Client)
+                    ticketService.reopenTicket(ticketId)
+                else{
+                    throw ForbiddenException()
+                }
+            }
             TicketStatusEnum.InProgress -> {
                 if (role != Role.ROLE_Client && role != Role.ROLE_Expert)
-
                     ticketService.startProgressTicket(ticketId, email, ticketStatus)
+                else{
+                    throw ForbiddenException()
+                }
             }
-
             TicketStatusEnum.Closed -> {
                 if (role != Role.ROLE_Client)
                     ticketService.closeTicket(ticketId, email)
+                else{
+                    throw ForbiddenException()
+                }
             }
-
             TicketStatusEnum.Resolved -> {
                 if (role != Role.ROLE_Client)
                     ticketService.resolveTicket(ticketId, email)
+                else{
+                    throw ForbiddenException()
+                }
             }
-
-            else -> {}
+            else -> {
+                 throw ForbiddenException()
+            }
         }
     }
 

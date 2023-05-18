@@ -189,7 +189,6 @@ class ChatMessageController(
                     return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
                 }
             }
-
             Role.ROLE_Manager -> {
                 return ResponseEntity.ok().headers(headers).body(attachmentDTO.content)
             }

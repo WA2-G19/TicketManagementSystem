@@ -10,6 +10,8 @@ import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -74,6 +76,7 @@ class TicketServiceImpl(
 
     }
 
+
     override fun createTicket(ticket: TicketDTO): Int {
         val c = customerRepository.findByEmailIgnoreCase(ticket.customerEmail) ?: throw ProfileNotFoundException()
         val p = productRepository.findByEan(ticket.productEan) ?: throw ProductNotFoundException()
@@ -87,7 +90,6 @@ class TicketServiceImpl(
             priorityLevel = null
 
         }
-
         t.statusHistory.add(OpenTicketStatus().apply {
             this.ticket = t
             this.timestamp = LocalDateTime.now()
@@ -95,6 +97,8 @@ class TicketServiceImpl(
         val ticketCreated = ticketRepository.save(t)
         return ticketCreated.getId()!!
     }
+
+    //SOLO MANAGER O EXPERT (SE EXPERT BISOGNA VERIFICARE CHE IL TICKET SIA SUO)
 
     override fun stopProgressTicket(ticketId: Int) {
         val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
@@ -110,10 +114,10 @@ class TicketServiceImpl(
         }
     }
 
+    @PreAuthorize("hasRole('Client')")
     override fun reopenTicket(ticketId: Int) {
-        val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-
-
+        val client = SecurityContextHolder.getContext().authentication as JwtAuthenticationToken;
+        val ticket: Ticket = ticketRepository.findTicketByIdAndCustomerEmail(ticketId, client.name) ?: throw TicketNotFoundException()
         if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
             ticket.status = TicketStatusEnum.Reopened
             ticket.statusHistory.add(ReopenedTicketStatus().apply {
@@ -126,9 +130,9 @@ class TicketServiceImpl(
         }
     }
 
+    @PreAuthorize("hasRole('Manager')")
     override fun startProgressTicket(ticketId: Int, managerEmail: String, ticketStatus: TicketStatusDTO) {
         val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
-
         val expert = staffRepository.findByEmailIgnoreCase(ticketStatus.expert!!) ?: throw ProfileNotFoundException()
         if (expert !is Expert) {
             throw ProfileNotFoundException()
@@ -155,7 +159,12 @@ class TicketServiceImpl(
         }
     }
 
+
+    @PreAuthorize("hasAnyRole('Manager', 'Expert')")
+    //SOLO MANAGER O EXPERT (SE EXPERT BISOGNA VERIFICARE CHE IL TICKET SIA SUO)
     override fun resolveTicket(ticketId: Int, resolverEmail: String) {
+        //per vedere se è dell 'expert
+        //ticketRepository.findTicketByIdAndExpertEmail(ticketId, resolverEmail) ?: throw TicketNotFoundException()
         val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
 
         val resolver = staffRepository.findByEmailIgnoreCase(resolverEmail) ?: throw ProfileNotFoundException()
@@ -172,6 +181,8 @@ class TicketServiceImpl(
         }
     }
 
+    @PreAuthorize("hasAnyRole('Manager', 'Expert')")
+    //SOLO MANAGER O EXPERT (SE EXPERT BISOGNA VERIFICARE CHE IL TICKET SIA SUO)
     override fun closeTicket(ticketId: Int, closerEmail: String) {
         val ticket: Ticket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
         val closer = staffRepository.findByEmailIgnoreCase(closerEmail) ?: throw ProfileNotFoundException()

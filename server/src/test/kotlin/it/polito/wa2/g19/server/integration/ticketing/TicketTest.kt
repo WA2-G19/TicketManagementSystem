@@ -175,6 +175,9 @@ class TicketTest {
         return ticketRepository.save(ticket).getId()!!
     }
 
+
+
+
     @Test
     fun `open a ticket is successful`(){
         val newTicket = Util.mockTicketDTO()
@@ -1403,6 +1406,175 @@ class TicketTest {
     }
 
 
+    @Test
+    fun `manager cannot open a ticket `(){
+        val newTicket = Util.mockTicketDTO()
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(newTicket, headers)
+        val responsePost = restTemplate.postForEntity<Void>(prefixEndPoint, request, HttpMethod.POST)
+        assert(responsePost.statusCode.value() == 403)
+
+    }
+
+    @Test
+    fun `expert cannot open a ticket`(){
+        val newTicket = Util.mockTicketDTO()
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = HttpEntity(newTicket, headers)
+        val responsePost = restTemplate.postForEntity<Void>(prefixEndPoint, request, HttpMethod.POST)
+        assert(responsePost.statusCode.value() == 403)
+    }
+
+    @Test
+    fun `customer cannot get a ticket of another customer`(){
+        val ticket = Util.mockTicket()
+        ticket.product = product
+        ticket.customer = otherCustomer
+        ticket.status = TicketStatusEnum.Open
+        val ticketID = ticketRepository.save(ticket).getId()
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),ProblemDetail::class.java)
+        assert(response.statusCode.value() == 404)
+        assert(response.body!!.detail == TicketNotFoundException().message!!)
+    }
+
+
+    @Test
+    fun `customer  gets only his  tickets`(){
+        val ticket = Util.mockTicket()
+        ticket.product = product
+        ticket.customer = otherCustomer
+        ticket.status = TicketStatusEnum.Open
+        val ticketID = ticketRepository.save(ticket).getId()
+        insertTicket(TicketStatusEnum.Open)
+
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val response: ResponseEntity<List<TicketOutDTO>>  = restTemplate.exchange("$prefixEndPoint", HttpMethod.GET,HttpEntity(null, headers))
+        assert( response.body!!.size == 1)
+        response.body!!.forEach{
+            assert(it.customerEmail == customer.email)
+        }
+    }
+
+    @Test
+    fun `expert  gets only his  tickets`(){
+        val ticket = Util.mockTicket()
+        ticket.product = product
+        ticket.customer = otherCustomer
+        ticket.expert = otherExpert
+        ticket.status = TicketStatusEnum.Open
+        val ticketID = ticketRepository.save(ticket).getId()
+        insertTicket(TicketStatusEnum.Open)
+
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val response: ResponseEntity<List<TicketOutDTO>>  = restTemplate.exchange("$prefixEndPoint", HttpMethod.GET,HttpEntity(null, headers))
+        assert( response.body!!.size == 1)
+        response.body!!.forEach{
+            assert(it.expertEmail == expert.email)
+        }
+    }
+
+    @Test
+    fun `expert cannot get a ticket of another expert`(){
+        val ticket = Util.mockTicket()
+        ticket.expert = otherExpert
+        ticket.product = product
+        ticket.customer = otherCustomer
+        ticket.status = TicketStatusEnum.Open
+        val ticketID = ticketRepository.save(ticket).getId()
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.GET,HttpEntity(null, headers),ProblemDetail::class.java)
+        assert(response.statusCode.value() == 404)
+        assert(response.body!!.detail == TicketNotFoundException().message!!)
+    }
+
+    @Test
+    fun `expert cannot reopen a ticket`(){
+        val ticketID = insertTicket(TicketStatusEnum.Closed)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Reopened,
+        )
+        val headers = HttpHeaders()
+        headers.setBearerAuth(expertToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.FORBIDDEN)
+        assert(response.body!!.detail == ForbiddenException().message)
+    }
+
+    @Test
+    fun `manager cannot reopen a ticket`(){
+        val ticketID = insertTicket(TicketStatusEnum.Closed)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Reopened,
+        )
+        val headers = HttpHeaders()
+        headers.setBearerAuth(managerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.FORBIDDEN)
+        assert(response.body!!.detail == ForbiddenException().message)
+    }
+
+    @Test
+    fun `customer cannot resolve a ticket`(){
+        val ticketID = insertTicket(TicketStatusEnum.Closed)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Resolved,
+            by = expert.email
+        )
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.FORBIDDEN)
+        assert(response.body!!.detail == ForbiddenException().message)
+    }
+
+    @Test
+    fun `customer cannot close a ticket`(){
+        val ticketID = insertTicket(TicketStatusEnum.Closed)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+            TicketStatusEnum.Closed,
+            by=manager.email
+        )
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.FORBIDDEN)
+        assert(response.body!!.detail == ForbiddenException().message)
+    }
+
+    @Test
+    fun `customer cannot start progress a ticket`(){
+        val ticketID = insertTicket(TicketStatusEnum.Closed)
+        val ticketStatusDTO = TicketStatusDTO(
+            ticketID,
+
+            TicketStatusEnum.InProgress,
+            by = manager.email,
+            expert = expert.email,
+            priorityLevel = PriorityLevelEnum.CRITICAL
+
+        )
+        val headers = HttpHeaders()
+        headers.setBearerAuth(customerToken)
+        val request = HttpEntity(ticketStatusDTO, headers)
+        val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
+        assert(response.statusCode == HttpStatus.FORBIDDEN)
+        assert(response.body!!.detail == ForbiddenException().message)
+    }
 
 
 }

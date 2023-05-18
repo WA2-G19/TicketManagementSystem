@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.common
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import jakarta.validation.ConstraintViolationException
 import org.json.JSONObject
 import org.springframework.http.*
@@ -32,6 +33,11 @@ class CommonProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolationException(e: ConstraintViolationException): ProblemDetail{
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+    }
+
+    @ExceptionHandler(ForbiddenException::class)
+    fun handleForbiddenException(e: ForbiddenException): ProblemDetail{
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.message!!)
     }
 
     override fun handleHttpMessageNotReadable(
