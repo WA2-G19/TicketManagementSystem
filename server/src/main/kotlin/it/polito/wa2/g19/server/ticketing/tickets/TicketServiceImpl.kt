@@ -10,9 +10,7 @@ import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -28,7 +26,8 @@ class TicketServiceImpl(
     private val ticketStatusRepository: TicketStatusRepository
 ): TicketService {
 
-    override fun getTicket(id: Int, principal: JwtAuthenticationToken): TicketOutDTO {
+    override fun getTicket(id: Int): TicketOutDTO {
+        val principal = SecurityContextHolder.getContext().authentication
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
 
@@ -204,6 +203,19 @@ class TicketServiceImpl(
     override fun getFinalStatus(ticketId: Int): TicketStatusDTO {
         val statuses = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketId)
         return statuses.toDTO()
+    }
+
+    override fun checkAuthorAndUser(ticketId: Int, author: String): Boolean {
+        val principal = SecurityContextHolder.getContext().authentication
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val ticket = getTicket(ticketId)
+        val flag =
+            when (role) {
+                Role.ROLE_Client -> ticket.customerEmail == author
+                Role.ROLE_Expert -> ticket.expertEmail == author
+                Role.ROLE_Manager -> true
+            }
+        return flag
     }
 
 }

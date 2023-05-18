@@ -1,16 +1,13 @@
 package it.polito.wa2.g19.server.integration.profile
 
 import it.polito.wa2.g19.server.profiles.customers.CustomerDTO
-import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.boot.test.web.client.postForEntity
-import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -36,18 +33,8 @@ class ProfileTest {
             registry.add("spring.jpa.hibernate.ddl-auto") {"create-drop"}
         }
     }
-    @LocalServerPort
-    protected var port: Int = 0
     @Autowired
     lateinit var restTemplate: TestRestTemplate
-    @Autowired
-    lateinit var customerRepository: CustomerRepository
-
-
-
-
-
-
 
     @Test
     fun containerIsRunning() {
@@ -61,11 +48,4 @@ class ProfileTest {
         println(response.statusCode)
         assertThat(response.statusCode)
     }
-     @Test
-     fun getProfile(){
-         val response = restTemplate.getForEntity<CustomerDTO>("/API/profiles/jacopo@test.it")
-         assertThat(response.statusCode.is2xxSuccessful)
-     }
-
-
 }

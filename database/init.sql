@@ -75,9 +75,6 @@ create table public.staff_skill
         foreign key (skill_id) references public.skill
 );
 
-
-
-
 create table public.ticket
 (
     id          integer       not null default nextval('public.ticket_seq'),
@@ -110,6 +107,24 @@ create table public.chat_message
         foreign key (ticket_id) references public.ticket
 );
 
+create table public.chat_message
+(
+    dtype              varchar(31)  not null,
+    id                 integer      not null default  nextval('public.chat_message_seq'),
+    body               varchar(255) not null,
+    timestamp          timestamp(6) not null,
+    ticket_id          integer      not null,
+    customer_author_id integer      ,
+    staff_author_id    integer      ,
+    primary key (id),
+    constraint fk_chat_message_customer_author_id
+        foreign key (customer_author_id) references public.profile,
+    constraint fk_chat_message_staff_author_id
+        foreign key (staff_author_id) references public.profile,
+    constraint fk_chat_message_ticket_id
+        foreign key (ticket_id) references public.ticket
+);
+
 create table public.attachment
 (
     id           integer       not null default nextval('public.attachment_seq'),
@@ -130,8 +145,11 @@ create index ix_chat_message_timestamp
 create index ix_chat_message_ticket_id
     on public.chat_message (ticket_id desc);
 
-create index ix_chat_message_author_id
-    on public.chat_message (author_id desc);
+create index ix_chat_message_customer_author_id
+    on public.chat_message (customer_author_id desc);
+
+create index ix_chat_message_staff_author_id
+    on public.chat_message (staff_author_id desc);
 
 create table public.ticket_status
 (

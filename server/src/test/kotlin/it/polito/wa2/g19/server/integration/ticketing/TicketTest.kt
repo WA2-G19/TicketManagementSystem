@@ -22,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
-import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -55,14 +54,12 @@ class TicketTest {
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.jpa.hibernate.ddl-auto") {"create-drop"}
             val keycloakBaseUrl = keycloak.authServerUrl
-            registry.add("keycloakBaseUrl", {"$keycloakBaseUrl"})
+            registry.add("keycloakBaseUrl", { keycloakBaseUrl })
             registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { "${keycloakBaseUrl}/realms/ticket_management_system" })
             registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", {"${keycloakBaseUrl}/realms/ticket_management_system/protocol/openid-connect/certs"})
         }
     }
 
-    @LocalServerPort
-    protected var port: Int = 0
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
@@ -95,8 +92,8 @@ class TicketTest {
 
     @BeforeEach
     fun populateDatabase(){
-        if(!keycloak.isRunning()){
-            keycloak.start();
+        if(!keycloak.isRunning){
+            keycloak.start()
         }
         println("----populating database------")
         Util.mockCustomers().forEach{

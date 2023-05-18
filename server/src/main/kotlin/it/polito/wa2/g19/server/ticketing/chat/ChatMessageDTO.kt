@@ -26,7 +26,7 @@ class ChatMessageOutDTO(val id: Int, authorEmail: String, body: String, val stub
 
 fun ChatMessage.toOutDTO(attachmentsProjection: List<AttachmentProjection>) = ChatMessageOutDTO(
     getId()!!,
-    author.email,
+    getAuthor().email,
     body,
     attachmentsProjection.map { it.toStubDTO() }.toSet(),
     timestamp

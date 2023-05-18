@@ -22,4 +22,8 @@ class ChatMessageProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleProductNotFound(e: AttachmentNotFoundException) = ProblemDetail
         .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
 
+    @ExceptionHandler(AuthorAndUserAreDifferentException::class)
+    fun handleDifferentAuthor(e: AuthorAndUserAreDifferentException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
+
 }
