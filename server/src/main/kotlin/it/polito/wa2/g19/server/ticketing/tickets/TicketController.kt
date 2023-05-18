@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -101,7 +102,16 @@ class TicketController(
         @RequestBody
         ticketStatus: TicketStatusDTO
     ) {
-        ticketService.updateTicket(ticketId, ticketStatus)
+        val principal = SecurityContextHolder.getContext().authentication
+        val email = principal.name
+
+        when(ticketStatus.status) {
+            TicketStatusEnum.Reopened -> ticketService.reopenTicket(ticketId)
+            TicketStatusEnum.InProgress -> ticketService.startProgressTicket(ticketId, email, ticketStatus)
+            TicketStatusEnum.Closed -> ticketService.closeTicket(ticketId, email)
+            TicketStatusEnum.Resolved -> ticketService.resolveTicket(ticketId, email)
+            else -> throw ForbiddenException()
+        }
     }
 }
 

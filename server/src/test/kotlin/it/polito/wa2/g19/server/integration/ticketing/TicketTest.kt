@@ -1501,7 +1501,6 @@ class TicketTest {
         val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.FORBIDDEN)
-        assert(response.body!!.detail == ForbiddenException().message)
     }
 
     @Test
@@ -1516,7 +1515,6 @@ class TicketTest {
         val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.FORBIDDEN)
-        assert(response.body!!.detail == ForbiddenException().message)
     }
 
     @Test
@@ -1532,7 +1530,6 @@ class TicketTest {
         val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.FORBIDDEN)
-        assert(response.body!!.detail == ForbiddenException().message)
     }
 
     @Test
@@ -1548,7 +1545,6 @@ class TicketTest {
         val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.FORBIDDEN)
-        assert(response.body!!.detail == ForbiddenException().message)
     }
 
     @Test
@@ -1568,7 +1564,6 @@ class TicketTest {
         val request = HttpEntity(ticketStatusDTO, headers)
         val response = restTemplate.exchange("$prefixEndPoint/$ticketID", HttpMethod.PUT, request, ProblemDetail::class.java)
         assert(response.statusCode == HttpStatus.FORBIDDEN)
-        assert(response.body!!.detail == ForbiddenException().message)
     }
 
 

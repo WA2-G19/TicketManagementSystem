@@ -11,6 +11,7 @@ import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
@@ -19,6 +20,7 @@ import java.time.LocalDateTime
 
 @Service
 @Transactional
+@EnableMethodSecurity
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
@@ -75,6 +77,7 @@ class TicketServiceImpl(
     }
 
 
+    @PreAuthorize("hasRole('Client')")
     override fun createTicket(ticket: TicketDTO): Int {
         val c = customerRepository.findByEmailIgnoreCase(ticket.customerEmail) ?: throw ProfileNotFoundException()
         val p = productRepository.findByEan(ticket.productEan) ?: throw ProductNotFoundException()
@@ -120,12 +123,8 @@ class TicketServiceImpl(
         }
     }
 
-    @PreAuthorize("hasAuthority('ROLE_Client')")
     override fun reopenTicket(ticketId: Int) {
         val client = SecurityContextHolder.getContext().authentication as JwtAuthenticationToken;
-        println("================================")
-        println(client.authorities)
-        println("================================")
         val ticket: Ticket = ticketRepository.findTicketByIdAndCustomerEmail(ticketId, client.name) ?: throw TicketNotFoundException()
         if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
             ticket.status = TicketStatusEnum.Reopened
@@ -172,9 +171,7 @@ class TicketServiceImpl(
     @PreAuthorize("hasAnyRole('Manager', 'Expert')")
     //SOLO MANAGER O EXPERT (SE EXPERT BISOGNA VERIFICARE CHE IL TICKET SIA SUO)
     override fun resolveTicket(ticketId: Int, resolverEmail: String) {
-        // per vedere se è dell 'expert
-        // Ho usato una funzione gia scritta da qualcuno checkUser non so di chi sia
-        //ticketRepository.findTicketByIdAndExpertEmail(ticketId, resolverEmail) ?: throw TicketNotFoundException()
+
         val principal = SecurityContextHolder.getContext().authentication
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val ticket: Ticket =
@@ -199,7 +196,6 @@ class TicketServiceImpl(
     }
 
     @PreAuthorize("hasAnyRole('Manager', 'Expert')")
-    //SOLO MANAGER O EXPERT (SE EXPERT BISOGNA VERIFICARE CHE IL TICKET SIA SUO)
     override fun closeTicket(ticketId: Int, closerEmail: String) {
         val principal = SecurityContextHolder.getContext().authentication
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
@@ -243,21 +239,7 @@ class TicketServiceImpl(
         return flag
     }
 
-    @PreAuthorize("isAuthenticated()")
-    override fun updateTicket(ticketId: Int, ticketStatus: TicketStatusDTO) {
 
-        val principal = SecurityContextHolder.getContext().authentication
-        val email = principal.name
-
-        when(ticketStatus.status) {
-            TicketStatusEnum.Reopened -> reopenTicket(ticketId)
-            TicketStatusEnum.InProgress -> startProgressTicket(ticketId, email, ticketStatus)
-            TicketStatusEnum.Closed -> closeTicket(ticketId, email)
-            TicketStatusEnum.Resolved -> resolveTicket(ticketId, email)
-            else -> throw ForbiddenException()
-        }
-
-    }
 
 
 }

@@ -4,6 +4,7 @@ import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
+import org.springframework.security.access.prepost.PreAuthorize
 
 interface TicketService {
     fun getTicket(id: Int): TicketOutDTO
@@ -14,6 +15,7 @@ interface TicketService {
 
     fun stopProgressTicket(ticketId: Int)
 
+    @PreAuthorize("hasRole('Client')")
     fun reopenTicket(ticketId: Int)
 
     fun startProgressTicket(ticketId: Int, managerEmail: String, ticketStatus: TicketStatusDTO)
@@ -26,5 +28,4 @@ interface TicketService {
 
     fun checkAuthorAndUser(ticketId: Int, author: String): Boolean
 
-    fun updateTicket(ticketId: Int, ticketStatus: TicketStatusDTO)
 }
