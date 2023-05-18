@@ -40,12 +40,12 @@ class TicketController(
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
 
-
-        val tickets = when(role){
+        val tickets = when (role) {
             /*If the customer param is specified ignores it*/
             Role.ROLE_Client -> ticketService.getTickets(email, expert, status, priorityLevel)
             /*If the expert param is specified ignores it*/
             Role.ROLE_Expert -> ticketService.getTickets(customer, email, status, priorityLevel)
+
             Role.ROLE_Manager -> ticketService.getTickets(customer, expert, status, priorityLevel)
         }
 
@@ -59,8 +59,8 @@ class TicketController(
     @GetMapping("/tickets/{ticketId}")
     fun getTicketById(
         principal: JwtAuthenticationToken,
-        @PathVariable ticketId: Int): TicketOutDTO {
-
+        @PathVariable ticketId: Int
+    ): TicketOutDTO {
 
         return ticketService.getTicket(ticketId)
     }
@@ -92,6 +92,7 @@ class TicketController(
     // Expert (Progress To close, Progress to Open, Progress to Resolve)
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/tickets/{ticketId}")
+    @ResponseStatus(HttpStatus.OK)
     fun putTicket(
         principal: JwtAuthenticationToken,
         @PathVariable
@@ -100,41 +101,7 @@ class TicketController(
         @RequestBody
         ticketStatus: TicketStatusDTO
     ) {
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
-        val email = principal.name
-        when (ticketStatus.status) {
-            TicketStatusEnum.Reopened -> {
-                if(role == Role.ROLE_Client)
-                    ticketService.reopenTicket(ticketId)
-                else{
-                    throw ForbiddenException()
-                }
-            }
-            TicketStatusEnum.InProgress -> {
-                if (role != Role.ROLE_Client && role != Role.ROLE_Expert)
-                    ticketService.startProgressTicket(ticketId, email, ticketStatus)
-                else{
-                    throw ForbiddenException()
-                }
-            }
-            TicketStatusEnum.Closed -> {
-                if (role != Role.ROLE_Client)
-                    ticketService.closeTicket(ticketId, email)
-                else{
-                    throw ForbiddenException()
-                }
-            }
-            TicketStatusEnum.Resolved -> {
-                if (role != Role.ROLE_Client)
-                    ticketService.resolveTicket(ticketId, email)
-                else{
-                    throw ForbiddenException()
-                }
-            }
-            else -> {
-                 throw ForbiddenException()
-            }
-        }
+        ticketService.updateTicket(ticketId, ticketStatus)
     }
-
 }
+

@@ -1,13 +1,14 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
+import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 
 interface TicketService {
     fun getTicket(id: Int): TicketOutDTO
 
-    fun getTickets( customerEmail: String?, expertEmail: String?, statusEnum: TicketStatusEnum?, priorityLevel: PriorityLevelEnum?): List<TicketOutDTO>
+    fun getTickets(customerEmail: String?, expertEmail: String?, statusEnum: TicketStatusEnum?, priorityLevel: PriorityLevelEnum?): List<TicketOutDTO>
 
     fun createTicket(ticket: TicketDTO) : Int
 
@@ -25,4 +26,5 @@ interface TicketService {
 
     fun checkAuthorAndUser(ticketId: Int, author: String): Boolean
 
+    fun updateTicket(ticketId: Int, ticketStatus: TicketStatusDTO)
 }

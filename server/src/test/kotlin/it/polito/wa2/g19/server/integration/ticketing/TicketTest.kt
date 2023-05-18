@@ -1290,8 +1290,6 @@ class TicketTest {
         assert(myTicketsDTO.statusCode == HttpStatus.UNAUTHORIZED)
     }
 
-
-
     @Test
     fun `filtering by expert and customer without bearer`(){
         val mySize = 10
