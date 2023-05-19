@@ -15,7 +15,6 @@ interface TicketService {
 
     fun stopProgressTicket(ticketId: Int)
 
-    @PreAuthorize("hasRole('Client')")
     fun reopenTicket(ticketId: Int)
 
     fun startProgressTicket(ticketId: Int, managerEmail: String, ticketStatus: TicketStatusDTO)

@@ -46,7 +46,7 @@ class ResourceServerConfig {
                 .authenticated()
             .requestMatchers(HttpMethod.POST, "/API/tickets")
                 .hasRole("Client")
-            .requestMatchers(HttpMethod.GET, "/API/tickets")
+            .requestMatchers(HttpMethod.GET, "/API/tickets**")
                 .authenticated()
             .requestMatchers("/API/login")
                 .permitAll()
