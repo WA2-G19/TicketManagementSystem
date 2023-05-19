@@ -27,7 +27,7 @@
   "oauth2DevicePollingInterval" : 5,
   "enabled" : true,
   "sslRequired" : "external",
-  "registrationAllowed" : false,
+  "registrationAllowed" : true,
   "registrationEmailAsUsername" : false,
   "rememberMe" : false,
   "verifyEmail" : false,
@@ -66,6 +66,7 @@
       "composites" : {
         "realm" : [ "offline_access", "uma_authorization" ],
         "client" : {
+          "keycloack-admin" : [ "realm-management" ],
           "account" : [ "manage-account", "view-profile" ]
         }
       },
@@ -265,6 +266,22 @@
         "containerId" : "abfd551f-fbee-4f7e-a82e-559ea9805fcf",
         "attributes" : { }
       } ],
+      "keycloack-admin" : [ {
+        "id" : "9443464a-ea3a-4c29-aa77-beda004bea7b",
+        "name" : "uma_protection",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "813d5a1d-06f6-40dc-9e70-3e3b549e54c5",
+        "attributes" : { }
+      }, {
+        "id" : "b01ed7ea-5c71-4220-98d4-9fbb9b7439ba",
+        "name" : "realm-management",
+        "description" : "",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "813d5a1d-06f6-40dc-9e70-3e3b549e54c5",
+        "attributes" : { }
+      } ],
       "security-admin-console" : [ ],
       "admin-cli" : [ ],
       "TicketManagementSystem" : [ ],
@@ -394,6 +411,34 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister" : false,
   "webAuthnPolicyPasswordlessAcceptableAaguids" : [ ],
   "users" : [ {
+    "id" : "9b6d57c0-7c83-4755-9fc7-eafb3e3772ba",
+    "createdTimestamp" : 1684506290757,
+    "username" : "admin@test.it",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "48c2fdd3-3df7-4647-b807-0f3d6f671d49",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1684506304145,
+      "secretData" : "{\"value\":\"QS6ARjI4WGcO9JvFYpqPcVuCTR6VYGK/8diligrOqBQ=\",\"salt\":\"ckQEe2eA5a2IRIy463l2eQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "Client", "default-roles-ticket_management_system", "Manager", "offline_access", "Expert", "uma_authorization" ],
+    "clientRoles" : {
+      "realm-management" : [ "manage-identity-providers", "view-realm", "manage-users", "view-events", "query-realms", "view-identity-providers", "query-users", "realm-admin", "query-groups", "manage-authorization", "create-client", "manage-realm" ],
+      "keycloack-admin" : [ "uma_protection", "realm-management" ],
+      "broker" : [ "read-token" ],
+      "account" : [ "view-applications", "manage-account-links", "view-consent", "manage-account", "view-profile", "manage-consent", "delete-account", "view-groups" ]
+    },
+    "notBefore" : 1684506864,
+    "groups" : [ ]
+  }, {
     "id" : "f5ac7878-d7ac-4668-8db3-94f3890cd6e3",
     "createdTimestamp" : 1683288754683,
     "username" : "client@test.it",
@@ -463,6 +508,23 @@
     "notBefore" : 0,
     "groups" : [ ]
   }, {
+    "id" : "5df2b771-6bf5-4f33-9ee7-c22f58687a6b",
+    "createdTimestamp" : 1684499263969,
+    "username" : "service-account-keycloack-admin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "serviceAccountClientId" : "keycloack-admin",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-ticket_management_system" ],
+    "clientRoles" : {
+      "keycloack-admin" : [ "uma_protection" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "5dc664ef-8afb-4732-85a8-541fe10c565a",
     "createdTimestamp" : 1683288560839,
     "username" : "service-account-ticketmanagementsystem",
@@ -516,6 +578,7 @@
       "oidc.ciba.grant.enabled" : "false",
       "client.secret.creation.time" : "1683291088",
       "backchannel.logout.session.required" : "true",
+      "post.logout.redirect.uris" : "+",
       "oauth2.device.authorization.grant.enabled" : "false",
       "display.on.consent.screen" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
@@ -665,7 +728,9 @@
     "publicClient" : true,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -691,12 +756,128 @@
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
     "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
+  }, {
+    "id" : "813d5a1d-06f6-40dc-9e70-3e3b549e54c5",
+    "clientId" : "keycloack-admin",
+    "name" : "",
+    "description" : "",
+    "rootUrl" : "",
+    "adminUrl" : "",
+    "baseUrl" : "",
+    "surrogateAuthRequired" : false,
+    "enabled" : true,
+    "alwaysDisplayInConsole" : true,
+    "clientAuthenticatorType" : "client-secret",
+    "secret" : "42ekEk8rPyhnwuopSzsz9x3q3YM85IPR",
+    "redirectUris" : [ "/*" ],
+    "webOrigins" : [ "/*" ],
+    "notBefore" : 0,
+    "bearerOnly" : false,
+    "consentRequired" : false,
+    "standardFlowEnabled" : true,
+    "implicitFlowEnabled" : false,
+    "directAccessGrantsEnabled" : true,
+    "serviceAccountsEnabled" : true,
+    "authorizationServicesEnabled" : true,
+    "publicClient" : false,
+    "frontchannelLogout" : true,
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "oidc.ciba.grant.enabled" : "false",
+      "oauth2.device.authorization.grant.enabled" : "false",
+      "client.secret.creation.time" : "1684499263",
+      "backchannel.logout.session.required" : "true",
+      "backchannel.logout.revoke.offline.tokens" : "false"
+    },
+    "authenticationFlowBindingOverrides" : { },
+    "fullScopeAllowed" : true,
+    "nodeReRegistrationTimeout" : -1,
+    "protocolMappers" : [ {
+      "id" : "07c2bf06-52cb-4416-aa64-850ea379c778",
+      "name" : "Client ID",
+      "protocol" : "openid-connect",
+      "protocolMapper" : "oidc-usersessionmodel-note-mapper",
+      "consentRequired" : false,
+      "config" : {
+        "user.session.note" : "client_id",
+        "id.token.claim" : "true",
+        "access.token.claim" : "true",
+        "claim.name" : "client_id",
+        "jsonType.label" : "String"
+      }
+    }, {
+      "id" : "0bd717e5-784d-4cd8-9483-450f65226f92",
+      "name" : "Client Host",
+      "protocol" : "openid-connect",
+      "protocolMapper" : "oidc-usersessionmodel-note-mapper",
+      "consentRequired" : false,
+      "config" : {
+        "user.session.note" : "clientHost",
+        "id.token.claim" : "true",
+        "access.token.claim" : "true",
+        "claim.name" : "clientHost",
+        "jsonType.label" : "String"
+      }
+    }, {
+      "id" : "ced35ccd-f12d-482a-9b86-eaab5719e2cd",
+      "name" : "Client IP Address",
+      "protocol" : "openid-connect",
+      "protocolMapper" : "oidc-usersessionmodel-note-mapper",
+      "consentRequired" : false,
+      "config" : {
+        "user.session.note" : "clientAddress",
+        "id.token.claim" : "true",
+        "access.token.claim" : "true",
+        "claim.name" : "clientAddress",
+        "jsonType.label" : "String"
+      }
+    } ],
+    "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ],
+    "authorizationSettings" : {
+      "allowRemoteResourceManagement" : true,
+      "policyEnforcementMode" : "ENFORCING",
+      "resources" : [ {
+        "name" : "Default Resource",
+        "type" : "urn:keycloack-admin:resources:default",
+        "ownerManagedAccess" : false,
+        "attributes" : { },
+        "_id" : "6d587bc9-23e7-42af-ae02-0e740e068f84",
+        "uris" : [ "/*" ]
+      } ],
+      "policies" : [ {
+        "id" : "9e8841d1-b2eb-4f2e-be69-704767c97e6c",
+        "name" : "Default Policy",
+        "description" : "A policy that grants access only for users within this realm",
+        "type" : "js",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "AFFIRMATIVE",
+        "config" : {
+          "code" : "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
+        }
+      }, {
+        "id" : "4437176a-887b-41f6-909f-ea89360aa8a4",
+        "name" : "Default Permission",
+        "description" : "A permission that applies to the default resource type",
+        "type" : "resource",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "UNANIMOUS",
+        "config" : {
+          "defaultResourceType" : "urn:keycloack-admin:resources:default",
+          "applyPolicies" : "[\"Default Policy\"]"
+        }
+      } ],
+      "scopes" : [ ],
+      "decisionStrategy" : "UNANIMOUS"
+    }
   }, {
     "id" : "abfd551f-fbee-4f7e-a82e-559ea9805fcf",
     "clientId" : "realm-management",
@@ -717,7 +898,9 @@
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
-    "attributes" : { },
+    "attributes" : {
+      "post.logout.redirect.uris" : "+"
+    },
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : false,
     "nodeReRegistrationTimeout" : 0,
@@ -904,7 +1087,8 @@
       "consentRequired" : false,
       "config" : {
         "id.token.claim" : "true",
-        "access.token.claim" : "true"
+        "access.token.claim" : "true",
+        "userinfo.token.claim" : "true"
       }
     } ]
   }, {
@@ -924,6 +1108,7 @@
       "consentRequired" : false,
       "config" : {
         "multivalued" : "true",
+        "userinfo.token.claim" : "true",
         "user.attribute" : "foo",
         "id.token.claim" : "true",
         "access.token.claim" : "true",
@@ -1284,16 +1469,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper", "saml-role-list-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper" ]
-      }
-    }, {
-      "id" : "14e142ca-54fa-4ed7-9791-ed82af17573e",
-      "name" : "Max Clients Limit",
-      "providerId" : "max-clients",
-      "subType" : "anonymous",
-      "subComponents" : { },
-      "config" : {
-        "max-clients" : [ "200" ]
+        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "oidc-usermodel-property-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-address-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     }, {
       "id" : "bd48b919-217a-4d43-a20c-e52e15158563",
@@ -1302,7 +1478,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-role-list-mapper", "oidc-usermodel-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-full-name-mapper", "oidc-address-mapper", "saml-user-property-mapper", "saml-user-attribute-mapper", "oidc-sha256-pairwise-sub-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "saml-user-property-mapper", "oidc-sha256-pairwise-sub-mapper", "saml-role-list-mapper", "saml-user-attribute-mapper", "oidc-usermodel-property-mapper", "oidc-address-mapper" ]
       }
     }, {
       "id" : "a6c9b853-39cf-4160-927d-2d9e589b748d",
@@ -1314,6 +1490,15 @@
         "allow-default-scopes" : [ "true" ]
       }
     }, {
+      "id" : "14e142ca-54fa-4ed7-9791-ed82af17573e",
+      "name" : "Max Clients Limit",
+      "providerId" : "max-clients",
+      "subType" : "anonymous",
+      "subComponents" : { },
+      "config" : {
+        "max-clients" : [ "200" ]
+      }
+    }, {
       "id" : "5ecc3efb-aa37-4b6a-97e4-6e96ceb72051",
       "name" : "Allowed Client Scopes",
       "providerId" : "allowed-client-templates",
@@ -1322,12 +1507,6 @@
       "config" : {
         "allow-default-scopes" : [ "true" ]
       }
-    } ],
-    "org.keycloak.userprofile.UserProfileProvider" : [ {
-      "id" : "4e17f416-87b7-4035-a419-85085297c1ba",
-      "providerId" : "declarative-user-profile",
-      "subComponents" : { },
-      "config" : { }
     } ],
     "org.keycloak.keys.KeyProvider" : [ {
       "id" : "9e243e1f-efbb-43c4-bf7b-be466dc1da27",
@@ -1353,16 +1532,6 @@
         "algorithm" : [ "RSA-OAEP" ]
       }
     }, {
-      "id" : "6d413584-4569-45dd-8fd3-7de7f180737d",
-      "name" : "aes-generated",
-      "providerId" : "aes-generated",
-      "subComponents" : { },
-      "config" : {
-        "kid" : [ "eb197f4a-2f7d-4092-a012-becbdc585a3f" ],
-        "secret" : [ "hZpbJYLaG7Pal2i5F4QCOg" ],
-        "priority" : [ "100" ]
-      }
-    }, {
       "id" : "9a4f9e55-b71c-48c6-bd18-b200468b0312",
       "name" : "hmac-generated",
       "providerId" : "hmac-generated",
@@ -1372,6 +1541,16 @@
         "secret" : [ "7DJazwJJBOBEVMi7r6l6e3mT3M3K8rE3zJqVMaryGJ3KZL9I9hXTa7nnLhVnrS_Doz880OIGwzH-Uc9LNSh55A" ],
         "priority" : [ "100" ],
         "algorithm" : [ "HS256" ]
+      }
+    }, {
+      "id" : "6d413584-4569-45dd-8fd3-7de7f180737d",
+      "name" : "aes-generated",
+      "providerId" : "aes-generated",
+      "subComponents" : { },
+      "config" : {
+        "kid" : [ "eb197f4a-2f7d-4092-a012-becbdc585a3f" ],
+        "secret" : [ "hZpbJYLaG7Pal2i5F4QCOg" ],
+        "priority" : [ "100" ]
       }
     } ]
   },
@@ -1967,8 +2146,8 @@
     "cibaExpiresIn" : "120",
     "cibaAuthRequestedUserHint" : "login_hint",
     "oauth2DeviceCodeLifespan" : "600",
-    "oauth2DevicePollingInterval" : "5",
     "clientOfflineSessionMaxLifespan" : "0",
+    "oauth2DevicePollingInterval" : "5",
     "clientSessionIdleTimeout" : "0",
     "parRequestUriLifespan" : "60",
     "clientSessionMaxLifespan" : "0",
