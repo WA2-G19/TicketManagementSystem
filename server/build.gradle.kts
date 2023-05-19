@@ -39,6 +39,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation ("com.github.dasniko:testcontainers-keycloak:2.5.0")
 
+	implementation("org.keycloak:keycloak-admin-client:21.1.1")
+
 }
 
 dependencyManagement {

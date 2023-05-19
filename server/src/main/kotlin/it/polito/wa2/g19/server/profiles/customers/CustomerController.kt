@@ -3,6 +3,8 @@ package it.polito.wa2.g19.server.profiles.customers
 import it.polito.wa2.g19.server.profiles.NotMatchingEmailException
 import jakarta.validation.constraints.Email
 import jakarta.validation.Valid
+import org.keycloak.admin.client.Keycloak
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -58,5 +60,14 @@ class CustomerController(
             throw NotMatchingEmailException()
         }
         profileService.updateProfile(email, profile)
+    }
+
+    @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun signup(
+        @RequestBody(required = true)
+        customer: CredentialCustomerDTO
+    ) {
+        profileService.signup(customer)
     }
 }

@@ -5,4 +5,5 @@ interface CustomerService {
     fun getProfile(email: String): CustomerDTO
     fun insertProfile(profile: CustomerDTO)
     fun updateProfile(email: String, profile: CustomerDTO)
+    fun signup(credentials: CredentialCustomerDTO)
 }
