@@ -26,7 +26,7 @@ class StaffController(
         return staffService.getStaff(email)
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/createExpert")
     @ResponseStatus(HttpStatus.OK)
     fun signupExpert(
         @RequestBody
