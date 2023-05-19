@@ -42,4 +42,6 @@ class ProfileController {
         val response = restTemplate.exchange(request, object: ParameterizedTypeReference<LinkedHashMap<String, Any>>() {})
         return response.body!!["access_token"].toString()
     }
+
+
 }

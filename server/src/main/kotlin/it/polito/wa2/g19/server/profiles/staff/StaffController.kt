@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.profiles.staff
 
+import it.polito.wa2.g19.server.profiles.customers.CredentialCustomerDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import org.springframework.http.HttpStatus
@@ -23,5 +24,14 @@ class StaffController(
         email: String
     ): StaffDTO {
         return staffService.getStaff(email)
+    }
+
+    @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.OK)
+    fun signupExpert(
+        @RequestBody
+        credentials: CredentialCustomerDTO
+    ) {
+        staffService.signupExpert(credentials)
     }
 }

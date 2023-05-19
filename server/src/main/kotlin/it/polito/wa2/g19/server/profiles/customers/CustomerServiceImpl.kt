@@ -1,8 +1,12 @@
 package it.polito.wa2.g19.server.profiles.customers
 
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
+import it.polito.wa2.g19.server.profiles.ProfileAlreadyPresent
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import org.apache.http.HttpStatus
+import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
+import org.keycloak.admin.client.resource.UsersResource
 import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 
 @Service
 @Transactional
@@ -70,21 +75,28 @@ class CustomerServiceImpl(
 
         val user = UserRepresentation()
         user.username = credentials.customerDTO.email
+        user.email = credentials.customerDTO.email
         user.isEnabled = true
         user.isEmailVerified = true
-        val role = keycloak.realm(realmName).roles().get("Client").toRepresentation().name
-        user.realmRoles = listOf(role)
 
         val credentialsKeycloak = CredentialRepresentation()
         credentialsKeycloak.type = CredentialRepresentation.PASSWORD
         credentialsKeycloak.value = credentials.password
         credentialsKeycloak.isTemporary = false
         user.credentials = listOf(credentialsKeycloak)
-
-        keycloak
+        val userResource = keycloak
             .realm(realmName)
             .users()
-            .create(user)
+
+        // Check if the user already exists
+        val response = userResource.create(user)
+        if(response.status == HttpStatus.SC_CONFLICT) throw ProfileAlreadyPresent()
+
+        // Assign the role to client
+        val role = keycloak.realm(realmName).roles().get("Client").toRepresentation()
+        val userId = CreatedResponseUtil.getCreatedId(response)
+        val userResponse = userResource.get(userId)
+        userResponse.roles().realmLevel().add(listOf(role))
 
     }
 }

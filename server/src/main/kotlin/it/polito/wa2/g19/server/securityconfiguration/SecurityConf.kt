@@ -52,6 +52,8 @@ class ResourceServerConfig {
                 .authenticated()
             .requestMatchers("/API/login")
                 .permitAll()
+            .requestMatchers("/API/signup")
+                .permitAll()
             .and()
             .formLogin().disable()
             .sessionManagement()

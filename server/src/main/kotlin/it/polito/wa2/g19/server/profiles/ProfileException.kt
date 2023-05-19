@@ -7,3 +7,5 @@ class DuplicateEmailException : RuntimeException("There is already an email asso
 class NotMatchingEmailException : RuntimeException("The email in the path does not match the email in the body of the request")
 
 class NotMatchStaffTypeException : RuntimeException("The staff type is not matched")
+
+class ProfileAlreadyPresent: RuntimeException("There is already a profile associated to this email")

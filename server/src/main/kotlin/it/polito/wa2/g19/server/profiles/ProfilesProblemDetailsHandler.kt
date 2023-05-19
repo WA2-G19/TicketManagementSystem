@@ -19,4 +19,8 @@ class ProfilesProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler(NotMatchingEmailException::class)
     fun handleNotMatchingEmail(e: NotMatchingEmailException) = ProblemDetail
         .forStatusAndDetail( HttpStatus.BAD_REQUEST, e.message!! )
+
+    @ExceptionHandler(ProfileAlreadyPresent::class)
+    fun handleProfileAlreadyPresent(e: ProfileAlreadyPresent) = ProblemDetail
+        .forStatusAndDetail( HttpStatus.CONFLICT, e.message!! )
 }
