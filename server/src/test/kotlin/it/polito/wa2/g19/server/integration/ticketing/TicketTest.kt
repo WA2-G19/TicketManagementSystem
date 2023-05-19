@@ -25,7 +25,6 @@ import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.test.context.event.annotation.BeforeTestMethod
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -1056,6 +1055,7 @@ class TicketTest {
         val headers = HttpHeaders()
         headers.setBearerAuth(managerToken)
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}", HttpMethod.GET, HttpEntity(null, headers))
+        assert(myTicketsDTO.statusCode == HttpStatus.OK)
         assert(myTicketsDTO.body!!.size == mySize)
         assert(myTicketsDTO.body!!.all { it.expertEmail == expert.email && it.customerEmail == customer.email && it.status == myStatus })
     }
@@ -1468,7 +1468,7 @@ class TicketTest {
 
         val headers = HttpHeaders()
         headers.setBearerAuth(expertToken)
-        val response: ResponseEntity<List<TicketOutDTO>>  = restTemplate.exchange("$prefixEndPoint", HttpMethod.GET,HttpEntity(null, headers))
+        val response: ResponseEntity<List<TicketOutDTO>>  = restTemplate.exchange(prefixEndPoint, HttpMethod.GET,HttpEntity(null, headers))
         assert( response.body!!.size == 1)
         response.body!!.forEach{
             assert(it.expertEmail == expert.email)

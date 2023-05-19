@@ -11,6 +11,7 @@ import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import it.polito.wa2.g19.server.ticketing.tickets.TicketService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -31,6 +32,7 @@ class ChatMessageServiceImpl(
     private val ticketService: TicketService,
     ) : ChatMessageService {
 
+    @PreAuthorize("isAuthenticated()")
     override fun getChatMessage(ticketId: Int, chatMessageId: Int): ChatMessageOutDTO {
         ticketService.getTicket(ticketId)
         val message = chatMessageRepository.findByTicketIdAndId(ticketId, chatMessageId) ?: throw MessageNotFoundException()
@@ -38,6 +40,7 @@ class ChatMessageServiceImpl(
         return message.toOutDTO(attachmentProjections)
     }
 
+    @PreAuthorize("isAuthenticated()")
     override fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO> {
         ticketService.getTicket(ticketId)
         return chatMessageRepository.findByTicketId(ticketId)!!
@@ -46,6 +49,7 @@ class ChatMessageServiceImpl(
             }.toSet()
     }
 
+    @PreAuthorize("isAuthenticated()")
     override fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
         if(!ticketService.checkAuthorAndUser(ticketId,messageToSave.authorEmail))
             throw AuthorAndUserAreDifferentException()
@@ -78,6 +82,7 @@ class ChatMessageServiceImpl(
         return createdMessage.getId()!!
     }
 
+    @PreAuthorize("isAuthenticated()")
     override fun getAttachment(ticketId: Int, attachmentId: Int): AttachmentDTO {
         ticketService.getTicket(ticketId)
         val attachment = attachmentRepository.findByIdOrNull(attachmentId) ?: throw AttachmentNotFoundException()

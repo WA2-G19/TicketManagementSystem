@@ -2,7 +2,7 @@ package it.polito.wa2.g19.server.securityconfiguration
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -29,7 +29,29 @@ class ResourceServerConfig {
 
         http.cors().disable()
             .csrf().disable()
-
+            .authorizeHttpRequests()
+            .requestMatchers("/API/products/**")
+                .permitAll()
+            .requestMatchers("/API/staff/*")
+                .hasAnyRole("Expert", "Manager")
+            .requestMatchers("/API/profiles")
+                .hasRole("Manager")
+            .requestMatchers("/API/profiles/*")
+                .authenticated()
+            .requestMatchers("/API/tickets/*/chat-messages/**")
+                .authenticated()
+            .requestMatchers("/API/stats/**")
+                .hasRole("Manager")
+            .requestMatchers("/API/tickets/*")
+                .authenticated()
+            .requestMatchers(HttpMethod.POST, "/API/tickets")
+                .hasRole("Client")
+            .requestMatchers(HttpMethod.GET, "/API/tickets")
+                .authenticated()
+            .requestMatchers("/API/login")
+                .permitAll()
+            .and()
+            .formLogin().disable()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()

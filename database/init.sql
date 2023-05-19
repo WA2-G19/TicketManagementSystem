@@ -95,20 +95,6 @@ create table public.ticket
 
 create table public.chat_message
 (
-    id        integer       not null default  nextval('public.chat_message_seq'),
-    body      varchar(255) not null,
-    timestamp timestamp(6) not null,
-    author_id integer      not null,
-    ticket_id integer      not null,
-    primary key (id),
-    constraint fk_chat_message_author_id
-        foreign key (author_id) references public.profile,
-    constraint fk_chat_message_ticket_id
-        foreign key (ticket_id) references public.ticket
-);
-
-create table public.chat_message
-(
     dtype              varchar(31)  not null,
     id                 integer      not null default  nextval('public.chat_message_seq'),
     body               varchar(255) not null,

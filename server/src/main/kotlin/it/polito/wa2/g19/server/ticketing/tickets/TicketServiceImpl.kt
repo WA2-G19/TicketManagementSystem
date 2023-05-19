@@ -11,7 +11,6 @@ import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
@@ -20,7 +19,6 @@ import java.time.LocalDateTime
 
 @Service
 @Transactional
-@EnableMethodSecurity
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
@@ -30,6 +28,7 @@ class TicketServiceImpl(
     private val ticketStatusRepository: TicketStatusRepository
 ): TicketService {
 
+    @PreAuthorize("isAuthenticated()")
     override fun getTicket(id: Int): TicketOutDTO {
         val principal = SecurityContextHolder.getContext().authentication
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
@@ -44,6 +43,7 @@ class TicketServiceImpl(
         return ticket.toOutDTO()
     }
 
+    @PreAuthorize("isAuthenticated()")
     override fun getTickets(
         customerEmail: String?,
         expertEmail: String?,
@@ -122,8 +122,10 @@ class TicketServiceImpl(
         }
     }
 
+
+    @PreAuthorize("hasRole('Client')")
     override fun reopenTicket(ticketId: Int) {
-        val client = SecurityContextHolder.getContext().authentication as JwtAuthenticationToken;
+        val client = SecurityContextHolder.getContext().authentication as JwtAuthenticationToken
         val ticket: Ticket = ticketRepository.findTicketByIdAndCustomerEmail(ticketId, client.name) ?: throw TicketNotFoundException()
         if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
             ticket.status = TicketStatusEnum.Reopened
@@ -229,11 +231,12 @@ class TicketServiceImpl(
         val principal = SecurityContextHolder.getContext().authentication
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val ticket = getTicket(ticketId)
+        val email = principal.name
         val flag =
             when (role) {
                 Role.ROLE_Client -> ticket.customerEmail == author
                 Role.ROLE_Expert -> ticket.expertEmail == author
-                Role.ROLE_Manager -> true
+                Role.ROLE_Manager -> email == author
             }
         return flag
     }

@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -24,12 +23,7 @@ class ChatMessageController(
     private val handlerMapping: RequestMappingHandlerMapping,
 ) {
 
-
-    // User is authenticated
-    //  - Manager can do everything
-    // - Expert should be assigned to ticket
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}")
-    @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     fun getMessage(
         principal: JwtAuthenticationToken,
@@ -43,12 +37,7 @@ class ChatMessageController(
         }
     }
 
-    // User is authenticated
-    //  - Manager can do everything
-    // - Expert should be assigned to ticket (InProgress or Closed)
-    // - Client can see ONLY its ticket
     @GetMapping("/{ticketId}/chat-messages")
-    @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     fun getMessages(
         principal: JwtAuthenticationToken,
@@ -63,15 +52,11 @@ class ChatMessageController(
         return messages
     }
 
-    // User is authenticated
-    //  - Manager can do everything
-    // - Expert should be assigned to ticket
     @PostMapping(
         "/{ticketId}/chat-messages",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
     fun postChatMessage(
         principal: JwtAuthenticationToken,
@@ -85,11 +70,7 @@ class ChatMessageController(
         return ResponseEntity(null, headers, HttpStatus.CREATED)
     }
 
-    // User is authenticated
-    //  - Manager can do everything
-    // - Expert should be assigned to ticket
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}/attachments/{attachmentId}")
-    @PreAuthorize("isAuthenticated()")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     fun getAttachment(

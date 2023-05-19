@@ -50,11 +50,11 @@ abstract class ChatMessage : EntityBase<Int>() {
     @OneToMany(mappedBy = "message")
     open lateinit var attachments: Set<Attachment>
     @Column(nullable = false)
-    var body: String = ""
+    open var body: String = ""
     @CreationTimestamp
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    var timestamp: LocalDateTime = LocalDateTime.now()
+    open var timestamp: LocalDateTime = LocalDateTime.now()
 
     abstract fun getAuthor(): Profile
 }
