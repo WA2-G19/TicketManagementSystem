@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class CustomerServiceImpl(
     private val customerRepository: CustomerRepository
-): CustomerService {
+) : CustomerService {
 
     @Autowired
     private lateinit var keycloak: Keycloak
@@ -76,6 +76,8 @@ class CustomerServiceImpl(
         val user = UserRepresentation()
         user.username = credentials.customerDTO.email
         user.email = credentials.customerDTO.email
+        user.firstName = credentials.customerDTO.name
+        user.lastName = credentials.customerDTO.surname
         user.isEnabled = true
         user.isEmailVerified = true
 
@@ -90,13 +92,21 @@ class CustomerServiceImpl(
 
         // Check if the user already exists
         val response = userResource.create(user)
-        if(response.status == HttpStatus.SC_CONFLICT) throw ProfileAlreadyPresent()
+        if (response.status == HttpStatus.SC_CONFLICT) throw DuplicateEmailException()
 
         // Assign the role to client
         val role = keycloak.realm(realmName).roles().get("Client").toRepresentation()
         val userId = CreatedResponseUtil.getCreatedId(response)
         val userResponse = userResource.get(userId)
         userResponse.roles().realmLevel().add(listOf(role))
+
+        // Insert inside database
+        val p = Customer()
+        p.email = credentials.customerDTO.email.trim().lowercase()
+        p.name = credentials.customerDTO.name
+        p.surname = credentials.customerDTO.surname
+        p.address = credentials.customerDTO.address
+        customerRepository.save(p)
 
     }
 }

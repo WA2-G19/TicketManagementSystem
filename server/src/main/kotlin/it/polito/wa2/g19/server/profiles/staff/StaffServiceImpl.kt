@@ -4,6 +4,7 @@ import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.ProfileAlreadyPresent
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.customers.CredentialCustomerDTO
+import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 @Transactional
 class StaffServiceImpl(
     private val staffRepository: StaffRepository
-): StaffService {
+) : StaffService {
 
     @Autowired
     private lateinit var keycloak: Keycloak
@@ -75,11 +76,16 @@ class StaffServiceImpl(
 
     @PreAuthorize("hasRole('Manager')")
     @ResponseStatus(org.springframework.http.HttpStatus.CREATED)
-    override fun signupExpert(credentials: CredentialCustomerDTO) {
+    override fun signupExpert(credentials: CredentialStaffDTO) {
 
         val user = UserRepresentation()
-        user.username = credentials.customerDTO.email
-        user.email = credentials.customerDTO.email
+        user.username = credentials.staffDTO.email
+        user.email = credentials.staffDTO.email
+        user.firstName = credentials.staffDTO.name
+        user.lastName = credentials.staffDTO.surname
+
+        if (credentials.staffDTO.type != StaffType.Expert) throw ForbiddenException()
+
         user.isEnabled = true
         user.isEmailVerified = true
 
@@ -94,13 +100,22 @@ class StaffServiceImpl(
 
         // Check if the user already exists
         val response = userResource.create(user)
-        if(response.status == HttpStatus.SC_CONFLICT) throw ProfileAlreadyPresent()
+        if (response.status == HttpStatus.SC_CONFLICT) throw DuplicateEmailException()
 
         // Assign the role to client
         val role = keycloak.realm(realmName).roles().get("Expert").toRepresentation()
         val userId = CreatedResponseUtil.getCreatedId(response)
         val userResponse = userResource.get(userId)
         userResponse.roles().realmLevel().add(listOf(role))
+
+        // Insert also inside the Database
+        val profile = credentials.staffDTO
+        val p = Expert()
+        p.email = profile.email.trim()
+        p.name = profile.name
+        p.surname = profile.surname
+        staffRepository.save(p)
+
 
     }
 

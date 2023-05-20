@@ -30,7 +30,7 @@ class StaffController(
     @ResponseStatus(HttpStatus.OK)
     fun signupExpert(
         @RequestBody
-        credentials: CredentialCustomerDTO
+        credentials: CredentialStaffDTO
     ) {
         staffService.signupExpert(credentials)
     }
