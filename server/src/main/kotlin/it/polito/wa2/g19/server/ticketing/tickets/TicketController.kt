@@ -6,6 +6,8 @@ import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import jakarta.validation.Valid
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,7 +22,8 @@ import java.net.URI
 @RequestMapping("/API/tickets")
 class TicketController(
     private val ticketService: TicketService,
-    private val handlerMapping: RequestMappingHandlerMapping
+    @Autowired
+    @Qualifier("requestMappingHandlerMapping") private val handlerMapping: RequestMappingHandlerMapping
 ) {
 
     @GetMapping("")

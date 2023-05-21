@@ -2,6 +2,8 @@ package it.polito.wa2.g19.server.ticketing.chat
 
 import it.polito.wa2.g19.server.common.Util
 import jakarta.validation.Valid
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -20,7 +22,8 @@ import java.net.URI
 @RequestMapping("/API/tickets")
 class ChatMessageController(
     private val chatMessageService: ChatMessageService,
-    private val handlerMapping: RequestMappingHandlerMapping,
+    @Autowired
+    @Qualifier("requestMappingHandlerMapping") private val handlerMapping: RequestMappingHandlerMapping,
 ) {
 
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}")
