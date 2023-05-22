@@ -61,7 +61,7 @@ class TicketServiceImpl(
             null
 
         val priorityLevelVal = if (priorityLevel != null) {
-            priorityLevelRepository.findByName(priorityLevel.name)
+            priorityLevelRepository.findByIdOrNull(priorityLevel.name)
         } else null
 
 
@@ -153,7 +153,7 @@ class TicketServiceImpl(
         if (ticket.status == TicketStatusEnum.Open || ticket.status == TicketStatusEnum.Reopened) {
             ticket.expert = expert
             ticket.status = TicketStatusEnum.InProgress
-            ticket.priorityLevel = priorityLevelRepository.findByName(ticketStatus.priorityLevel!!.name)
+            ticket.priorityLevel = priorityLevelRepository.findByIdOrNull(ticketStatus.priorityLevel!!.name)
             ticket.statusHistory.add(InProgressTicketStatus().apply {
                 this.ticket = ticket
                 this.expert = expert

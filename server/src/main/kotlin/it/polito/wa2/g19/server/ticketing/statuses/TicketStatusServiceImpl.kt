@@ -23,7 +23,7 @@ class TicketStatusServiceImpl(
     override fun getTicketClosedByExpert(expertMail: String): Int {
         val expert = staffRepository.findByEmailIgnoreCase(expertMail) ?: throw ProfileNotFoundException()
         return ticketStatusRepository.getTicketsClosedByExpert(
-            expert.getId()!!,
+            expert.email,
         )
     }
 
@@ -32,7 +32,8 @@ class TicketStatusServiceImpl(
         val expert = staffRepository.findByEmailIgnoreCase(expertMail) ?: throw ProfileNotFoundException()
 
         val ticketStatusList = ticketStatusRepository.getTicketStatusByExpert(
-            expert.getId()!!)
+            expert.email
+        )
         var diff = 0f
         var count = 0
         ticketStatusList.groupBy { it.ticket.getId()!! }.values.forEach {

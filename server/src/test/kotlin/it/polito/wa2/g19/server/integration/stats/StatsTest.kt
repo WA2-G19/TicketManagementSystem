@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -143,7 +144,7 @@ class StatsTest {
         ticket.customer = customer
         ticket.product = product
         val ticketStatus = Util.mockInProgressTicketStatus()
-        ticketStatus.priority = priorityLevelRepository.findByName("HIGH")
+        ticketStatus.priority = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.HIGH.name)!!
         ticketStatus.ticket = ticket
         ticketStatus.expert = expert
         ticket.statusHistory = mutableSetOf()

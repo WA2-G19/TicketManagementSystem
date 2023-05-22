@@ -1,4 +1,4 @@
 staff_id,skill_id
-1,51
-1,101
-51,1
+expert@test.it,"Software expert"
+expert@test.it,"Tablet expert"
+manager@test.it,"Mobile phone expert"

@@ -16,7 +16,6 @@ abstract class EntityBase<T: Serializable> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "entity_seq", allocationSize = 1)
     private var id: T? = null
 
     open fun getId(): T? = id

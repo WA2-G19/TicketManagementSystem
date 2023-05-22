@@ -1,12 +1,13 @@
 package it.polito.wa2.g19.server.profiles
 
-import it.polito.wa2.g19.server.common.EntityBase
 import jakarta.persistence.Column
+import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 
 @MappedSuperclass
-open class Profile(): EntityBase<Int>() {
+open class Profile() {
 
+    @Id
     @Column(unique = true, nullable = false, name = "email")
     open var email: String = ""
     @Column(nullable = false)

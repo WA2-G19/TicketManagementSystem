@@ -14,6 +14,7 @@ import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageInDTO
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageOutDTO
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageRepository
+import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
 import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
@@ -191,7 +192,7 @@ class ChatTest {
         ticket.status = TicketStatusEnum.InProgress
         ticket.expert = expert
         val ticketStatus = Util.mockInProgressTicketStatus()
-        ticketStatus.priority = priorityLevelRepository.findByName("HIGH")
+        ticketStatus.priority = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.HIGH.name)!!
         ticketStatus.ticket = ticket
         ticketStatus.expert = expert
         ticketStatus.by = manager

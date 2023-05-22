@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PriorityLevelRepository: JpaRepository<PriorityLevel, String> {
-    fun findByName(name: String): PriorityLevel
 
 }

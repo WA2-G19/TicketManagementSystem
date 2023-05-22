@@ -1,2 +1,2 @@
-description,customer_id,product_id,expert_id,priority_level_id,status
-"Non si connette ad internet",1,1,,0,0
+description,customer_email,product_ean,expert_email,priority_level_name,status
+"Non si connette ad internet",client@test.it,4935531465706,,,0

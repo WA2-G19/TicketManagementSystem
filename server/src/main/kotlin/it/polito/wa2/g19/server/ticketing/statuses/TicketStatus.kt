@@ -77,12 +77,10 @@ class ReopenedTicketStatus : TicketStatus() {
 
 @Entity
 @Table(name = "priority_level")
-class PriorityLevel : EntityBase<Int>() {
+class PriorityLevel() {
 
-    @Column(unique = true, nullable = false)
+    @Id
     var name: String = ""
-
-
 
 }
 

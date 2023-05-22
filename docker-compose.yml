@@ -38,17 +38,19 @@ services:
       - --import-realm
 
   tempo:
+    container_name: tempo
     image: grafana/tempo
     extra_hosts: [ 'host.docker.internal:host-gateway' ]
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
       - ./tempo/tempo-local.yaml:/etc/tempo.yaml:ro
-      - ./tempo/tempo-data:/tmp/tempo
+      - tempo-data:/tmp/tempo
     ports:
       - "14268"  # jaeger ingest
       - "9411:9411" # zipkin
 
   loki:
+    container_name: loki
     image: grafana/loki
     extra_hosts: [ 'host.docker.internal:host-gateway' ]
     command: [ "-config.file=/etc/loki/local-config.yaml" ]
@@ -61,6 +63,7 @@ services:
       - JAEGER_SAMPLER_PARAM=1
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     extra_hosts: [ 'host.docker.internal:host-gateway' ]
     command:
@@ -72,6 +75,7 @@ services:
       - "9090:9090"
 
   grafana:
+    container_name: grafana
     image: grafana/grafana
     extra_hosts: [ 'host.docker.internal:host-gateway' ]
     volumes:
@@ -87,4 +91,6 @@ volumes:
   postgres-data:
     driver: local
   keycloak-data:
+    driver: local
+  tempo-data:
     driver: local

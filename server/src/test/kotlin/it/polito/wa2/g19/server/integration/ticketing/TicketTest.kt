@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.test.web.client.postForEntity
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.*
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -1066,8 +1067,8 @@ class TicketTest {
         val myStatus = TicketStatusEnum.Closed
         val otherStatus = TicketStatusEnum.Reopened
 
-        val myPriorityLevel = priorityLevelRepository.findByName("HIGH")
-        val otherPriorityLevel = priorityLevelRepository.findByName("LOW")
+        val myPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.HIGH.name)!!
+        val otherPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.LOW.name)!!
         (0 until mySize).forEach{ _ ->
             ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status = myStatus; it.expert = expert; it.priorityLevel = myPriorityLevel; it})
@@ -1347,8 +1348,8 @@ class TicketTest {
         val myStatus = TicketStatusEnum.Closed
         val otherStatus = TicketStatusEnum.Reopened
 
-        val myPriorityLevel = priorityLevelRepository.findByName("HIGH")
-        val otherPriorityLevel = priorityLevelRepository.findByName("LOW")
+        val myPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.HIGH.name)!!
+        val otherPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.LOW.name)!!
         (0 until mySize).forEach{ _ ->
             ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
                 it.status = myStatus; it.expert = expert; it.priorityLevel = myPriorityLevel; it})
