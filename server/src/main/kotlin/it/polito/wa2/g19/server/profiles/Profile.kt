@@ -3,12 +3,15 @@ package it.polito.wa2.g19.server.profiles
 import jakarta.persistence.Column
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
+import java.util.UUID
 
 @MappedSuperclass
 open class Profile() {
 
     @Id
-    @Column(unique = true, nullable = false, name = "email")
+    @Column(nullable = false)
+    open var id: UUID? = null
+    @Column(unique = true, nullable = false)
     open var email: String = ""
     @Column(nullable = false)
     open var name: String = ""

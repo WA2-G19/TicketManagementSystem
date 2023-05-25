@@ -32,11 +32,12 @@ create table public.product
 
 create table public.profile
 (
-    email   varchar(255) not null,
+    id      uuid         not null,
+    email   varchar(255) not null unique,
     name    varchar(255) not null,
     surname varchar(255) not null,
     address varchar(255) not null,
-    primary key (email)
+    primary key (id)
 );
 
 create table public.skill
@@ -48,15 +49,16 @@ create table public.skill
 create table public.staff
 (
     dtype   varchar(31)  not null,
-    email   varchar(255) not null,
+    id      uuid         not null,
+    email   varchar(255) not null unique,
     name    varchar(255) not null,
     surname varchar(255) not null,
-    primary key (email)
+    primary key (id)
 );
 
 create table public.staff_skill
 (
-    staff_id varchar(255) not null,
+    staff_id uuid         not null,
     skill_id varchar(255) not null,
     primary key (staff_id, skill_id),
     constraint fk_staff_skill_skill
@@ -70,15 +72,15 @@ create table public.ticket
     id                  integer      not null default nextval('public.ticket_seq'),
     description         varchar(255) not null,
     status              smallint,
-    customer_email      varchar(255) not null,
-    expert_email        varchar(255),
+    customer_id         uuid         not null,
+    expert_id           uuid,
     priority_level_name varchar(255),
     product_ean         varchar(255) not null,
     primary key (id),
     constraint fk_ticket_customer
-        foreign key (customer_email) references public.profile,
+        foreign key (customer_id) references public.profile,
     constraint fk_ticket_expert
-        foreign key (expert_email) references public.staff,
+        foreign key (expert_id) references public.staff,
     constraint fk_ticket_priority_level
         foreign key (priority_level_name) references public.priority_level,
     constraint fk_ticket_product
@@ -92,8 +94,8 @@ create table public.chat_message
     body               varchar(255) not null,
     timestamp          timestamp(6) not null,
     ticket_id          integer      not null,
-    customer_author_id varchar(255),
-    staff_author_id    varchar(255),
+    customer_author_id uuid,
+    staff_author_id    uuid,
     primary key (id),
     constraint fk_chat_message_ticket
         foreign key (ticket_id) references public.ticket,
@@ -135,16 +137,16 @@ create table public.ticket_status
     id            integer      not null default nextval('public.ticket_status_seq'),
     timestamp     timestamp(6) not null,
     ticket_id     integer,
-    by_email      varchar(255),
-    expert_email  varchar(255),
+    by_id         uuid,
+    expert_id     uuid,
     priority_name varchar(255),
     primary key (id),
     constraint fk_ticket_status_ticket
         foreign key (ticket_id) references public.ticket,
     constraint fk_ticket_status_by
-        foreign key (by_email) references public.staff,
+        foreign key (by_id) references public.staff,
     constraint fk_ticket_status_expert
-        foreign key (expert_email) references public.staff,
+        foreign key (expert_id) references public.staff,
     constraint fk_ticket_status_priority_level
         foreign key (priority_name) references public.priority_level
 );
@@ -155,31 +157,34 @@ create index ix_ticket_status_timestamp
 create index ix_ticket_status_ticket_id
     on public.ticket_status (ticket_id desc);
 
-COPY public.product(ean, name, brand)
-FROM '/docker-entrypoint-initdb.d/product.csv'
-WITH DELIMITER ',' CSV HEADER;
-
-COPY public.profile(email, name, surname, address)
-FROM '/docker-entrypoint-initdb.d/profile.csv'
-WITH DELIMITER ',' CSV HEADER;
-
-COPY public.priority_level(name)
-    FROM '/docker-entrypoint-initdb.d/priority_level.csv'
+COPY public.product("ean", "name", "brand")
+    FROM '/docker-entrypoint-initdb.d/product.csv'
     WITH DELIMITER ',' CSV HEADER;
 
-COPY public.ticket(description,customer_email,product_ean,expert_email,priority_level_name,status)
-    FROM '/docker-entrypoint-initdb.d/ticket.csv'
+COPY public.profile("id", "email", "name", "surname", "address")
+    FROM '/docker-entrypoint-initdb.d/profile.csv'
     WITH DELIMITER ',' CSV HEADER;
 
-COPY public.staff(email, name, surname, dtype)
+COPY public.staff("id", "email", "name", "surname", "dtype")
     FROM '/docker-entrypoint-initdb.d/staff.csv'
     WITH DELIMITER ',' CSV HEADER;
 
-
-COPY public.skill(name)
+COPY public.skill("name")
     FROM '/docker-entrypoint-initdb.d/skill.csv'
     WITH DELIMITER ',' CSV HEADER;
 
-COPY public.staff_skill(staff_id, skill_id)
+COPY public.staff_skill("staff_id", "skill_id")
     FROM '/docker-entrypoint-initdb.d/staff_skill.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+COPY public.priority_level("name")
+    FROM '/docker-entrypoint-initdb.d/priority_level.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+COPY public.ticket("id", "description", "customer_id", "product_ean", "expert_id", "priority_level_name", "status")
+    FROM '/docker-entrypoint-initdb.d/ticket.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+COPY public.ticket_status("dtype", "id", "timestamp", "ticket_id", "by_id", "expert_id", "priority_name")
+    FROM '/docker-entrypoint-initdb.d/ticket_status.csv'
     WITH DELIMITER ',' CSV HEADER;

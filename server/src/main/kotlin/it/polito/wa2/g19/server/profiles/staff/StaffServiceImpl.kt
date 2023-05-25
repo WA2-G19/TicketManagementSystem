@@ -1,9 +1,7 @@
 package it.polito.wa2.g19.server.profiles.staff
 
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
-import it.polito.wa2.g19.server.profiles.ProfileAlreadyPresent
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.profiles.customers.CredentialCustomerDTO
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
@@ -15,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.ResponseStatus
+import java.util.*
 
 @Service
 @Transactional
@@ -75,23 +73,22 @@ class StaffServiceImpl(
     }
 
     @PreAuthorize("hasRole('Manager')")
-    @ResponseStatus(org.springframework.http.HttpStatus.CREATED)
-    override fun signupExpert(credentials: CredentialStaffDTO) {
+    override fun signupExpert(credential: CredentialStaffDTO) {
 
         val user = UserRepresentation()
-        user.username = credentials.staffDTO.email
-        user.email = credentials.staffDTO.email
-        user.firstName = credentials.staffDTO.name
-        user.lastName = credentials.staffDTO.surname
+        user.username = credential.staffDTO.email
+        user.email = credential.staffDTO.email
+        user.firstName = credential.staffDTO.name
+        user.lastName = credential.staffDTO.surname
 
-        if (credentials.staffDTO.type != StaffType.Expert) throw ForbiddenException()
+        if (credential.staffDTO.type != StaffType.Expert) throw ForbiddenException()
 
         user.isEnabled = true
         user.isEmailVerified = true
 
         val credentialsKeycloak = CredentialRepresentation()
         credentialsKeycloak.type = CredentialRepresentation.PASSWORD
-        credentialsKeycloak.value = credentials.password
+        credentialsKeycloak.value = credential.password
         credentialsKeycloak.isTemporary = false
         user.credentials = listOf(credentialsKeycloak)
         val userResource = keycloak
@@ -109,15 +106,13 @@ class StaffServiceImpl(
         userResponse.roles().realmLevel().add(listOf(role))
 
         // Insert also inside the Database
-        val profile = credentials.staffDTO
-        val p = Expert()
-        p.email = profile.email.trim()
-        p.name = profile.name
-        p.surname = profile.surname
+        val profile = credential.staffDTO
+        val p = Expert().apply {
+            id = UUID.fromString(userId)
+            email = profile.email.trim()
+            name = profile.name
+            surname = profile.surname
+        }
         staffRepository.save(p)
-
-
     }
-
-
 }

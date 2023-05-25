@@ -1,2 +1,2 @@
-email,name,surname,address
-client@test.it,Client,Test,"Test Street 1"
+id,email,name,surname,address
+f5ac7878-d7ac-4668-8db3-94f3890cd6e3,client@test.it,Client,Test,"Test Street 1"

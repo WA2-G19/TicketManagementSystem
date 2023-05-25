@@ -1,12 +1,10 @@
 package it.polito.wa2.g19.server.profiles.customers
 
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
-import it.polito.wa2.g19.server.profiles.ProfileAlreadyPresent
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
-import org.keycloak.admin.client.resource.UsersResource
 import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 
 @Service
@@ -78,6 +77,7 @@ class CustomerServiceImpl(
         user.email = credentials.customerDTO.email
         user.firstName = credentials.customerDTO.name
         user.lastName = credentials.customerDTO.surname
+        user.attributes["address"] = listOf(credentials.customerDTO.address)
         user.isEnabled = true
         user.isEmailVerified = true
 
@@ -101,11 +101,13 @@ class CustomerServiceImpl(
         userResponse.roles().realmLevel().add(listOf(role))
 
         // Insert inside database
-        val p = Customer()
-        p.email = credentials.customerDTO.email.trim().lowercase()
-        p.name = credentials.customerDTO.name
-        p.surname = credentials.customerDTO.surname
-        p.address = credentials.customerDTO.address
+        val p = Customer().apply {
+            id = UUID.fromString(userId)
+            email = credentials.customerDTO.email.trim().lowercase()
+            name = credentials.customerDTO.name
+            surname = credentials.customerDTO.surname
+            address = credentials.customerDTO.address
+        }
         customerRepository.save(p)
 
     }
