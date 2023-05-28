@@ -26,12 +26,14 @@ class StaffController(
         return staffService.getStaff(email)
     }
 
+
     @PostMapping("/createExpert")
-    @ResponseStatus(HttpStatus.OK)
-    fun signupExpert(
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createExpert(
         @RequestBody
         credentials: CredentialStaffDTO
     ) {
-        staffService.signupExpert(credentials)
+        println("ciaoooooooooooooooooooooooooooooooooooooooooooooo")
+        staffService.createExpert(credentials)
     }
 }

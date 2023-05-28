@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.profiles.staff
 
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
+import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.apache.http.HttpStatus
@@ -73,8 +74,8 @@ class StaffServiceImpl(
     }
 
     @PreAuthorize("hasRole('Manager')")
-    override fun signupExpert(credential: CredentialStaffDTO) {
-
+    override fun createExpert(credential: CredentialStaffDTO) {
+        credential.staffDTO.email = credential.staffDTO.email.lowercase()
         val user = UserRepresentation()
         user.username = credential.staffDTO.email
         user.email = credential.staffDTO.email
@@ -98,7 +99,7 @@ class StaffServiceImpl(
         // Check if the user already exists
         val response = userResource.create(user)
         if (response.status == HttpStatus.SC_CONFLICT) throw DuplicateEmailException()
-
+        if (response.status != 201 ) throw KeycloakException()
         // Assign the role to client
         val role = keycloak.realm(realmName).roles().get("Expert").toRepresentation()
         val userId = CreatedResponseUtil.getCreatedId(response)

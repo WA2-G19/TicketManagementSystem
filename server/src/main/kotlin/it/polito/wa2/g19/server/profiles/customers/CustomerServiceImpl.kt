@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.profiles.customers
 
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
+import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import kotlin.collections.HashMap
 
 
 @Service
@@ -49,6 +51,7 @@ class CustomerServiceImpl(
             throw DuplicateEmailException()
         } else {
             val p = Customer()
+
             p.email = profile.email.trim().lowercase()
             p.name = profile.name
             p.surname = profile.surname
@@ -71,12 +74,13 @@ class CustomerServiceImpl(
     }
 
     override fun signup(credentials: CredentialCustomerDTO) {
-
         val user = UserRepresentation()
+        credentials.customerDTO.email = credentials.customerDTO.email.lowercase()
         user.username = credentials.customerDTO.email
         user.email = credentials.customerDTO.email
         user.firstName = credentials.customerDTO.name
         user.lastName = credentials.customerDTO.surname
+        user.attributes = HashMap()
         user.attributes["address"] = listOf(credentials.customerDTO.address)
         user.isEnabled = true
         user.isEmailVerified = true
@@ -92,7 +96,9 @@ class CustomerServiceImpl(
 
         // Check if the user already exists
         val response = userResource.create(user)
+        println(response.status)
         if (response.status == HttpStatus.SC_CONFLICT) throw DuplicateEmailException()
+        if (response.status != 201 ) throw KeycloakException()
 
         // Assign the role to client
         val role = keycloak.realm(realmName).roles().get("Client").toRepresentation()

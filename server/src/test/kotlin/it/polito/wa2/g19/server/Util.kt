@@ -8,6 +8,7 @@ import it.polito.wa2.g19.server.ticketing.statuses.*
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import it.polito.wa2.g19.server.ticketing.tickets.TicketDTO
 import java.sql.Timestamp
+import java.util.*
 
 class Util {
 
@@ -21,6 +22,7 @@ class Util {
             return mutableListOf<Customer>().let {
                 for (i in 0..3){
                     val c = Customer("customer${i}@test.test", "customer${i}Name", "customer${i}Surname", "customer${i}Address")
+                    c.id = UUID.randomUUID()
                     it.add(c)
                 }
                 it
@@ -28,13 +30,16 @@ class Util {
         }
 
         fun mockMainCustomer(): Customer{
-            return Customer("client@test.it", "customerName", "customerSurname", "customerAddress")
+            val c = Customer("client@test.it", "customerName", "customerSurname", "customerAddress")
+            c.id = UUID.randomUUID()
+            return c
         }
 
         fun mockExperts(): List<Expert>{
             return mutableListOf<Expert>().let {
                 for (i in 0..3){
                     val e = Expert("expert${i}@test.test", "expert${i}Name", "expert${i}Surname" )
+                    e.id = UUID.randomUUID()
                     it.add(e)
                 }
                 it
@@ -42,13 +47,16 @@ class Util {
         }
 
         fun mockMainExpert(): Expert{
-            return Expert("expert@test.it", "expertName", "expertSurname")
+            val e = Expert("expert@test.it", "expertName", "expertSurname")
+            e.id = UUID.randomUUID()
+            return e
         }
 
         fun mockManagers(): List<Manager>{
             return mutableListOf<Manager>().let {
                 for (i in 0..3){
-                    val m = Manager("manager${i}@test.test", "expert${i}Name", "expert${i}Surname" )
+                    val m = Manager("manager${i}@test.test", "expert${i}Name", "expert${i}Surname")
+                    m.id = UUID.randomUUID()
                     it.add(m)
                 }
                 it
@@ -56,7 +64,9 @@ class Util {
         }
 
         fun mockMainManager(): Manager{
-            return  Manager("manager@test.it", "managerName", "managerSurname")
+            val m = Manager("manager@test.it", "managerName", "managerSurname")
+            m.id = UUID.randomUUID()
+            return m
         }
 
         fun mockProduct(): Product {

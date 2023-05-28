@@ -29,6 +29,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.util.*
 
 
 @Testcontainers
@@ -102,9 +103,11 @@ class TicketTest {
                 otherCustomer = customer
             customer = customerRepository.save(it)
         }
+
         customer = customerRepository.save(Util.mockMainCustomer())
 
         Util.mockManagers().forEach{
+            it.id = UUID.randomUUID()
             manager = staffRepository.save(it)
         }
         manager = staffRepository.save(Util.mockMainManager())
@@ -114,6 +117,7 @@ class TicketTest {
                 otherExpert = expert
             expert =  staffRepository.save(it)
         }
+
         expert = staffRepository.save(Util.mockMainExpert())
         Util.mockPriorityLevels().forEach{
             priorityLevelRepository.save(it)
@@ -229,7 +233,7 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as ClosedTicketStatus).by== manager)
+        assert((lastStatus as ClosedTicketStatus).by.id == manager.id)
     }
 
     @Test
@@ -301,8 +305,8 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as InProgressTicketStatus).expert== expert)
-        assert(lastStatus.by == manager)
+        assert((lastStatus as InProgressTicketStatus).expert.id == expert.id)
+        assert(lastStatus.by.id == manager.id)
     }
 
     @Test
@@ -340,7 +344,7 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as ResolvedTicketStatus).by == manager)
+        assert((lastStatus as ResolvedTicketStatus).by.id == manager.id)
     }
 
     @Test
@@ -375,7 +379,7 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as ClosedTicketStatus).by == manager)
+        assert((lastStatus as ClosedTicketStatus).by.id == manager.id)
     }
 
     @Test
@@ -454,7 +458,7 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as ResolvedTicketStatus).by== expert)
+        assert((lastStatus as ResolvedTicketStatus).by.id == expert.id)
     }
 
     @Test
@@ -772,7 +776,7 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as ClosedTicketStatus).by== manager)
+        assert((lastStatus as ClosedTicketStatus).by.id== manager.id)
     }
 
     @Test
@@ -820,8 +824,8 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as InProgressTicketStatus).expert== expert)
-        assert(lastStatus.by == manager)
+        assert((lastStatus as InProgressTicketStatus).expert.id == expert.id)
+        assert(lastStatus.by.id == manager.id)
     }
 
     @Test
@@ -914,7 +918,7 @@ class TicketTest {
         val statuses = ticketStatusRepository.findAllByTicketId(ticketID)
         assert(statuses.size == 2)
         val lastStatus = ticketStatusRepository.findByTicketAndTimestampIsMaximum(ticketID)
-        assert((lastStatus as ClosedTicketStatus).by== expert)
+        assert((lastStatus as ClosedTicketStatus).by.id == expert.id)
     }
 
     @Test
@@ -1464,7 +1468,6 @@ class TicketTest {
         ticket.customer = otherCustomer
         ticket.expert = otherExpert
         ticket.status = TicketStatusEnum.Open
-        val ticketID = ticketRepository.save(ticket).getId()
         insertTicket(TicketStatusEnum.Open)
 
         val headers = HttpHeaders()

@@ -9,3 +9,5 @@ class NotMatchingEmailException : RuntimeException("The email in the path does n
 class NotMatchStaffTypeException : RuntimeException("The staff type is not matched")
 
 class ProfileAlreadyPresent: RuntimeException("There is already a profile associated to this email")
+
+class KeycloakException: RuntimeException("A problem happened during registration, please try later...")

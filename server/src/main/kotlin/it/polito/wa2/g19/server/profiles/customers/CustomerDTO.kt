@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size
 import org.hibernate.annotations.Check
 
 data class CustomerDTO(
-    @field:Email(message = "provide a valid email")
+    @field:Email(message = "provide a valid email", )
     @field:NotBlank(message = "email cannot be blank")
     var email: String,
     @field:NotBlank(message = "name cannot be blank" )
@@ -24,6 +24,7 @@ data class CredentialCustomerDTO (
     @field:NotBlank(message = "password cannot be blank")
     @field:Size(min = 6, message = "password size should be minimum 6 characters")
     val password: String
+
 
 )
 

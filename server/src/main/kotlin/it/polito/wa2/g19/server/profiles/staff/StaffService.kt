@@ -8,5 +8,5 @@ interface StaffService {
     fun insertProfile(profile: StaffDTO)
     fun updateProfile(email: String, profile: StaffDTO)
 
-    fun signupExpert(credential: CredentialStaffDTO)
+    fun createExpert(credential: CredentialStaffDTO)
 }
