@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
+import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.common.Util
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
@@ -20,6 +21,7 @@ import java.net.URI
 @RestController
 @Validated
 @RequestMapping("/API/tickets")
+@Observed
 class TicketController(
     private val ticketService: TicketService,
     @Autowired

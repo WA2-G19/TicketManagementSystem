@@ -27,5 +27,7 @@ COPY --from=buildServer /server/build/libs/*.jar ./spring-boot-application.jar
 
 RUN echo "spring.datasource.url=jdbc:postgresql://database:5432/TicketManagementSystem" >> application.properties
 RUN echo "keycloakBaseUrl=http://keycloak:8080" >> application.properties
+RUN echo "loki.hostname=loki:3100" >> application.properties
+RUN echo "management.zipkin.tracing.endpoint=http://tempo:9411/api/v2/spans" >> application.properties
 
 ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]

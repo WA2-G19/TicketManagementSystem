@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.chat
 
+import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g19.server.common.Util
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,6 +21,7 @@ import java.net.URI
 @RestController
 @Validated
 @RequestMapping("/API/tickets")
+@Observed
 class ChatMessageController(
     private val chatMessageService: ChatMessageService,
     @Autowired

@@ -1,10 +1,9 @@
 package it.polito.wa2.g19.server.profiles.customers
 
+import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g19.server.profiles.NotMatchingEmailException
 import jakarta.validation.constraints.Email
 import jakarta.validation.Valid
-import org.keycloak.admin.client.Keycloak
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @Validated
 @RequestMapping("/API")
+@Observed
 class CustomerController(
     private val profileService: CustomerService
 ) {
