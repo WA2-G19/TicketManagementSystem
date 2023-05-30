@@ -17,6 +17,7 @@ class ProductController(
     private val productService: ProductService
 ) {
 
+    @Observed
     @GetMapping("/products")
     fun getAll(): List<ProductDTO> {
         return productService.getAll()
