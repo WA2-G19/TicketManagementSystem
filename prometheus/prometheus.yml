@@ -5,10 +5,10 @@ global:
 scrape_configs:
     - job_name: 'prometheus'
       static_configs:
-          - targets: ['localhost:9090']
-            labels:
-              app: 'Prometheus'
-    - job_name: 'apps'
+        - targets: ['prometheus:9090']
+          labels:
+            app: 'Prometheus'
+    - job_name: 'cluster-api'
       metrics_path: '/actuator/prometheus'
       static_configs:
         - targets: ['application:8080']

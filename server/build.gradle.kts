@@ -6,6 +6,7 @@ plugins {
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
 	kotlin("plugin.jpa") version "1.7.22"
+	id("io.freefair.lombok") version "6.2.0"
 }
 
 group = "it.polito.wa2.g19"
@@ -41,20 +42,25 @@ dependencies {
 
 	implementation("org.keycloak:keycloak-admin-client:21.1.1")
 
-	// using new @Observed on class and enaabled @ObservedAspect
+	// using new @Observed on class and enabled @ObservedAspect
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	// enabled endpoint and expose metrics
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("io.micrometer:micrometer-registry-prometheus")
-	// handleing lifecycle of a span
+	// handling lifecycle of a span
 	implementation("io.micrometer:micrometer-tracing-bridge-brave")
 	// send span and trace data
 	// endpoint is default to "http://locahost:9411/api/v2/spans" by actuator
-	// we could setting by management.zipkin.tracing.endpoint
+	// we could set it by management.zipkin.tracing.endpoint
 	implementation("io.zipkin.reporter2:zipkin-reporter-brave")
 	// send logs by log Appender through URL
 	implementation("com.github.loki4j:loki-logback-appender:1.4.0-rc2")
 
+	compileOnly("org.projectlombok:lombok:1.18.20")
+	annotationProcessor("org.projectlombok:lombok:1.18.20")
+
+	implementation("io.github.microutils:kotlin-logging:3.0.5")
+	implementation("ch.qos.logback:logback-classic:1.4.6")
 }
 
 dependencyManagement {

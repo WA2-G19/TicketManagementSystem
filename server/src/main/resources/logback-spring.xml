@@ -22,4 +22,5 @@
     <root level="INFO">
         <appender-ref ref="LOKI"/>
     </root>
+    <logger name="feign" level="DEBUG"/> <!-- you can set your own level rule -->
 </configuration>
