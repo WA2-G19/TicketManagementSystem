@@ -182,7 +182,6 @@ class ProfileTest {
     }
 
     fun mockCredentialStaffDTO(): CredentialStaffDTO{
-        val expertDTO = mockExpertDTO()
         val pwd = "secretpwd"
         return CredentialStaffDTO(mockExpertDTO(), pwd)
     }

@@ -1449,7 +1449,6 @@ class TicketTest {
         ticket.product = product
         ticket.customer = otherCustomer
         ticket.status = TicketStatusEnum.Open
-        val ticketID = ticketRepository.save(ticket).getId()
         insertTicket(TicketStatusEnum.Open)
 
         val headers = HttpHeaders()
