@@ -32,6 +32,7 @@ class ProfileController {
         login: LoginDTO): String {
         log.info("User {} tried to log in.", login.username)
         val restTemplate = RestTemplate()
+
         val request = RequestEntity.post("${keycloakBaseUrl}/realms/ticket_management_system/protocol/openid-connect/token")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(LinkedMultiValueMap<String, String>().apply {

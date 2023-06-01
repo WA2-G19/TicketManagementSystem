@@ -73,6 +73,7 @@ class TicketController(
     ): ResponseEntity<Void> {
         val email = principal.name
         ticket.customerEmail = email
+
         val id = ticketService.createTicket(ticket)
         val headers = HttpHeaders()
         headers.location = URI.create(Util.getUri(handlerMapping, ::getTicketById.name, id))

@@ -34,7 +34,6 @@ class StaffController(
         @RequestBody
         credentials: CredentialStaffDTO
     ) {
-        println("ciaoooooooooooooooooooooooooooooooooooooooooooooo")
         staffService.createExpert(credentials)
     }
 }
