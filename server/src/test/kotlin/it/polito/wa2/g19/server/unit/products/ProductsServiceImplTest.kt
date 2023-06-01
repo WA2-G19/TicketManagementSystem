@@ -88,9 +88,7 @@ internal class ProductsServiceImplTest {
         val productsDTO = service.getAll()
 
         productsDTO.sortedBy { p -> p.ean }.forEachIndexed { index, p ->
-            println(p)
             assert("${index}Ean" == p.ean)
-            println("okk")
             assert("${index}Name" == p.name)
             assert("${index}Brand" == p.brand)
         }

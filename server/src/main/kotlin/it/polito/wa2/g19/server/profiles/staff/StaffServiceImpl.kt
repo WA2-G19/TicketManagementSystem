@@ -107,13 +107,21 @@ class StaffServiceImpl(
         userResponse.roles().realmLevel().add(listOf(role))
 
         // Insert also inside the Database
-        val profile = credential.staffDTO
-        val p = Expert().apply {
-            id = UUID.fromString(userId)
-            email = profile.email.trim()
-            name = profile.name
-            surname = profile.surname
+        try{
+            val profile = credential.staffDTO
+            val p = Expert().apply {
+                id = UUID.fromString(userId)
+                email = profile.email.trim()
+                name = profile.name
+                surname = profile.surname
+            }
+            staffRepository.save(p)
+        } catch (e: Exception){
+            //delete the expert is something go wrong
+
+            userResource.get(userId).remove()
+            throw KeycloakException()
         }
-        staffRepository.save(p)
+
     }
 }

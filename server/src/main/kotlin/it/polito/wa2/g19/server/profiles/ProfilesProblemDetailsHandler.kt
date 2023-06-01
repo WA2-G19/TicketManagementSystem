@@ -23,4 +23,10 @@ class ProfilesProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler(ProfileAlreadyPresent::class)
     fun handleProfileAlreadyPresent(e: ProfileAlreadyPresent) = ProblemDetail
         .forStatusAndDetail( HttpStatus.CONFLICT, e.message!! )
+
+    @ExceptionHandler(KeycloakException::class)
+    fun handleProfileAlreadyPresent(e: KeycloakException): ProblemDetail {
+        println("----------------------------------------------------")
+        return ProblemDetail
+            .forStatusAndDetail( HttpStatus.INTERNAL_SERVER_ERROR, e.message!! )}
 }

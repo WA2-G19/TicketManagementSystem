@@ -85,18 +85,20 @@ class CustomerServiceImpl(
         user.isEnabled = true
         user.isEmailVerified = true
 
+
         val credentialsKeycloak = CredentialRepresentation()
         credentialsKeycloak.type = CredentialRepresentation.PASSWORD
         credentialsKeycloak.value = credentials.password
+
         credentialsKeycloak.isTemporary = false
         user.credentials = listOf(credentialsKeycloak)
+
         val userResource = keycloak
             .realm(realmName)
             .users()
 
         // Check if the user already exists
         val response = userResource.create(user)
-        println(response.status)
         if (response.status == HttpStatus.SC_CONFLICT) throw DuplicateEmailException()
         if (response.status != 201 ) throw KeycloakException()
 
@@ -105,16 +107,22 @@ class CustomerServiceImpl(
         val userId = CreatedResponseUtil.getCreatedId(response)
         val userResponse = userResource.get(userId)
         userResponse.roles().realmLevel().add(listOf(role))
-
-        // Insert inside database
-        val p = Customer().apply {
-            id = UUID.fromString(userId)
-            email = credentials.customerDTO.email.trim().lowercase()
-            name = credentials.customerDTO.name
-            surname = credentials.customerDTO.surname
-            address = credentials.customerDTO.address
+        try{
+            val p = Customer().apply {
+                id = UUID.fromString(userId)
+                email = credentials.customerDTO.email.trim().lowercase()
+                name = credentials.customerDTO.name
+                surname = credentials.customerDTO.surname
+                address = credentials.customerDTO.address
+            }
+            customerRepository.save(p)
+        } catch (e: Exception){
+            //delete the user is something go wrong
+            userResource.get(userId).remove()
+            throw KeycloakException()
         }
-        customerRepository.save(p)
+        // Insert inside database
+
 
     }
 }

@@ -195,8 +195,7 @@ class TicketTest {
         newTicket.id = createdTicket.id
         assert(newTicket.id == createdTicket.id)
         assert(newTicket.description == createdTicket.description)
-        println(customer.email)
-        println(createdTicket.customerEmail)
+
         assert(customer.email == createdTicket.customerEmail)
         assert(newTicket.productEan == createdTicket.productEan)
         assert( createdTicket.priorityLevel == null)
@@ -1001,7 +1000,6 @@ class TicketTest {
         headers.setBearerAuth(managerToken)
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?customer=${customer.email}", HttpMethod.GET, HttpEntity(null, headers))
         assert(myTicketsDTO.body!!.size == mySize)
-        (myTicketsDTO.body!!.forEach{println(it.customerEmail)})
         assert(myTicketsDTO.body!!.all { it.customerEmail == customer.email })
     }
 
@@ -1028,7 +1026,6 @@ class TicketTest {
         val headers = HttpHeaders()
         headers.setBearerAuth(managerToken)
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}", HttpMethod.GET, HttpEntity(null, headers))
-        println(myTicketsDTO.body!!.size)
         assert(myTicketsDTO.body!!.size == mySize)
         assert(myTicketsDTO.body!!.all { it.expertEmail == expert.email && it.customerEmail == customer.email })
     }

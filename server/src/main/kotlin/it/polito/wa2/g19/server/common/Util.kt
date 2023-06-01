@@ -8,7 +8,6 @@ class Util {
     companion object{
         fun getUri(handlerMapping: RequestMappingHandlerMapping, handlerName: String, vararg params: Any): String{
             val uri =  handlerMapping.handlerMethods.entries.find { it.value.method.name == handlerName}!!.key.pathPatternsCondition!!.patterns.first().patternString
-            println(uri)
             return UriComponentsBuilder.fromUriString(uri)
                 .buildAndExpand(*params)
                 .toUriString()
