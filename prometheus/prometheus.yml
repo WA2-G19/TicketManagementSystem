@@ -14,3 +14,11 @@ scrape_configs:
         - targets: ['application:8080']
           labels:
             app: 'TicketManagementSystem'
+      oauth2:
+        client_id: 'TicketManagementSystem'
+        client_secret: "eoM7Xo7Ft93eyph81RnfSiNcJ9Cawvfw"
+        token_url: 'http://keycloak:8080/realms/ticket_management_system/protocol/openid-connect/token'
+        endpoint_params:
+          grant_type: "password"
+          username: "prometheus"
+          password: "password"

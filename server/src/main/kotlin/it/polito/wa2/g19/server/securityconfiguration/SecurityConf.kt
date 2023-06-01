@@ -53,7 +53,7 @@ class ResourceServerConfig {
             .requestMatchers("/API/signup")
                 .permitAll()
             .requestMatchers("/actuator/prometheus")
-                .permitAll()
+                .hasRole("Prometheus")
             .and()
             .formLogin().disable()
             .sessionManagement()
