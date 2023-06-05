@@ -30,8 +30,9 @@ class ResourceServerConfig {
         http.cors().disable()
             .csrf().disable()
             .authorizeHttpRequests()
+            .requestMatchers("/index.html","/", "/static/**", "/manifest.json").permitAll()
             .requestMatchers("/actuator/prometheus")
-            .   hasRole("Prometheus")
+            .hasRole("Prometheus")
             .requestMatchers("/API/products/**")
                 .permitAll()
             .requestMatchers("/API/staff/*")
@@ -50,7 +51,6 @@ class ResourceServerConfig {
                 .hasRole("Client")
             .requestMatchers(HttpMethod.GET, "/API/tickets**")
                 .authenticated()
-
             .requestMatchers("/API/login")
                 .permitAll()
             .requestMatchers("/API/signup")
