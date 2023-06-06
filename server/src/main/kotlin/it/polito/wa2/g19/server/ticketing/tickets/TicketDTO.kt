@@ -15,7 +15,8 @@ open class TicketDTO(
 )
 
 class TicketOutDTO(id: Int?, customerEmail: String, productEan: String, description: String,
-                   var priorityLevel: PriorityLevelEnum?, var expertEmail: String?,
+                   var priorityLevel: PriorityLevelEnum?,
+                   var expertEmail: String?,
                    var status: TicketStatusEnum = TicketStatusEnum.Open
 )
     : TicketDTO(id, customerEmail, productEan, description){

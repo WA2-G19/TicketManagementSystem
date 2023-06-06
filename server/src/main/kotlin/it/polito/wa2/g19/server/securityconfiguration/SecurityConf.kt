@@ -13,6 +13,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.stereotype.Component
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+
+
+
 
 
 @EnableWebSecurity
@@ -27,10 +33,11 @@ class ResourceServerConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
 
-        http.cors().disable()
+        http
+            .cors().disable()
             .csrf().disable()
             .authorizeHttpRequests()
-            .requestMatchers("/index.html","/", "/static/**", "/manifest.json").permitAll()
+            .requestMatchers("/index.html","/", "/static/**", "/manifest.json", "/signup").permitAll()
             .requestMatchers("/actuator/prometheus")
             .hasRole("Prometheus")
             .requestMatchers("/API/products/**")

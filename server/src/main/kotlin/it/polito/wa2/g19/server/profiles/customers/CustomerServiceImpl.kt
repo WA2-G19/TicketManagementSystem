@@ -83,7 +83,8 @@ class CustomerServiceImpl(
         user.attributes = HashMap()
         user.attributes["address"] = listOf(credentials.customerDTO.address)
         user.isEnabled = true
-        user.isEmailVerified = true
+        user.isEmailVerified = false
+
 
 
         val credentialsKeycloak = CredentialRepresentation()
@@ -96,6 +97,7 @@ class CustomerServiceImpl(
         val userResource = keycloak
             .realm(realmName)
             .users()
+
 
         // Check if the user already exists
         val response = userResource.create(user)
@@ -116,6 +118,7 @@ class CustomerServiceImpl(
                 address = credentials.customerDTO.address
             }
             customerRepository.save(p)
+            userResource.get(userId).sendVerifyEmail()
         } catch (e: Exception){
             //delete the user is something go wrong
             userResource.get(userId).remove()

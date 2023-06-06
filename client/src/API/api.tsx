@@ -1,4 +1,4 @@
-import Profile from "../classes/Profile"
+import {Profile} from "../classes/Profile"
 
 async function getAllProducts(): Promise<Response> {
     return await fetch("/API/products")
@@ -6,7 +6,6 @@ async function getAllProducts(): Promise<Response> {
 
 async function getProductByEAN(ean: string): Promise<Response> {
     return await fetch("/API/products/" + ean)
-
 }
 
 async function getProfileByEmail(email: string): Promise<Response> {

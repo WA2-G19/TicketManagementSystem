@@ -1,7 +1,7 @@
 import {Container, Button, Form, Row, Col, Card} from "react-bootstrap"
 import Response from "./Response"
-import Product from "./classes/Product"
-import API from "./API/api"
+import Product from "../classes/Product"
+import API from "../API/api"
 import React, {useState} from "react"
 
 

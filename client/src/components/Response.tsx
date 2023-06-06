@@ -1,8 +1,8 @@
 import { Card, InputGroup, Button, Container } from "react-bootstrap"
-import APIObject from "./classes/APIObject"
+import APIObject from "../classes/APIObject"
 import PrettyOutput from "./PrettyOutput"
 import { useEffect, useState } from "react"
-import { HttpStatusEnum } from "./utils/httpMapping"
+import { HttpStatusEnum } from "../utils/httpMapping"
 
 function Response(props: {
     prototype: APIObject,

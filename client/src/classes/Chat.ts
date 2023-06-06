@@ -1,6 +1,6 @@
-import APIObject from "./APIObject"
+import APIObject from "./APIObject";
 
-class Product extends APIObject {
+class ChatMessage extends APIObject {
     ean: string
     name: string
     brand?: string
@@ -12,8 +12,6 @@ class Product extends APIObject {
         this.brand = brand
     }
 
-    
+
 
 }
-
-export default Product

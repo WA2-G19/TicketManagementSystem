@@ -1,5 +1,5 @@
 import { Container } from "react-bootstrap"
-import APIObject from "./classes/APIObject"
+import APIObject from "../classes/APIObject"
 import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 
 function PrettyOutput(props: {
