@@ -8,19 +8,16 @@ import jakarta.validation.constraints.NotBlank
 import java.time.LocalDateTime
 
 abstract class ChatMessageDTO(
-    @field:Email(message = "authorEmail must be a valid email")
-    @field:NotBlank(message = "authorEmail must be not blank")
-    var authorEmail: String,
     @field:NotBlank(message = "message body must be not blank")
     var body: String,
 )
 
-class ChatMessageInDTO(authorEmail: String, body: String):
-    ChatMessageDTO(authorEmail, body)
+class ChatMessageInDTO( body: String):
+    ChatMessageDTO( body)
 
-class ChatMessageOutDTO(val id: Int, authorEmail: String, body: String, val stubAttachments: Set<StubAttachmentDTO>?,
+class ChatMessageOutDTO(val id: Int, val authorEmail:  String, body: String, val stubAttachments: Set<StubAttachmentDTO>?,
                          val timestamp: LocalDateTime):
-        ChatMessageDTO(authorEmail, body)
+        ChatMessageDTO(body)
 
 
 

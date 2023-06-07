@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.products
 
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
+import it.polito.wa2.g19.server.warranty.Warranty
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -14,7 +15,7 @@ import org.hibernate.validator.constraints.EAN
 class Product() {
 
     @OneToMany(mappedBy = "product")
-    lateinit var tickets: Set<Ticket>
+    lateinit var warranties: Set<Warranty>
 
     @Id
     @EAN

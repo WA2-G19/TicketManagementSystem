@@ -2,6 +2,7 @@ package it.polito.wa2.g19.server.integration.chat
 
 import dasniko.testcontainers.keycloak.KeycloakContainer
 import it.polito.wa2.g19.server.Util
+import it.polito.wa2.g19.server.integration.ticketing.TicketTest
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductRepository
 import it.polito.wa2.g19.server.profiles.LoginDTO
@@ -10,6 +11,8 @@ import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
+import it.polito.wa2.g19.server.profiles.vendors.Vendor
+import it.polito.wa2.g19.server.profiles.vendors.VendorRepository
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageInDTO
 import it.polito.wa2.g19.server.ticketing.chat.ChatMessageOutDTO
@@ -19,6 +22,8 @@ import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusRepository
 import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
 import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
+import it.polito.wa2.g19.server.warranty.Warranty
+import it.polito.wa2.g19.server.warranty.WarrantyRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -75,79 +80,96 @@ class ChatTest {
 
     private lateinit var customer: Customer
     private lateinit var otherCustomer: Customer
-    private lateinit var product: Product
-    private lateinit var manager: Manager
     private lateinit var expert: Expert
     private lateinit var otherExpert: Expert
+    private lateinit var manager: Manager
+    private lateinit var vendor: Vendor
+
+
+
     private lateinit var customerToken: String
     private lateinit var expertToken: String
     private lateinit var managerToken: String
 
+    private lateinit var warranty: Warranty
+    private lateinit var otherWarranty: Warranty
+    private lateinit var expiredWarranty: Warranty
+    private lateinit var notActivatedWarranty: Warranty
+    private lateinit var product: Product
+
+
     @Autowired
     lateinit var customerRepository: CustomerRepository
-
     @Autowired
     lateinit var staffRepository: StaffRepository
-
+    @Autowired
+    lateinit var vendorRepository: VendorRepository
     @Autowired
     lateinit var productRepository: ProductRepository
-
     @Autowired
     lateinit var ticketRepository: TicketRepository
-
     @Autowired
     lateinit var priorityLevelRepository: PriorityLevelRepository
-
     @Autowired
     lateinit var ticketStatusRepository: TicketStatusRepository
-
     @Autowired
-    lateinit var chatRepository: ChatMessageRepository
-
-    @Autowired
-    lateinit var attachmentRepository: AttachmentRepository
+    lateinit var warrantyRepository: WarrantyRepository
 
     @BeforeEach
-    fun populateDatabase() {
-        if(!keycloak.isRunning){
-            keycloak.start()
+    fun populateDatabase(){
+        if(!TicketTest.keycloak.isRunning){
+            TicketTest.keycloak.start()
         }
         println("----populating database------")
-        Util.mockCustomers().forEach {
+        Util.mockCustomers().forEach{
             if (::customer.isInitialized)
                 otherCustomer = customer
             customer = customerRepository.save(it)
         }
+
         customer = customerRepository.save(Util.mockMainCustomer())
-        Util.mockManagers().forEach {
+
+        Util.mockManagers().forEach{
+            it.id = UUID.randomUUID()
             manager = staffRepository.save(it)
         }
         manager = staffRepository.save(Util.mockMainManager())
-        Util.mockExperts().forEach {
-            if (::expert.isInitialized)
+
+        Util.mockExperts().forEach{
+            if(::expert.isInitialized)
                 otherExpert = expert
-            expert = staffRepository.save(it)
+            expert =  staffRepository.save(it)
         }
+
         expert = staffRepository.save(Util.mockMainExpert())
-        Util.mockPriorityLevels().forEach {
+        Util.mockPriorityLevels().forEach{
             priorityLevelRepository.save(it)
         }
+        vendor = vendorRepository.save(Util.mockVendor())
         product = productRepository.save(Util.mockProduct())
+        warranty = warrantyRepository.save(Util.mockWarranty(product, vendor, customer))
+        expiredWarranty = warrantyRepository.save(Util.mockExpiredWarranty(product, vendor, customer))
+        notActivatedWarranty = warrantyRepository.save(Util.mockNotActivatedWarranty(product, vendor, customer))
+        otherWarranty = warrantyRepository.save(Util.mockWarranty(product, vendor, otherCustomer))
+
+        Util.warrantyUUID = warranty.id!!
         println("---------------------------------")
     }
 
+
     @AfterEach
-    fun destroyDatabase() {
+    fun destroyDatabase(){
         println("----destroying database------")
-        attachmentRepository.deleteAll()
-        chatRepository.deleteAll()
         ticketStatusRepository.deleteAll()
         ticketRepository.deleteAll()
         priorityLevelRepository.deleteAll()
         productRepository.deleteAll()
         customerRepository.deleteAll()
         staffRepository.deleteAll()
+        warrantyRepository.deleteAll()
+        vendorRepository.deleteAll()
         println("---------------------------------")
+
     }
 
     @BeforeEach
@@ -177,8 +199,7 @@ class ChatTest {
     fun insertTicket(): Int {
         val ticket = Util.mockTicket()
         ticket.status = TicketStatusEnum.Open
-        ticket.customer = customer
-        ticket.product = product
+        ticket.warranty = warranty
         val ticketStatus = Util.mockOpenTicketStatus()
         ticketStatus.ticket = ticket
         ticket.statusHistory = mutableSetOf()
@@ -213,7 +234,7 @@ class ChatTest {
             .headers(headers)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO(messageBody))
             })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
@@ -237,7 +258,7 @@ class ChatTest {
             .headers(headers)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(expert.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
             })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
@@ -260,7 +281,7 @@ class ChatTest {
             .headers(headers1)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
             })
         val response1 = restTemplate.exchange<Void>(request1)
         assert(response1.statusCode == HttpStatus.CREATED)
@@ -282,7 +303,7 @@ class ChatTest {
             .headers(headers1)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
             })
         val response1 = restTemplate.exchange<Void>(request1)
         assert(response1.statusCode == HttpStatus.CREATED)
@@ -326,7 +347,7 @@ class ChatTest {
             .headers(headers)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO(messageBody))
             })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
@@ -346,7 +367,7 @@ class ChatTest {
             .headers(headers)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
             })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
@@ -368,7 +389,7 @@ class ChatTest {
             .headers(headers)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(expert.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
             })
         val response = restTemplate.exchange<Void>(request)
         assert(response.statusCode == HttpStatus.CREATED)
@@ -391,7 +412,7 @@ class ChatTest {
             .headers(headers)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
                 add("files", object : ByteArrayResource(file1Content) {
                     override fun getFilename(): String = "test.txt"
                 })
@@ -421,7 +442,7 @@ class ChatTest {
             .headers(headers)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO(messageBody))
                 add("files", object : ByteArrayResource(fileContent) {
                     override fun getFilename(): String = fileName
                 })
@@ -460,7 +481,7 @@ class ChatTest {
             .headers(headers1)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
                 add("files", object : ByteArrayResource(fileContent) {
                     override fun getFilename(): String = fileName
                 })
@@ -500,7 +521,7 @@ class ChatTest {
             .headers(headers1)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
                 add("files", object : ByteArrayResource(fileContent) {
                     override fun getFilename(): String = fileName
                 })
@@ -536,7 +557,7 @@ class ChatTest {
             .headers(headers1)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply {
-                add("message", ChatMessageInDTO(customer.email, messageBody))
+                add("message", ChatMessageInDTO( messageBody))
                 add("files", object : ByteArrayResource(fileContent) {
                     override fun getFilename(): String = fileName
                 })

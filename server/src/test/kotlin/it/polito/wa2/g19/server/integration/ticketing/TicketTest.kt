@@ -11,8 +11,12 @@ import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
+import it.polito.wa2.g19.server.profiles.vendors.Vendor
+import it.polito.wa2.g19.server.profiles.vendors.VendorRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import it.polito.wa2.g19.server.ticketing.tickets.*
+import it.polito.wa2.g19.server.warranty.Warranty
+import it.polito.wa2.g19.server.warranty.WarrantyRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -67,20 +71,30 @@ class TicketTest {
 
     private lateinit var customer: Customer
     private lateinit var otherCustomer: Customer
-    private lateinit var product: Product
-    private lateinit var manager: Manager
     private lateinit var expert: Expert
     private lateinit var otherExpert: Expert
+    private lateinit var manager: Manager
+    private lateinit var vendor: Vendor
+
+
 
     private lateinit var customerToken: String
     private lateinit var expertToken: String
     private lateinit var managerToken: String
+
+    private lateinit var warranty: Warranty
+    private lateinit var otherWarranty: Warranty
+    private lateinit var expiredWarranty: Warranty
+    private lateinit var notActivatedWarranty: Warranty
+    private lateinit var product: Product
 
 
     @Autowired
     lateinit var customerRepository: CustomerRepository
     @Autowired
     lateinit var staffRepository: StaffRepository
+    @Autowired
+    lateinit var vendorRepository: VendorRepository
     @Autowired
     lateinit var productRepository: ProductRepository
     @Autowired
@@ -89,6 +103,9 @@ class TicketTest {
     lateinit var priorityLevelRepository: PriorityLevelRepository
     @Autowired
     lateinit var ticketStatusRepository: TicketStatusRepository
+    @Autowired
+    lateinit var warrantyRepository: WarrantyRepository
+
 
 
 
@@ -122,7 +139,14 @@ class TicketTest {
         Util.mockPriorityLevels().forEach{
             priorityLevelRepository.save(it)
         }
+        vendor = vendorRepository.save(Util.mockVendor())
         product = productRepository.save(Util.mockProduct())
+        warranty = warrantyRepository.save(Util.mockWarranty(product, vendor, customer))
+        expiredWarranty = warrantyRepository.save(Util.mockExpiredWarranty(product, vendor, customer))
+        notActivatedWarranty = warrantyRepository.save(Util.mockNotActivatedWarranty(product, vendor, customer))
+        otherWarranty = warrantyRepository.save(Util.mockWarranty(product, vendor, otherCustomer))
+
+        Util.warrantyUUID = warranty.id!!
         println("---------------------------------")
     }
 
@@ -132,10 +156,13 @@ class TicketTest {
         println("----destroying database------")
         ticketStatusRepository.deleteAll()
         ticketRepository.deleteAll()
+        warrantyRepository.deleteAll()
+
         priorityLevelRepository.deleteAll()
         productRepository.deleteAll()
         customerRepository.deleteAll()
         staffRepository.deleteAll()
+        vendorRepository.deleteAll()
         println("---------------------------------")
 
     }
@@ -168,8 +195,7 @@ class TicketTest {
         val ticket = Util.mockTicket()
         ticket.status = status
         ticket.expert = expert
-        ticket.customer = customer
-        ticket.product = product
+        ticket.warranty = warranty
         val ticketStatus = Util.mockOpenTicketStatus()
         ticketStatus.ticket = ticket
         ticket.statusHistory = mutableSetOf()
@@ -196,8 +222,7 @@ class TicketTest {
         assert(newTicket.id == createdTicket.id)
         assert(newTicket.description == createdTicket.description)
 
-        assert(customer.email == createdTicket.customerEmail)
-        assert(newTicket.productEan == createdTicket.productEan)
+        assert(newTicket.warrantyUUID == createdTicket.warrantyUUID)
         assert( createdTicket.priorityLevel == null)
         assert(createdTicket.status == TicketStatusEnum.Open)
         assert(createdTicket.expertEmail == null)
@@ -976,10 +1001,10 @@ class TicketTest {
         val mySize = 10
         val otherSize = 10
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty; it})
         }
         (0 until otherSize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty; it})
         }
         val headers = HttpHeaders()
         headers.setBearerAuth(managerToken)
@@ -991,10 +1016,10 @@ class TicketTest {
     fun `filtering by customer`(){
         val mySize = 10
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty; it})
         }
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = otherWarranty; it})
         }
         val headers = HttpHeaders()
         headers.setBearerAuth(managerToken)
@@ -1009,17 +1034,17 @@ class TicketTest {
     fun `filtering by expert and customer`(){
         val mySize = 10
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = expert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = otherWarranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
 
@@ -1036,22 +1061,22 @@ class TicketTest {
         val myStatus = TicketStatusEnum.Closed
         val otherStatus = TicketStatusEnum.Reopened
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = myStatus; it.expert = expert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  myStatus; it.expert = otherExpert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  otherStatus; it.expert = otherExpert;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
         val headers = HttpHeaders()
@@ -1071,27 +1096,27 @@ class TicketTest {
         val myPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.HIGH.name)!!
         val otherPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.LOW.name)!!
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = myStatus; it.expert = expert; it.priorityLevel = myPriorityLevel; it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  myStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let {it.warranty = warranty
                 it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = otherPriorityLevel;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it.priorityLevel = otherPriorityLevel; it})
         }
 
@@ -1271,10 +1296,10 @@ class TicketTest {
         val mySize = 10
         val otherSize = 10
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty; it})
         }
         (0 until otherSize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty;it})
         }
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange(prefixEndPoint, HttpMethod.GET, HttpEntity(null, null))
         assert(myTicketsDTO.statusCode == HttpStatus.UNAUTHORIZED)
@@ -1284,10 +1309,10 @@ class TicketTest {
     fun `filtering by customer without bearer`(){
         val mySize = 10
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty; it})
         }
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product; it})
+            ticketRepository.save(Util.mockTicket().let { it.warranty = otherWarranty; it})
         }
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?customer=${customer.email}", HttpMethod.GET, HttpEntity(null, null))
         assert(myTicketsDTO.statusCode == HttpStatus.UNAUTHORIZED)
@@ -1297,17 +1322,17 @@ class TicketTest {
     fun `filtering by expert and customer without bearer`(){
         val mySize = 10
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = expert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
 
@@ -1321,22 +1346,22 @@ class TicketTest {
         val myStatus = TicketStatusEnum.Closed
         val otherStatus = TicketStatusEnum.Reopened
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = myStatus; it.expert = expert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  myStatus; it.expert = otherExpert;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  otherStatus; it.expert = otherExpert;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it})
         }
         val myTicketsDTO: ResponseEntity<List<TicketOutDTO>> = restTemplate.exchange("$prefixEndPoint?expert=${expert.email}&customer=${customer.email}&status=${myStatus}", HttpMethod.GET, HttpEntity(null, null))
@@ -1352,27 +1377,27 @@ class TicketTest {
         val myPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.HIGH.name)!!
         val otherPriorityLevel = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.LOW.name)!!
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = myStatus; it.expert = expert; it.priorityLevel = myPriorityLevel; it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  myStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = myPriorityLevel;it})
         }
 
         (0 until mySize).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = customer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status =  otherStatus; it.expert = otherExpert;it.priorityLevel = otherPriorityLevel;it})
         }
 
         (0 until 12).forEach{ _ ->
-            ticketRepository.save(Util.mockTicket().let { it.customer = otherCustomer; it.product = product
+            ticketRepository.save(Util.mockTicket().let { it.warranty = warranty
                 it.status = TicketStatusEnum.InProgress; it.expert = otherExpert; it.priorityLevel = otherPriorityLevel; it})
         }
 
@@ -1428,8 +1453,7 @@ class TicketTest {
     @Test
     fun `customer cannot get a ticket of another customer`(){
         val ticket = Util.mockTicket()
-        ticket.product = product
-        ticket.customer = otherCustomer
+        ticket.warranty = otherWarranty
         ticket.status = TicketStatusEnum.Open
         val ticketID = ticketRepository.save(ticket).getId()
         val headers = HttpHeaders()
@@ -1443,8 +1467,8 @@ class TicketTest {
     @Test
     fun `customer  gets only his  tickets`(){
         val ticket = Util.mockTicket()
-        ticket.product = product
-        ticket.customer = otherCustomer
+        ticket.warranty = otherWarranty
+
         ticket.status = TicketStatusEnum.Open
         insertTicket(TicketStatusEnum.Open)
 
@@ -1460,8 +1484,8 @@ class TicketTest {
     @Test
     fun `expert  gets only his  tickets`(){
         val ticket = Util.mockTicket()
-        ticket.product = product
-        ticket.customer = otherCustomer
+        ticket.warranty = otherWarranty
+
         ticket.expert = otherExpert
         ticket.status = TicketStatusEnum.Open
         insertTicket(TicketStatusEnum.Open)
@@ -1479,8 +1503,8 @@ class TicketTest {
     fun `expert cannot get a ticket of another expert`(){
         val ticket = Util.mockTicket()
         ticket.expert = otherExpert
-        ticket.product = product
-        ticket.customer = otherCustomer
+        ticket.warranty = warranty
+
         ticket.status = TicketStatusEnum.Open
         val ticketID = ticketRepository.save(ticket).getId()
         val headers = HttpHeaders()
@@ -1573,8 +1597,7 @@ class TicketTest {
         val ticket = Util.mockTicket()
         ticket.status = TicketStatusEnum.Open
         ticket.expert = otherExpert
-        ticket.customer = customer
-        ticket.product = product
+        ticket.warranty = warranty
         val ticketStatus = Util.mockOpenTicketStatus()
         ticketStatus.ticket = ticket
         ticket.statusHistory = mutableSetOf()
@@ -1601,8 +1624,8 @@ class TicketTest {
         val ticket = Util.mockTicket()
         ticket.status = TicketStatusEnum.Resolved
         ticket.expert = otherExpert
-        ticket.customer = customer
-        ticket.product = product
+        ticket.warranty = warranty
+
         val ticketStatus = Util.mockOpenTicketStatus()
         ticketStatus.ticket = ticket
         ticket.statusHistory = mutableSetOf()

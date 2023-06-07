@@ -4,16 +4,22 @@ import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
+import it.polito.wa2.g19.server.profiles.vendors.Vendor
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import it.polito.wa2.g19.server.ticketing.tickets.TicketDTO
+import it.polito.wa2.g19.server.warranty.Warranty
 import java.sql.Timestamp
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.*
 
 class Util {
 
     companion object{
 
+
+        lateinit var  warrantyUUID: UUID
         val testTimestamp = Timestamp(1000)
 
 
@@ -78,9 +84,7 @@ class Util {
         }
 
         fun mockTicketDTO(): TicketDTO{
-            val customer = mockCustomers()[0]
-            val product = mockProduct()
-            return TicketDTO(null, customer.email, product.ean, "testDescription")
+            return TicketDTO(null, warrantyUUID, "testDescription")
         }
 
 
@@ -119,12 +123,60 @@ class Util {
             }
         }
 
+        fun mockVendor(): Vendor{
+            return Vendor().let {
+                it.id = UUID.randomUUID()
+                it.email = "vendor@test.it"
+                it.address = "testAddress"
+                it.businessName = "testBusinessName"
+                it.phoneNumber = "3330004444"
+
+                it
+            }
+        }
+
+        fun mockWarranty(product: Product, vendor: Vendor, customer: Customer): Warranty{
+            return Warranty().let {
+                it.customer = customer
+                it.vendor = vendor
+                it.product = product
+                it.creationTimestamp = LocalDateTime.now().minusDays(3)
+                it.activationTimestamp = LocalDateTime.now()
+                it.duration = Duration.ofDays(4)
+                it
+            }
+        }
+
+        fun mockExpiredWarranty(product: Product, vendor: Vendor, customer: Customer): Warranty{
+            return Warranty().let {
+                it.customer = customer
+                it.vendor = vendor
+                it.product = product
+                it.creationTimestamp = LocalDateTime.now().minusDays(3)
+                it.activationTimestamp = LocalDateTime.now()
+                it.duration = Duration.ofDays(1)
+                it
+            }
+        }
+
+        fun mockNotActivatedWarranty(product: Product, vendor: Vendor, customer: Customer): Warranty{
+            return Warranty().let {
+                it.customer = customer
+                it.vendor = vendor
+                it.product = product
+                it.creationTimestamp = LocalDateTime.now().minusDays(3)
+                it.duration = Duration.ofDays(4)
+                it
+            }
+        }
+
+
+
     }
 
 }
 
 fun TicketDTO.equalsTo(other: TicketDTO): Boolean{
     return this.id == other.id && this.description == other.description
-            && this.productEan == other.productEan
-            && this.customerEmail == other.customerEmail
+            && this.warrantyUUID == other.warrantyUUID
 }

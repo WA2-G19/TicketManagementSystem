@@ -9,6 +9,7 @@ import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
+import it.polito.wa2.g19.server.warranty.WarrantyExpiredException
 import it.polito.wa2.g19.server.warranty.WarrantyNotFoundException
 import it.polito.wa2.g19.server.warranty.WarrantyRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Service
 @Transactional
@@ -82,9 +84,10 @@ class TicketServiceImpl(
 
     @PreAuthorize("hasRole('Client')")
     override fun createTicket(ticket: TicketDTO): Int {
-        val c = customerRepository.findByEmailIgnoreCase(ticket.customerEmail) ?: throw ProfileNotFoundException()
-        val p = productRepository.findByEan(ticket.productEan) ?: throw ProductNotFoundException()
-        val w = warrantyRepository.findWarrantyByCustomerIdAndProductEan(c.id!!, p.ean) ?: throw WarrantyNotFoundException()
+
+        val w = warrantyRepository.findByIdOrNull(ticket.warrantyUUID) ?: throw WarrantyNotFoundException()
+        if (w.creationTimestamp.plus(w.duration) < LocalDateTime.now()) throw WarrantyExpiredException()
+
         val t = Ticket().apply {
             warranty = w
             description = ticket.description
@@ -237,7 +240,7 @@ class TicketServiceImpl(
         val email = principal.name
         val flag =
             when (role) {
-                Role.ROLE_Client -> ticket.customerEmail == author
+                Role.ROLE_Client -> warrantyRepository.getReferenceById(ticket.warrantyUUID).customer!!.email == author
                 Role.ROLE_Expert -> ticket.expertEmail == author
                 Role.ROLE_Manager -> email == author
             }

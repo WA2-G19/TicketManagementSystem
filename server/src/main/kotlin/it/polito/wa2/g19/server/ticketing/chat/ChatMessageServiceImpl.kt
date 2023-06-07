@@ -9,9 +9,12 @@ import it.polito.wa2.g19.server.ticketing.attachments.AttachmentDTO
 import it.polito.wa2.g19.server.ticketing.attachments.toDTO
 import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import it.polito.wa2.g19.server.ticketing.tickets.TicketService
+import it.polito.wa2.g19.server.warranty.Warranty
+import it.polito.wa2.g19.server.warranty.WarrantyRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -30,6 +33,7 @@ class ChatMessageServiceImpl(
     private val customerRepository: CustomerRepository,
     private val staffRepository: StaffRepository,
     private val ticketService: TicketService,
+    private val warrantyRepository: WarrantyRepository
     ) : ChatMessageService {
 
     @PreAuthorize("isAuthenticated()")
@@ -51,11 +55,11 @@ class ChatMessageServiceImpl(
 
     @PreAuthorize("isAuthenticated()")
     override fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
-        if(!ticketService.checkAuthorAndUser(ticketId,messageToSave.authorEmail))
-            throw AuthorAndUserAreDifferentException()
+
         val referredTicket = ticketRepository.findById(ticketId).get()
-        val profile = customerRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
-            ?: staffRepository.findByEmailIgnoreCase(messageToSave.authorEmail)
+        val authorEmail = SecurityContextHolder.getContext().authentication.name
+        val profile = customerRepository.findByEmailIgnoreCase(authorEmail)
+            ?: staffRepository.findByEmailIgnoreCase(authorEmail)
             ?: throw ProfileNotFoundException()
         val createdMessage = ChatMessage.withAuthor(profile).apply {
             ticket = referredTicket
