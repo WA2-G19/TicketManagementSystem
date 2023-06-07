@@ -24,8 +24,8 @@ class TicketOutDTO(id: Int?, customerEmail: String, productEan: String, descript
 
 fun Ticket.toDTO() = TicketDTO(
     getId(),
-    customer.email,
-    product.ean,
+    warranty.customer!!.email,
+    warranty.product.ean,
     description)
 
 fun Ticket.toOutDTO() :TicketOutDTO {
@@ -38,8 +38,8 @@ fun Ticket.toOutDTO() :TicketOutDTO {
 
     return TicketOutDTO(
         getId(),
-        this.customer.email,
-        this.product.ean,
+        this.warranty.customer!!.email,
+        this.warranty.product.ean,
         this.description,
         priorityLevel,
         this.expert?.email,

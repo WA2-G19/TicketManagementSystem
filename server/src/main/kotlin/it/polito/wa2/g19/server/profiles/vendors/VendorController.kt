@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.profiles.staff
+package it.polito.wa2.g19.server.profiles.vendors
 
 import io.micrometer.observation.annotation.Observed
 import jakarta.validation.Valid
@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @Validated
-@RequestMapping("/API/staff")
+@RequestMapping("/API/vendor")
 @Observed
-class StaffController(
-
-    private val staffService: StaffService
+class VendorController(
+    private val vendorService: VendorService
 ){
+
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getProfiles(): List<VendorDTO> {
+        return vendorService.getAll()
+    }
 
     @GetMapping("/{email}")
     @ResponseStatus(HttpStatus.OK)
@@ -23,17 +28,17 @@ class StaffController(
         @PathVariable
         @Email(message = "provide a valid email")
         email: String
-    ): StaffDTO {
-        return staffService.getStaff(email)
+    ): VendorDTO {
+        return vendorService.getVendor(email)
     }
 
 
-    @PostMapping("/createExpert")
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createExpert(
+    fun insertProfile(
         @RequestBody
-        credentials: CredentialStaffDTO
+        credentials: VendorCredentialsDTO
     ) {
-        staffService.createExpert(credentials)
+        vendorService.insertVendor(credentials)
     }
 }

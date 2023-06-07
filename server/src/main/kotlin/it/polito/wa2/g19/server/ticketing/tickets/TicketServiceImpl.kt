@@ -9,6 +9,8 @@ import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.statuses.*
+import it.polito.wa2.g19.server.warranty.WarrantyNotFoundException
+import it.polito.wa2.g19.server.warranty.WarrantyRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
@@ -25,7 +27,8 @@ class TicketServiceImpl(
     private val productRepository: ProductRepository,
     private val staffRepository: StaffRepository,
     private val priorityLevelRepository: PriorityLevelRepository,
-    private val ticketStatusRepository: TicketStatusRepository
+    private val ticketStatusRepository: TicketStatusRepository,
+    private val warrantyRepository: WarrantyRepository,
 ): TicketService {
 
     @PreAuthorize("isAuthenticated()")
@@ -81,9 +84,9 @@ class TicketServiceImpl(
     override fun createTicket(ticket: TicketDTO): Int {
         val c = customerRepository.findByEmailIgnoreCase(ticket.customerEmail) ?: throw ProfileNotFoundException()
         val p = productRepository.findByEan(ticket.productEan) ?: throw ProductNotFoundException()
+        val w = warrantyRepository.findWarrantyByCustomerIdAndProductEan(c.id!!, p.ean) ?: throw WarrantyNotFoundException()
         val t = Ticket().apply {
-            customer = c
-            product = p
+            warranty = w
             description = ticket.description
             statusHistory = mutableSetOf()
             status = TicketStatusEnum.Open

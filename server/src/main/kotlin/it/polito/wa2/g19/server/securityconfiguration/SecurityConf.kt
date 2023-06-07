@@ -13,13 +13,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.stereotype.Component
-import org.springframework.web.servlet.config.annotation.CorsRegistry
-
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-
-
-
-
 
 @EnableWebSecurity
 @Component
@@ -48,6 +41,10 @@ class ResourceServerConfig {
                 .hasRole("Manager")
             .requestMatchers("/API/profiles/*")
                 .authenticated()
+            .requestMatchers("/API/vendor/")
+                .hasRole("Manager")
+            .requestMatchers("/API/vendor/")
+                .hasAnyRole("Manager", "Vendor")
             .requestMatchers("/API/tickets/*/chat-messages/**")
                 .authenticated()
             .requestMatchers("/API/stats/**")
@@ -58,6 +55,14 @@ class ResourceServerConfig {
                 .hasRole("Client")
             .requestMatchers(HttpMethod.GET, "/API/tickets**")
                 .authenticated()
+            .requestMatchers(HttpMethod.POST,"/API/warranty/")
+                .hasRole("Vendor")
+            .requestMatchers(HttpMethod.GET, "/API/warranty")
+                .hasRole("Manager")
+            .requestMatchers("/API/warranty/*/activate")
+                .hasRole("Client")
+            .requestMatchers(HttpMethod.GET, "/API/warranty/*")
+            .hasAnyRole("Client", "Vendor", "Manager")
             .requestMatchers("/API/login")
                 .permitAll()
             .requestMatchers("/API/signup")
@@ -89,5 +94,4 @@ class ResourceServerConfig {
     fun jwtDecoder(): JwtDecoder {
         return NimbusJwtDecoder.withJwkSetUri(issuerUri).build()
     }
-
 }

@@ -1,12 +1,11 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.common.EntityBase
-import it.polito.wa2.g19.server.products.Product
-import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevel
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
+import it.polito.wa2.g19.server.warranty.Warranty
 import jakarta.persistence.*
 
 @Entity
@@ -15,10 +14,7 @@ class Ticket : EntityBase<Int>() {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    lateinit var customer: Customer
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    lateinit var product: Product
+    lateinit var warranty: Warranty
     @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
     lateinit var statusHistory: MutableSet<TicketStatus>
     @Column(nullable = false)
