@@ -67,24 +67,53 @@ create table public.staff_skill
         foreign key (staff_id) references public.staff
 );
 
+create table public.vendor
+(
+    id            uuid         not null,
+    address       varchar(255) not null,
+    business_name varchar(255) not null,
+    email         varchar(255) not null,
+    phone_number  varchar(255) not null,
+    primary key (id),
+    constraint uk_vendor_business_name
+        unique (business_name),
+    constraint uk_vendor_email
+        unique (email)
+);
+
+create table public.warranty
+(
+    id                   uuid         not null default gen_random_uuid(),
+    activation_timestamp timestamp(6),
+    creation_timestamp   timestamp(6) not null,
+    duration             numeric(21)  not null,
+    customer_id          uuid,
+    product_ean          varchar(13) not null,
+    vendor_id            uuid         not null,
+    primary key (id),
+    constraint fk_warranty_customer
+        foreign key (customer_id) references public.profile,
+    constraint fk_warranty_product
+        foreign key (product_ean) references public.product,
+    constraint fk_warranty_vendor
+        foreign key (vendor_id) references public.vendor
+);
+
 create table public.ticket
 (
     id                  integer      not null default nextval('public.ticket_seq'),
     description         varchar(255) not null,
     status              smallint,
-    customer_id         uuid         not null,
     expert_id           uuid,
     priority_level_name varchar(255),
-    product_ean         varchar(255) not null,
+    warranty_id         uuid         not null,
     primary key (id),
-    constraint fk_ticket_customer
-        foreign key (customer_id) references public.profile,
     constraint fk_ticket_expert
         foreign key (expert_id) references public.staff,
     constraint fk_ticket_priority_level
         foreign key (priority_level_name) references public.priority_level,
-    constraint fk_ticket_product
-        foreign key (product_ean) references public.product
+    constraint fk_ticket_warranty
+        foreign key (warranty_id) references public.warranty
 );
 
 create table public.chat_message
@@ -169,6 +198,10 @@ COPY public.staff("id", "email", "name", "surname", "dtype")
     FROM '/docker-entrypoint-initdb.d/staff.csv'
     WITH DELIMITER ',' CSV HEADER;
 
+COPY public.vendor("id", "email", "business_name", "address", "phone_number")
+    FROM '/docker-entrypoint-initdb.d/vendor.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
 COPY public.skill("name")
     FROM '/docker-entrypoint-initdb.d/skill.csv'
     WITH DELIMITER ',' CSV HEADER;
@@ -181,7 +214,11 @@ COPY public.priority_level("name")
     FROM '/docker-entrypoint-initdb.d/priority_level.csv'
     WITH DELIMITER ',' CSV HEADER;
 
-COPY public.ticket("id", "description", "customer_id", "product_ean", "expert_id", "priority_level_name", "status")
+COPY public.warranty("id", "product_ean", "vendor_id", "customer_id", "duration", "creation_timestamp", "activation_timestamp")
+    FROM '/docker-entrypoint-initdb.d/warranty.csv'
+    WITH DELIMITER ',' CSV HEADER;
+
+COPY public.ticket("id", "description", "warranty_id", "expert_id", "priority_level_name", "status")
     FROM '/docker-entrypoint-initdb.d/ticket.csv'
     WITH DELIMITER ',' CSV HEADER;
 

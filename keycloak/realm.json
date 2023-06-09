@@ -523,6 +523,29 @@
     "realmRoles" : [ "Manager" ],
     "notBefore" : 0,
     "groups" : [ ]
+  },{
+    "id" : "44afd9d1-d74e-4f4c-8ee2-3ce4978d4412",
+    "createdTimestamp" : 1683288686708,
+    "username" : "vendor@test.it",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "Vendor",
+    "lastName" : "",
+    "email" : "vendor@test.it",
+    "credentials" : [ {
+      "id" : "b8a412d1-2e52-4820-9dc6-f3e35756576a",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1683299588148,
+      "secretData" : "{\"value\":\"sNN50+M99xGWXcEthRJETaBeXlD+AboZDwCWNlURZV4=\",\"salt\":\"o8LITkj3KKjyvChRcm7Vog==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "Vendor" ],
+    "notBefore" : 0,
+    "groups" : [ ]
   }, {
     "id" : "8b9fcbbb-dab7-4308-afaf-627a19e1ccfa",
     "createdTimestamp" : 1685619158358,
@@ -576,23 +599,7 @@
     "requiredActions" : [ ],
     "notBefore" : 0,
     "groups" : [ ]
-  }, {
-    "id" : "aa861377-9a9a-4090-8c04-47b4ad3d7b01",
-    "createdTimestamp" : 1686146856103,
-    "username" : "vendor",
-    "enabled" : true,
-    "totp" : false,
-    "emailVerified" : true,
-    "firstName" : "vendor",
-    "lastName" : "",
-    "email" : "vendor@test.it",
-    "credentials" : [ ],
-    "disableableCredentialTypes" : [ ],
-    "requiredActions" : [ ],
-    "realmRoles" : [ "Vendor" ],
-    "notBefore" : 0,
-    "groups" : [ ]
-  } ],
+  }],
   "scopeMappings" : [ {
     "clientScope" : "offline_access",
     "roles" : [ "offline_access" ]
