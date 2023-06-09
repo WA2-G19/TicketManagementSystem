@@ -1,4 +1,5 @@
 import {createContext, useContext, useState} from "react"
+import jwt_decode from 'jwt-decode';
 
 interface Authentication {
     user: any | null
@@ -8,9 +9,9 @@ interface Authentication {
 const AuthenticationContext = createContext<Authentication | null>(null)
 
 function AuthenticationContextProvider({ children }: {
-    children: [JSX.Element]
+    children: [JSX.Element] | JSX.Element
 }) {
-    const [authentication, _] = useState(new class implements Authentication {
+    const [authentication, _] = useState( new class implements Authentication {
         user: any | null
         isLoggedIn(): boolean {
             return this.user !== null
@@ -22,7 +23,7 @@ function AuthenticationContextProvider({ children }: {
                 this.user = null
             } else {
                 try {
-                    this.user = JSON.parse(Buffer.from(token.split(".")[1], "base64").toString())
+                    this.user = jwt_decode(token)
                 } catch (e) {
                     console.error(e)
                     this.user = null

@@ -3,6 +3,7 @@ import {Profile, CredentialCustomer} from "../../classes/Profile";
 import {Alert, Button, Card, Col, Container, Form, Row, Toast, ToastContainer} from "react-bootstrap";
 import CustomerAPI from "../../API/Profile/customer";
 import response from "../Response";
+import {useAuthentication} from "../../contexts/Authentication";
 
 interface RegistrationProps {
     error: string,
@@ -23,7 +24,6 @@ export const RegistrationForm: React.FC<RegistrationProps> = (props): JSX.Elemen
             "confirmPassword": "",
         }
     );
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.name]: e.target.value})
     };
