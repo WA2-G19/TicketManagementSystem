@@ -1,15 +1,16 @@
 import Navbar from "../Navbar";
 import {Container} from "react-bootstrap";
+import Layout from "../Layout";
 import {AuthenticationContextProvider} from "../../contexts/Authentication";
-import LoginPage from "./LoginPage";
 
-function HomePage() {
+function ClientPage() {
     return <AuthenticationContextProvider>
         <>
             <Navbar/>
-            <Container></Container>
+            <Container><Layout/></Container>
         </>
     </AuthenticationContextProvider>
+
 }
 
-export default HomePage
+export default ClientPage

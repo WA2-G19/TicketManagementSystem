@@ -1,14 +1,18 @@
 import {Container, Form, Card, Button, FormText, Row, Col} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import React, {createContext, useContext, useState} from 'react';
+import React, {createContext, Dispatch, SetStateAction, useContext, useState} from 'react';
 import API from "../../API/api"
-import {Link, Navigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {AuthenticationContextProvider, useAuthentication} from "../../contexts/Authentication";
 
+interface LoginProps{
+    useRefresh: Dispatch<SetStateAction<number>>
+}
 function LoginForm() {
 
     const [email, setEmail] = useState("client@test.it")
     const [pwd, setPwd] = useState("password")
+    const navigate = useNavigate();
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -18,6 +22,7 @@ function LoginForm() {
             if (!token) {
                 return
             }
+            navigate("/client")
         } catch (e) {
             console.log(e)
         }

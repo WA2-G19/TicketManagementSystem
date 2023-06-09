@@ -6,12 +6,14 @@ import {Container, Row, Col, Button} from 'react-bootstrap';
 import ProductAPI from './API/Products/products'
 import ProfilesAPI from './components/ProfilesAPI';
 import {createContext, useEffect, useState} from "react";
-import LoginForm from "./components/authentications/LoginForm";
+import LoginForm from "./components/loginpage/LoginForm";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {RegistrationForm} from "./components/authentications/RegistrationForm";
+import {RegistrationForm} from "./components/signuppage/RegistrationForm";
 import {AuthenticationContextProvider, useAuthentication} from "./contexts/Authentication";
 import Layout from "./components/Layout";
 import HomePage from "./components/pages/HomePage";
+import LoginPage from "./components/pages/LoginPage";
+import ClientPage from "./components/pages/ClientPage";
 
 function App() {
 
@@ -27,17 +29,17 @@ function App() {
     //     }
     //     checkAuth();
     // },[])
+    const [refresh, useRefresh] = useState(1);
 
 
     return (
-
         <Container fluid className=" vh-100 p-0 min-vh-100">
             <BrowserRouter>
                 <Routes>
                     <Route path={"/"} element={<HomePage/>}/>
-                    <Route path={"/login"} element={<LoginForm/>}/>
+                    <Route path={"/login"} element={<LoginPage/>}/>
                     <Route path={"/signup"} element={<RegistrationForm error={error} setError={setError}/>}/>
-                    <Route path={"/layout"} element={<Layout/>}/>
+                    <Route path={"/client"} element={<ClientPage/>}/>
                 </Routes>
             </BrowserRouter>
         </Container>

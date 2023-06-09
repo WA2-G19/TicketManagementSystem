@@ -10,9 +10,8 @@ interface RegistrationProps {
     setError: (msg: string) => void
 }
 
-export const RegistrationForm: React.FC<RegistrationProps> = (props): JSX.Element => {
+export const RegistrationForm = () => {
 
-    const error = props.error
     const [showToast, setShowToast] = useState(false)
     const [formData, setFormData] = useState(
         {
@@ -29,7 +28,7 @@ export const RegistrationForm: React.FC<RegistrationProps> = (props): JSX.Elemen
     };
 
     const setRegistrationError = (msg: string) => {
-        props.setError(msg)
+     //   props.setError(msg)
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -62,7 +61,7 @@ export const RegistrationForm: React.FC<RegistrationProps> = (props): JSX.Elemen
     return (
         <Container fluid className="flex-grow-1 justify-content-center d-flex align-items-center p-lg-3">
             <Card border="primary" style={{padding: '3rem'}}>
-                {error ? <Alert variant={"danger"} onClose={() => setRegistrationError("")} dismissible>{error}</Alert> : <></>}
+                {/*error ? <Alert variant={"danger"} onClose={() => setRegistrationError("")} dismissible>{error}</Alert> : <></>*/}
                 <h1>Sign Up</h1>
                 <Form onSubmit={handleSubmit}>
                     <Row className={"mt-3"}>
