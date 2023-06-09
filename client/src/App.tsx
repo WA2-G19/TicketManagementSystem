@@ -15,6 +15,7 @@ import HomePage from "./components/pages/HomePage";
 import LoginPage from "./components/pages/LoginPage";
 import ClientPage from "./components/pages/ClientPage";
 import {AlertContextProvider} from "./contexts/Alert";
+import SignupPage from "./components/pages/SignupPage";
 
 function App() {
 
@@ -41,7 +42,7 @@ function App() {
                         <Routes>
                             <Route path={"/"} element={<HomePage/>}/>
                             <Route path={"/login"} element={<LoginPage/>}/>
-                            <Route path={"/signup"} element={<RegistrationForm error={error} setError={setError}/>}/>
+                            <Route path={"/signup"} element={<SignupPage/>}/>
                             <Route path={"/client"} element={<ClientPage/>}/>
                         </Routes>
                     </BrowserRouter>

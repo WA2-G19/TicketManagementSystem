@@ -10,7 +10,7 @@ interface RegistrationProps {
     setError: Dispatch<SetStateAction<string>>
 }
 
-export const RegistrationForm = (props: RegistrationProps) => {
+export const RegistrationForm = () => {
 
     const [showToast, setShowToast] = useState(false)
     const [formData, setFormData] = useState(
