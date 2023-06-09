@@ -83,9 +83,7 @@ class CustomerServiceImpl(
         user.attributes = HashMap()
         user.attributes["address"] = listOf(credentials.customerDTO.address)
         user.isEnabled = true
-        user.isEmailVerified = false
-
-
+        user.isEmailVerified = true
 
         val credentialsKeycloak = CredentialRepresentation()
         credentialsKeycloak.type = CredentialRepresentation.PASSWORD
@@ -118,7 +116,7 @@ class CustomerServiceImpl(
                 address = credentials.customerDTO.address
             }
             customerRepository.save(p)
-            userResource.get(userId).sendVerifyEmail()
+//            userResource.get(userId).sendVerifyEmail()
         } catch (e: Exception){
             //delete the user is something go wrong
             userResource.get(userId).remove()
