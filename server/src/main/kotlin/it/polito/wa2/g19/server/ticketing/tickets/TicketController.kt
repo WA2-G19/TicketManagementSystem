@@ -71,7 +71,6 @@ class TicketController(
         @RequestBody
         ticket: TicketDTO
     ): ResponseEntity<Void> {
-        val email = principal.name
 
         val id = ticketService.createTicket(ticket)
         val headers = HttpHeaders()

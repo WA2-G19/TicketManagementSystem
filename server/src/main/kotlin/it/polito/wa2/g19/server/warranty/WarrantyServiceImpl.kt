@@ -7,6 +7,7 @@ import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.vendors.VendorRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
@@ -44,7 +45,9 @@ class WarrantyServiceImpl(
 
     @PreAuthorize("hasRole('Vendor')")
     override fun insertWarranty(warranty: WarrantyInDTO): WarrantyOutDTO {
-        val v = vendorRepository.findByEmailIgnoreCase(warranty.vendorEmail) ?: throw ProfileNotFoundException()
+        val principal = SecurityContextHolder.getContext().authentication
+
+        val v = vendorRepository.findByEmailIgnoreCase(principal.name) ?: throw ProfileNotFoundException()
         val p = productRepository.findByEan(warranty.productEan) ?: throw ProductNotFoundException()
         val w = Warranty().apply {
             vendor = v
@@ -54,7 +57,7 @@ class WarrantyServiceImpl(
         return warrantyRepository.save(w).toDTO()
     }
 
-    @PreAuthorize("hasRole('Customer')")
+    @PreAuthorize("hasRole('Client')")
     override fun activateWarranty(warrantyId: UUID, customerEmail: String): WarrantyOutDTO {
         val w = warrantyRepository.findByIdOrNull(warrantyId) ?: throw WarrantyNotFoundException()
         if (w.customer != null) throw WarrantyAlreadyActivated()

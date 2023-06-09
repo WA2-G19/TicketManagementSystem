@@ -14,9 +14,7 @@ data class WarrantyInDTO(
     @NotBlank
     @EAN
     val productEan: String,
-    @NotBlank
-    @Email
-    val vendorEmail: String,
+
     @NotBlank
     @DurationFormat(DurationStyle.SIMPLE)
     val duration: Duration
