@@ -1,37 +1,13 @@
 import './App.css';
-import Sidebar from './Sidebar';
-import Navbar from './components/Navbar';
-import {Container, Row, Col, Button} from 'react-bootstrap';
-// import ProductAPI from './ProductAPI';
-import ProductAPI from './API/Products/products'
-import ProfilesAPI from './components/ProfilesAPI';
-import {createContext, useEffect, useState} from "react";
-import LoginForm from "./components/loginpage/LoginForm";
+import {Container} from 'react-bootstrap';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {RegistrationForm} from "./components/signuppage/RegistrationForm";
-import {AuthenticationContextProvider, useAuthentication} from "./contexts/Authentication";
-import Layout from "./components/Layout";
-import HomePage from "./components/pages/HomePage";
-import LoginPage from "./components/pages/LoginPage";
-import ClientPage from "./components/pages/ClientPage";
+import {AuthenticationContextProvider} from "./contexts/Authentication";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
 import {AlertContextProvider} from "./contexts/Alert";
-import SignupPage from "./components/pages/SignupPage";
+import SignupPage from "./pages/SignupPage";
 
 function App() {
-
-    const [filter, setFilter] = useState<string>("Product");
-    const [error, setError] = useState("")
-
-    // useEffect(()=>{
-    //     const checkAuth = async () => {
-    //         try {
-    //             console.log(await ProductAPI.getAllProducts(""))
-    //         } catch(e) {
-    //         }
-    //     }
-    //     checkAuth();
-    // },[])
-    const [refresh, useRefresh] = useState(1);
 
 
     return (
@@ -43,7 +19,6 @@ function App() {
                             <Route path={"/"} element={<HomePage/>}/>
                             <Route path={"/login"} element={<LoginPage/>}/>
                             <Route path={"/signup"} element={<SignupPage/>}/>
-                            <Route path={"/client"} element={<ClientPage/>}/>
                         </Routes>
                     </BrowserRouter>
                 </Container>

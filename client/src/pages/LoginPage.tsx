@@ -1,7 +1,7 @@
-import Navbar from "../Navbar";
+import Navbar from "../components/Navbar";
 import {Container} from "react-bootstrap";
-import LoginForm from "../loginpage/LoginForm";
-import {AuthenticationContextProvider} from "../../contexts/Authentication";
+import LoginForm from "../components/loginpage/LoginForm";
+import {AuthenticationContextProvider} from "../contexts/Authentication";
 
 function LoginPage() {
     return <AuthenticationContextProvider>

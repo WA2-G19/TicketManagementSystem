@@ -92,7 +92,7 @@ async function signup(credentials: CredentialCustomer) {
             },
             body: credentials.toJsonObject()
         })
-        return response.ok
+        return response.status
     } catch (e) {
         throw e
     }

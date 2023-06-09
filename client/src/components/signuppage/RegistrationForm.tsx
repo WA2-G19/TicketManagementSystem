@@ -1,16 +1,13 @@
-import React, {useState, ChangeEvent, FormEvent, Dispatch, SetStateAction} from 'react';
+import React, {useState, ChangeEvent, FormEvent} from 'react';
 import {Profile, CredentialCustomer} from "../../classes/Profile";
-import {Alert, Button, Card, Col, Container, Form, Row, Toast, ToastContainer} from "react-bootstrap";
+import {Button, Card, Col, Container, Form, Row, Toast, ToastContainer} from "react-bootstrap";
 import CustomerAPI from "../../API/Profile/customer";
-import response from "../Response";
-import {useAuthentication} from "../../contexts/Authentication";
+import {useAlert} from "../../contexts/Alert";
+import HttpStatusCode from "../../utils/httpStatusCode";
 
-interface RegistrationProps {
-    error: string,
-    setError: Dispatch<SetStateAction<string>>
-}
 
 export const RegistrationForm = () => {
+    const alert = useAlert()
 
     const [showToast, setShowToast] = useState(false)
     const [formData, setFormData] = useState(
@@ -27,12 +24,17 @@ export const RegistrationForm = () => {
         setFormData({...formData, [e.target.name]: e.target.value})
     };
 
-    const setRegistrationError = (msg: string) => {
-     //   props.setError(msg)
-    }
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        const validator = require("validator")
+        if (!validator.isEmail(formData.email)) {
+            return
+        }
+        if (formData.password != formData.confirmPassword) {
+            alert.getBuilder().setTitle("Error in signup").setMessage("Confirm password is different from password").show()
+            return
+        }
         const profile = new Profile(
             formData.email,
             formData.name,
@@ -41,8 +43,7 @@ export const RegistrationForm = () => {
         )
         const credentials = new CredentialCustomer(profile, formData.password)
         const response = await CustomerAPI.signup(credentials)
-
-        if (response) {
+        if (response == HttpStatusCode.CREATED) {
             setFormData({
                 "name": "",
                 "surname": "",
@@ -52,10 +53,11 @@ export const RegistrationForm = () => {
                 "confirmPassword": "",
             });
             setShowToast(true)
+        } else if (response == HttpStatusCode.CONFLICT) {
+            alert.getBuilder().setTitle("Conflict").setMessage("User with this email already exist").setButtonsOk(undefined).show()
         } else {
-            setRegistrationError("An error occured during the registration, please try later")
+            alert.getBuilder().setTitle("Error").setMessage("Unexpected error").show()
         }
-
     };
 
     return (
@@ -119,8 +121,9 @@ export const RegistrationForm = () => {
                     <Button type="submit" className={"mt-3"}>Sign Up</Button>
                 </Form>
             </Card>
-            <ToastContainer position={"top-end"} className = "p-5" >
-                <Toast show={showToast} onClose={() => setShowToast(false)} delay={3000} autohide className={"bg-success"}>
+            <ToastContainer position={"top-end"} className="p-5">
+                <Toast show={showToast} onClose={() => setShowToast(false)} delay={3000} autohide
+                       className={"bg-success"}>
                     <Toast.Header>
                         <strong className="me-auto">Email Verification</strong>
                     </Toast.Header>
