@@ -1,4 +1,4 @@
-import React, {useState, ChangeEvent, FormEvent} from 'react';
+import React, {useState, ChangeEvent, FormEvent, Dispatch, SetStateAction} from 'react';
 import {Profile, CredentialCustomer} from "../../classes/Profile";
 import {Alert, Button, Card, Col, Container, Form, Row, Toast, ToastContainer} from "react-bootstrap";
 import CustomerAPI from "../../API/Profile/customer";
@@ -7,10 +7,10 @@ import {useAuthentication} from "../../contexts/Authentication";
 
 interface RegistrationProps {
     error: string,
-    setError: (msg: string) => void
+    setError: Dispatch<SetStateAction<string>>
 }
 
-export const RegistrationForm = () => {
+export const RegistrationForm = (props: RegistrationProps) => {
 
     const [showToast, setShowToast] = useState(false)
     const [formData, setFormData] = useState(

@@ -1,7 +1,7 @@
 import React, {createContext, useContext, useState} from "react";
 import {Button, Modal} from "react-bootstrap";
 
-interface AlertContext {
+interface Alert {
     isShown(): boolean
     hide(): void
     getBuilder(): AlertBuilder
@@ -18,10 +18,10 @@ interface AlertBuilder {
     show(): void
 }
 
-const AlertContext = createContext<AlertContext | null>(null);
+const AlertContext = createContext<Alert | null>(null);
 
 function AlertContextProvider({ children }: {
-    children: [JSX.Element]
+    children: JSX.Element[] | JSX.Element
 }) {
     const [ show, setShow ] = useState(false);
     const [ title, setTitle ] = useState(<></>);
@@ -36,7 +36,7 @@ function AlertContextProvider({ children }: {
         };
     };
 
-    const value: AlertContext = {
+    const value: Alert = {
         isShown(): boolean {
             return show
         },
@@ -121,7 +121,7 @@ function AlertContextProvider({ children }: {
     );
 }
 
-function useAlert(): AlertContext {
+function useAlert(): Alert {
     const c = useContext(AlertContext)
     if (!c) {
         throw new Error("useAlert has to be used inside <AlertContextProvider>")

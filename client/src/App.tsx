@@ -14,6 +14,7 @@ import Layout from "./components/Layout";
 import HomePage from "./components/pages/HomePage";
 import LoginPage from "./components/pages/LoginPage";
 import ClientPage from "./components/pages/ClientPage";
+import {AlertContextProvider} from "./contexts/Alert";
 
 function App() {
 
@@ -33,16 +34,20 @@ function App() {
 
 
     return (
-        <Container fluid className=" vh-100 p-0 min-vh-100">
-            <BrowserRouter>
-                <Routes>
-                    <Route path={"/"} element={<HomePage/>}/>
-                    <Route path={"/login"} element={<LoginPage/>}/>
-                    <Route path={"/signup"} element={<RegistrationForm error={error} setError={setError}/>}/>
-                    <Route path={"/client"} element={<ClientPage/>}/>
-                </Routes>
-            </BrowserRouter>
-        </Container>
+        <AlertContextProvider>
+            <AuthenticationContextProvider>
+                <Container fluid className=" vh-100 p-0 min-vh-100">
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path={"/"} element={<HomePage/>}/>
+                            <Route path={"/login"} element={<LoginPage/>}/>
+                            <Route path={"/signup"} element={<RegistrationForm error={error} setError={setError}/>}/>
+                            <Route path={"/client"} element={<ClientPage/>}/>
+                        </Routes>
+                    </BrowserRouter>
+                </Container>
+            </AuthenticationContextProvider>
+        </AlertContextProvider>
     );
 }
 
