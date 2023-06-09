@@ -13,15 +13,15 @@ class WarrantyProblemDetailsHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler(WarrantyNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleWarrantyNotFound(e: WarrantyNotFoundException) = ProblemDetail
-        .forStatusAndDetail( HttpStatus.BAD_REQUEST, e.message!! )
+        .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
 
     @ExceptionHandler(WarrantyExpiredException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleWarrantyExpired(e: WarrantyExpiredException) = ProblemDetail
-        .forStatusAndDetail( HttpStatus.BAD_REQUEST, e.message!! )
+        .forStatusAndDetail( HttpStatus.CONFLICT, e.message!! )
 
     @ExceptionHandler(WarrantyAlreadyActivated::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleWarrantyAlreadyActivated(e: WarrantyAlreadyActivated) = ProblemDetail
-        .forStatusAndDetail( HttpStatus.BAD_REQUEST, e.message!! )
+        .forStatusAndDetail( HttpStatus.CONFLICT, e.message!! )
 }
