@@ -29,6 +29,7 @@ class Util {
                 for (i in 0..3){
                     val c = Customer("customer${i}@test.test", "customer${i}Name", "customer${i}Surname", "customer${i}Address")
                     c.id = UUID.randomUUID()
+
                     it.add(c)
                 }
                 it

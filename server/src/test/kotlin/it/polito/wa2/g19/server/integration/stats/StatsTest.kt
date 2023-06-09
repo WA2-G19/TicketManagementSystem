@@ -158,11 +158,12 @@ class StatsTest {
         println("----destroying database------")
         ticketStatusRepository.deleteAll()
         ticketRepository.deleteAll()
+        warrantyRepository.deleteAll()
+
         priorityLevelRepository.deleteAll()
         productRepository.deleteAll()
         customerRepository.deleteAll()
         staffRepository.deleteAll()
-        warrantyRepository.deleteAll()
         vendorRepository.deleteAll()
         println("---------------------------------")
 
@@ -191,7 +192,7 @@ class StatsTest {
     fun insertTicket(status: TicketStatusEnum): Ticket {
         val ticket = Util.mockTicket()
         ticket.status = status
-        ticket.warranty
+        ticket.warranty = warranty
         val ticketStatus = Util.mockInProgressTicketStatus()
         ticketStatus.priority = priorityLevelRepository.findByIdOrNull(PriorityLevelEnum.HIGH.name)!!
         ticketStatus.ticket = ticket
@@ -218,6 +219,7 @@ class StatsTest {
             ticket.statusHistory.add(ClosedTicketStatus().apply {
                 this.ticket = ticket
                 this.by = expert
+
             })
             ticketRepository.save(ticket)
         }
@@ -270,6 +272,7 @@ class StatsTest {
         println("---------------")
         val response =
             restTemplate.exchange<Int>("$prefixStatsEndPoint/average-time/${expert.email}", HttpMethod.GET, HttpEntity(null,headers))
+        println(response.body)
         assert(response.body!! == 1 * 24 * 3600)
     }
 

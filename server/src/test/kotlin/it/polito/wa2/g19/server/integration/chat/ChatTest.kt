@@ -100,6 +100,7 @@ class ChatTest {
 
     @Autowired
     lateinit var customerRepository: CustomerRepository
+
     @Autowired
     lateinit var staffRepository: StaffRepository
     @Autowired
@@ -115,6 +116,12 @@ class ChatTest {
     @Autowired
     lateinit var warrantyRepository: WarrantyRepository
 
+    @Autowired
+    lateinit var chatRepository: ChatMessageRepository
+
+    @Autowired
+    lateinit var attachmentRepository: AttachmentRepository
+
     @BeforeEach
     fun populateDatabase(){
         if(!TicketTest.keycloak.isRunning){
@@ -122,6 +129,7 @@ class ChatTest {
         }
         println("----populating database------")
         Util.mockCustomers().forEach{
+            println(it.email)
             if (::customer.isInitialized)
                 otherCustomer = customer
             customer = customerRepository.save(it)
@@ -160,13 +168,15 @@ class ChatTest {
     @AfterEach
     fun destroyDatabase(){
         println("----destroying database------")
+        attachmentRepository.deleteAll()
+        chatRepository.deleteAll()
         ticketStatusRepository.deleteAll()
         ticketRepository.deleteAll()
+        warrantyRepository.deleteAll()
         priorityLevelRepository.deleteAll()
         productRepository.deleteAll()
         customerRepository.deleteAll()
         staffRepository.deleteAll()
-        warrantyRepository.deleteAll()
         vendorRepository.deleteAll()
         println("---------------------------------")
 
