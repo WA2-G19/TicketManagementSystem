@@ -3,15 +3,15 @@ import {Profile, CredentialCustomer} from "../../classes/Profile";
 import {Alert, Button, Card, Col, Container, Form, Row, Toast, ToastContainer} from "react-bootstrap";
 import CustomerAPI from "../../API/Profile/customer";
 import response from "../Response";
+import {useAuthentication} from "../../contexts/Authentication";
 
 interface RegistrationProps {
     error: string,
     setError: (msg: string) => void
 }
 
-export const RegistrationForm: React.FC<RegistrationProps> = (props): JSX.Element => {
+export const RegistrationForm = () => {
 
-    const error = props.error
     const [showToast, setShowToast] = useState(false)
     const [formData, setFormData] = useState(
         {
@@ -23,13 +23,12 @@ export const RegistrationForm: React.FC<RegistrationProps> = (props): JSX.Elemen
             "confirmPassword": "",
         }
     );
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.name]: e.target.value})
     };
 
     const setRegistrationError = (msg: string) => {
-        props.setError(msg)
+     //   props.setError(msg)
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -62,7 +61,7 @@ export const RegistrationForm: React.FC<RegistrationProps> = (props): JSX.Elemen
     return (
         <Container fluid className="flex-grow-1 justify-content-center d-flex align-items-center p-lg-3">
             <Card border="primary" style={{padding: '3rem'}}>
-                {error ? <Alert variant={"danger"} onClose={() => setRegistrationError("")} dismissible>{error}</Alert> : <></>}
+                {/*error ? <Alert variant={"danger"} onClose={() => setRegistrationError("")} dismissible>{error}</Alert> : <></>*/}
                 <h1>Sign Up</h1>
                 <Form onSubmit={handleSubmit}>
                     <Row className={"mt-3"}>
