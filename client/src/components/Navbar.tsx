@@ -1,4 +1,4 @@
-import {Card, Col, Container, Nav, Row} from "react-bootstrap";
+import {Col, Nav, Row} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Navbar} from "react-bootstrap";
 import {useAuthentication} from "../contexts/Authentication";
@@ -17,15 +17,15 @@ function MyNavbar() {
     }
 
     const goToHome = () => {
-        navigate("/")
+        navigate("/home")
     }
 
     return <Navbar bg="primary" variant="dark">
         <Row style={{width: "100%"}}>
             <Col>
                 <Nav>
-                    <Nav.Link onClick={() => goToHome()}>Home</Nav.Link>
                     <IsAuthenticated>
+                        <Nav.Link onClick={() => goToHome()}>Home</Nav.Link>
                         <Nav.Link onClick={() => logout()}>Logout</Nav.Link>
                     </IsAuthenticated>
                     <IsAnonymous>

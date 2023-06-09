@@ -29,6 +29,7 @@ function RegistrationForm() {
         e.preventDefault();
         const validator = require("validator")
         if (!validator.isEmail(formData.email)) {
+            alert.getBuilder().setTitle("Error in email").setMessage("Email format is uncorrect").show()
             return
         }
         if (formData.password != formData.confirmPassword) {

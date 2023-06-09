@@ -1,4 +1,3 @@
-import Navbar from "../Navbar";
 import {Col, Container, Row} from "react-bootstrap";
 import {Children} from "react";
 
@@ -16,13 +15,12 @@ function SidebarLayout({ children }: { children: JSX.Element[] | JSX.Element}): 
 
     return (
         <>
-            <Navbar/>
             <Container fluid>
                 <Row>
-                    <Col className={"d-none d-md-block col-md-3 bg-light"}>
+                    <Col xs={2} id="sidebar-wrapper">
                         {_sidebar}
                     </Col>
-                    <Col className={"col-sm-12 col-md-9"}>
+                    <Col xs={10} id="page-content-wrapper">
                         {_main}
                     </Col>
                 </Row>
