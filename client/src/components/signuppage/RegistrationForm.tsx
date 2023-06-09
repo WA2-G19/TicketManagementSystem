@@ -4,6 +4,8 @@ import {Button, Card, Col, Container, Form, Row, Toast, ToastContainer} from "re
 import CustomerAPI from "../../API/Profile/customer";
 import {useAlert} from "../../contexts/Alert";
 import HttpStatusCode from "../../utils/httpStatusCode";
+import {MDBInput} from "mdb-react-ui-kit";
+import {Checkbox} from "@mui/material";
 
 
 function RegistrationForm() {
@@ -61,67 +63,96 @@ function RegistrationForm() {
         }
     };
 
-    return (
-        <Container fluid className="flex-grow-1 justify-content-center d-flex align-items-center p-lg-3">
-            <Card border="primary" style={{padding: '3rem'}}>
-                {/*error ? <Alert variant={"danger"} onClose={() => setRegistrationError("")} dismissible>{error}</Alert> : <></>*/}
-                <h1>Sign Up</h1>
-                <Form onSubmit={handleSubmit}>
-                    <Row className={"mt-3"}>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control type="text" name="name" value={formData.name} required pattern="[A-Za-z]+"
-                                              onChange={handleChange}/>
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Surname</Form.Label>
-                                <Form.Control type="text" name="surname" value={formData.surname} required
-                                              pattern="[A-Za-z]+"
-                                              onChange={handleChange}/>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row className={"mt-3"}>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control type="email" name="email" value={formData.email} required
-                                              onChange={handleChange}/>
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Address</Form.Label>
-                                <Form.Control type="address" name="address" value={formData.address} required
-                                              onChange={handleChange}/>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row className={"mt-3"}>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" name="password" value={formData.password} required
-                                              minLength={6}
-                                              onChange={handleChange}/>
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Confirm Password</Form.Label>
-                                <Form.Control type="password" name="confirmPassword" value={formData.confirmPassword}
-                                              required
-                                              minLength={6}
-                                              onChange={handleChange}/>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Button type="submit" className={"mt-3"}>Sign Up</Button>
-                </Form>
-            </Card>
+    return (<Container fluid className='p-4'>
+            <Row>
+                <Col md='6' className='text-center text-md-start d-flex flex-column justify-content-center'>
+
+                    <h1 className="my-5 display-3 fw-bold ls-tight px-3">
+                        The best TMS <br/>
+                        <span className="text-primary"> for your products</span>
+                    </h1>
+
+                    <p className='px-3' style={{color: 'hsl(217, 10%, 50.8%)'}}>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Eveniet, itaque accusantium odio, soluta, corrupti aliquam
+                        quibusdam tempora at cupiditate quis eum maiores libero
+                        veritatis? Dicta facilis sint aliquid ipsum atque?
+                    </p>
+
+                </Col>
+
+                <Col md='6'>
+
+                    <Card className='my-5'>
+                        <Card.Body className='p-5'>
+                            <Row>
+                                <Form onSubmit={handleSubmit}>
+                                    <Row className={"mt-3"}>
+                                        <Col>
+                                            <Form.Group>
+                                                <Form.Label>Name</Form.Label>
+                                                <Form.Control type="text" name="name" value={formData.name} required
+                                                              pattern="[A-Za-z]+"
+                                                              onChange={handleChange}/>
+                                            </Form.Group>
+                                        </Col>
+                                        <Col>
+                                            <Form.Group>
+                                                <Form.Label>Surname</Form.Label>
+                                                <Form.Control type="text" name="surname" value={formData.surname}
+                                                              required
+                                                              pattern="[A-Za-z]+"
+                                                              onChange={handleChange}/>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    <Row className={"mt-3"}>
+                                        <Col>
+                                            <Form.Group>
+                                                <Form.Label>Email</Form.Label>
+                                                <Form.Control type="email" name="email" value={formData.email} required
+                                                              onChange={handleChange}/>
+                                            </Form.Group>
+                                        </Col>
+                                        <Col>
+                                            <Form.Group>
+                                                <Form.Label>Address</Form.Label>
+                                                <Form.Control type="address" name="address" value={formData.address}
+                                                              required
+                                                              onChange={handleChange}/>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    <Row className={"mt-3"}>
+                                        <Col>
+                                            <Form.Group>
+                                                <Form.Label>Password</Form.Label>
+                                                <Form.Control type="password" name="password" value={formData.password}
+                                                              required
+                                                              minLength={6}
+                                                              onChange={handleChange}/>
+                                            </Form.Group>
+                                        </Col>
+                                        <Col>
+                                            <Form.Group>
+                                                <Form.Label>Confirm Password</Form.Label>
+                                                <Form.Control type="password" name="confirmPassword"
+                                                              value={formData.confirmPassword}
+                                                              required
+                                                              minLength={6}
+                                                              onChange={handleChange}/>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    <Button type="submit" className={"mt-3"}>Sign Up</Button>
+                                </Form>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+
+                </Col>
+
+            </Row>
             <ToastContainer position={"top-end"} className="p-5">
                 <Toast show={showToast} onClose={() => setShowToast(false)} delay={3000} autohide
                        className={"bg-success"}>

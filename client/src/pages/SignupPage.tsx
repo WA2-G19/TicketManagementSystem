@@ -3,9 +3,8 @@ import NavbarLayout from "../components/layout/NavbarLayout";
 
 function SignupPage() {
     return (
-        <NavbarLayout>
-            <RegistrationForm/>
-        </NavbarLayout>
+        <RegistrationForm/>
+
     )
 }
 

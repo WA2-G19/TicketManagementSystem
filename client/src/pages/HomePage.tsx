@@ -1,11 +1,13 @@
 import HasRole from "../components/authentication/HasRole";
+import SidebarLayout from "../components/layout/SidebarLayout";
+import Sidebar from "../components/Sidebar";
 
 interface HomePageProps {
     select: string
 }
 
 function HomePage(props: HomePageProps) {
-    return <>
+    return <><SidebarLayout.Main>
         <HasRole role={"Manager"} key={"manager"}>
             <p>Manager page</p>
         </HasRole>
@@ -18,7 +20,11 @@ function HomePage(props: HomePageProps) {
         <HasRole role={"Vendor"} key={"vendor"}>
             <p>Vendor page</p>
         </HasRole>
-    </>
+            </SidebarLayout.Main>
+          <SidebarLayout.Sidebar>
+              <Sidebar />
+          </SidebarLayout.Sidebar>
+        </>
 }
 
 export default HomePage
