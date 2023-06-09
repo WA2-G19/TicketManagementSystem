@@ -1,17 +1,19 @@
-import {Button, Col, Container, Nav, NavLink, Row} from "react-bootstrap";
+import {Col, Nav, Row} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Navbar} from "react-bootstrap";
 import {useAuthentication} from "../contexts/Authentication";
-import {Link, Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import IsAuthenticated from "./authentication/IsAuthenticated";
+import IsAnonymous from "./authentication/IsAnonymous";
 
 
 function MyNavbar() {
     const navigate = useNavigate()
-    const aut = useAuthentication()
+    const auth = useAuthentication()
 
     const logout = () => {
-        localStorage.removeItem("jwt")
-        navigate("/")
+        auth.logout()
+            .then(() => navigate("/"))
     }
 
     const goToHome = () => {
@@ -33,8 +35,12 @@ function MyNavbar() {
             <Col>
                 <Nav className="me-auto">
                     <Nav.Link onClick={() => goToHome()}>Home</Nav.Link>
-                    {!aut.isLoggedIn() ? <Nav.Link onClick={() => navigate("/login")}>Login</Nav.Link> :
-                        <Nav.Link onClick={() => logout()}>Logout</Nav.Link>}
+                    <IsAuthenticated>
+                        <Nav.Link onClick={() => logout()}>Logout</Nav.Link>
+                    </IsAuthenticated>
+                    <IsAnonymous>
+                        <Nav.Link onClick={() => navigate("/login")}>Login</Nav.Link>
+                    </IsAnonymous>
                 </Nav>
             </Col>
             <Col>

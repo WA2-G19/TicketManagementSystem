@@ -1,15 +1,12 @@
-import Navbar from "../components/Navbar";
-import {Container} from "react-bootstrap";
-import {AuthenticationContextProvider} from "../contexts/Authentication";
 import RegistrationForm from "../components/signuppage/RegistrationForm";
+import NavbarLayout from "../components/layout/NavbarLayout";
 
 function SignupPage() {
-    return <AuthenticationContextProvider>
-        <>
-            <Navbar/>
-            <Container><RegistrationForm/></Container>
-        </>
-    </AuthenticationContextProvider>
+    return (
+        <NavbarLayout>
+            <RegistrationForm/>
+        </NavbarLayout>
+    )
 }
 
 export default SignupPage

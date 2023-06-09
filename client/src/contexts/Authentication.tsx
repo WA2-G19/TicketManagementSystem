@@ -8,10 +8,15 @@ interface Credentials {
 }
 
 interface Authentication {
-    readonly user: any | null
+    readonly user: User | null
     isLoggedIn(): boolean
     login(credentials: Credentials): Promise<void>
     logout(): Promise<void>
+}
+
+interface User {
+    username: string
+    role: string[]
 }
 
 const AuthenticationContext = createContext<Authentication | null>(null)
@@ -20,13 +25,13 @@ function AuthenticationContextProvider({ children }: {
     children: JSX.Element[] | JSX.Element
 }) {
     const [authentication, _] = useState( new class implements Authentication {
-        get user(): any | null {
+        get user(): User | null {
             const token = localStorage.getItem("jwt")
             if (token === null) {
                 return null
             }
             try {
-                return jwt_decode(token)
+                return jwt_decode<User>(token)
             } catch (e) {
                 console.error(e)
                 localStorage.removeItem("jwt")

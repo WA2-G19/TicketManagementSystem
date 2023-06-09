@@ -1,15 +1,23 @@
-import Navbar from "../components/Navbar";
-import {Container} from "react-bootstrap";
-import {AuthenticationContextProvider} from "../contexts/Authentication";
-import LoginPage from "./LoginPage";
+import NavbarLayout from "../components/layout/NavbarLayout";
+import HasRole from "../components/authentication/HasRole";
 
 function HomePage() {
-    return <AuthenticationContextProvider>
-        <>
-            <Navbar/>
-            <Container></Container>
-        </>
-    </AuthenticationContextProvider>
+    return (
+        <NavbarLayout>
+            <HasRole role={"Manager"} key={"manager"}>
+                <p>Manager page</p>
+            </HasRole>
+            <HasRole role={"Client"} key={"client"}>
+                <p>Client page</p>
+            </HasRole>
+            <HasRole role={"Expert"} key={"expert"}>
+                <p>Expert page</p>
+            </HasRole>
+            <HasRole role={"Vendor"} key={"vendor"}>
+                <p>Vendor page</p>
+            </HasRole>
+        </NavbarLayout>
+    )
 }
 
 export default HomePage

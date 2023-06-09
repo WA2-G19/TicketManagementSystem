@@ -1,15 +1,12 @@
-import Navbar from "../components/Navbar";
-import {Container} from "react-bootstrap";
 import LoginForm from "../components/loginpage/LoginForm";
-import {AuthenticationContextProvider} from "../contexts/Authentication";
+import NavbarLayout from "../components/layout/NavbarLayout";
 
-function LoginPage() {
-    return <AuthenticationContextProvider>
-        <>
-            <Navbar/>
-            <Container><LoginForm/></Container>
-        </>
-    </AuthenticationContextProvider>
+function LoginPage(): JSX.Element {
+    return (
+        <NavbarLayout>
+            <LoginForm/>
+        </NavbarLayout>
+    )
 }
 
 export default LoginPage

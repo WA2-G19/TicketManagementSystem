@@ -6,7 +6,7 @@ import {useAlert} from "../../contexts/Alert";
 import HttpStatusCode from "../../utils/httpStatusCode";
 
 
-export const RegistrationForm = () => {
+function RegistrationForm() {
     const alert = useAlert()
 
     const [showToast, setShowToast] = useState(false)
@@ -133,6 +133,6 @@ export const RegistrationForm = () => {
         </Container>
 
     );
-};
+}
 
 export default RegistrationForm;

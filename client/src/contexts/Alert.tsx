@@ -52,14 +52,14 @@ function AlertContextProvider({ children }: {
                     return this
                 }
 
-                setButtonsOk(okCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder {
+                setButtonsOk(okCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined): AlertBuilder {
                     setButtons([
                         <Button variant={"primary"} onClick={buttonCallback(okCallback)}>Ok</Button>
                     ])
                     return this
                 }
 
-                setButtonsOkCancel(okCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, cancelCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder {
+                setButtonsOkCancel(okCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined, cancelCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined): AlertBuilder {
                     setButtons([
                         <Button variant={"primary"} onClick={buttonCallback(okCallback)}>Ok</Button>,
                         <Button variant={"danger"} onClick={buttonCallback(cancelCallback)}>Cancel</Button>
@@ -67,7 +67,7 @@ function AlertContextProvider({ children }: {
                     return this
                 }
 
-                setButtonsYesNo(yesCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, noCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder {
+                setButtonsYesNo(yesCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined, noCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined): AlertBuilder {
                     setButtons([
                         <Button variant={"primary"} onClick={buttonCallback(yesCallback)}>Yes</Button>,
                         <Button variant={"secondary"} onClick={buttonCallback(noCallback)}>No</Button>
@@ -75,7 +75,7 @@ function AlertContextProvider({ children }: {
                     return this
                 }
 
-                setButtonsYesNoCancel(yesCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, noCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, cancelCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder {
+                setButtonsYesNoCancel(yesCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined, noCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined, cancelCallback: React.MouseEventHandler<HTMLButtonElement> | undefined = undefined): AlertBuilder {
                     setButtons([
                         <Button variant={"primary"} onClick={buttonCallback(yesCallback)}>Yes</Button>,
                         <Button variant={"secondary"} onClick={buttonCallback(noCallback)}>No</Button>,

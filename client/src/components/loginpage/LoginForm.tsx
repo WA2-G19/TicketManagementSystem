@@ -1,14 +1,9 @@
 import {Container, Form, Card, Button, Row, Col} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import React, {Dispatch, SetStateAction, useState} from 'react';
-import API from "../../API/api"
+import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useAlert} from "../../contexts/Alert";
 import {useAuthentication} from "../../contexts/Authentication";
-
-interface LoginProps {
-    useRefresh: Dispatch<SetStateAction<number>>
-}
 
 function LoginForm() {
     const alert = useAlert()
@@ -21,13 +16,13 @@ function LoginForm() {
         event.preventDefault();
         try {
             if (!validator.isEmail(email)) {
-                alert.getBuilder().setTitle("Error in email").setMessage("Email format is uncorrect").show()
+                alert.getBuilder().setTitle("Error in email").setMessage("Email format is incorrect").show()
                 return
             }
             await auth.login({username: email, password: pwd})
             navigate("/")
         } catch (e) {
-            alert.getBuilder().setTitle("Error in login").setMessage("Email or password uncorrect").show()
+            alert.getBuilder().setTitle("Error in login").setMessage("Email or password incorrect").show()
         }
     }
 

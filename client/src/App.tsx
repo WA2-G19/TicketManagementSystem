@@ -8,12 +8,10 @@ import {AlertContextProvider} from "./contexts/Alert";
 import SignupPage from "./pages/SignupPage";
 
 function App() {
-
-
     return (
         <AlertContextProvider>
             <AuthenticationContextProvider>
-                <Container fluid className=" vh-100 p-0 min-vh-100">
+                <Container fluid className="vh-100 p-0 min-vh-100">
                     <BrowserRouter>
                         <Routes>
                             <Route path={"/"} element={<HomePage/>}/>
