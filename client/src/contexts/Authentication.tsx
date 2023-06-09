@@ -18,7 +18,7 @@ function AuthenticationContextProvider({ children }: {
         }
 
         constructor() {
-            const token = localStorage.getItem("token")
+            const token = localStorage.getItem("jwt")
             if (token === null) {
                 this.user = null
             } else {
@@ -27,7 +27,7 @@ function AuthenticationContextProvider({ children }: {
                 } catch (e) {
                     console.error(e)
                     this.user = null
-                    localStorage.removeItem("token")
+                    localStorage.removeItem("jwt")
                 }
             }
         }

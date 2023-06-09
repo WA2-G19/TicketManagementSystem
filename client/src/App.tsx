@@ -11,6 +11,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {RegistrationForm} from "./components/authentications/RegistrationForm";
 import {AuthenticationContextProvider, useAuthentication} from "./contexts/Authentication";
 import Layout from "./components/Layout";
+import HomePage from "./components/pages/HomePage";
 
 function App() {
 
@@ -31,10 +32,10 @@ function App() {
     return (
 
         <Container fluid className=" vh-100 p-0 min-vh-100">
-            <Navbar/>
             <BrowserRouter>
                 <Routes>
-                    <Route path={"/"} element={<LoginForm/>}/>
+                    <Route path={"/"} element={<HomePage/>}/>
+                    <Route path={"/login"} element={<LoginForm/>}/>
                     <Route path={"/signup"} element={<RegistrationForm error={error} setError={setError}/>}/>
                     <Route path={"/layout"} element={<Layout/>}/>
                 </Routes>
