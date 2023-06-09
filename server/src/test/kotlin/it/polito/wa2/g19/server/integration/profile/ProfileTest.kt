@@ -190,7 +190,9 @@ class ProfileTest {
         val request = HttpEntity(newCustomer)
         val response = restTemplate.postForEntity<Unit>("/API/signup", request, HttpMethod.POST)
         assert(response.statusCode == HttpStatus.CREATED)
-
+        keycloak.realm(realmName).users().list().forEach {
+            it.isEmailVerified = true
+        }
         val loginResponse: ResponseEntity<String> = restTemplate.exchange("/API/login", HttpMethod.POST, HttpEntity(LoginDTO(newCustomer.customerDTO.email, newCustomer.password)))
         assert(loginResponse.statusCode == HttpStatus.OK)
     }
@@ -244,7 +246,7 @@ class ProfileTest {
         val request = HttpEntity(newExpert, headers)
         val response = restTemplate.postForEntity<Unit>("/API/staff/createExpert", request, HttpMethod.POST)
         assert(response.statusCode == HttpStatus.CREATED)
-
+        keycloak.realm("ticket_")
         val loginResponse: ResponseEntity<String> = restTemplate.exchange("/API/login", HttpMethod.POST, HttpEntity(LoginDTO(newExpert.staffDTO.email, newExpert.password)))
         assert(loginResponse.statusCode == HttpStatus.OK)
     }

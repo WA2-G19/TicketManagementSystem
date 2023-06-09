@@ -34,9 +34,14 @@ class TicketStatusServiceImpl(
         val ticketStatusList = ticketStatusRepository.getTicketStatusByExpert(
             expert.email
         )
+        println("----------------")
+        println(ticketStatusList.size)
+        println("----------------")
+
         var diff = 0f
         var count = 0
         ticketStatusList.groupBy { it.ticket.getId()!! }.values.forEach {
+            println("........")
             val normalizedSize = if(it.size%2 ==0) it.size else it.size - 1
             for(i in 0 until normalizedSize step 2) {
                 diff += Duration.between(
@@ -46,7 +51,9 @@ class TicketStatusServiceImpl(
                 count ++
             }
         }
-
+        println("----------------")
+        println(count)
+        println("----------------")
         return if(count == 0) 0f else diff/count
     }
 }

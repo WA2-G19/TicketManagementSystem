@@ -4,6 +4,7 @@ import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.staff.Staff
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevel
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
+import it.polito.wa2.g19.server.warranty.Warranty
 
 
 import org.springframework.data.jpa.domain.Specification
@@ -25,7 +26,7 @@ class TicketSpecification{
         fun ofCustomer(customer: Customer?): Specification<Ticket>{
             return Specification<Ticket> { root, _, builder ->
                 if(customer != null)
-                    builder.equal(root.get<Customer>("customer"), customer)
+                    builder.equal(root.get<Warranty>("warranty").get<Customer>("customer"), customer)
                 else {
                     null
                 }
