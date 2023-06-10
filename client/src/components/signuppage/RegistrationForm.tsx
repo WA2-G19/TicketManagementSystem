@@ -4,8 +4,6 @@ import {Button, Card, Col, Container, Form, Row, Toast, ToastContainer} from "re
 import CustomerAPI from "../../API/Profile/customer";
 import {useAlert} from "../../contexts/Alert";
 import HttpStatusCode from "../../utils/httpStatusCode";
-import {MDBInput} from "mdb-react-ui-kit";
-import {Checkbox} from "@mui/material";
 
 
 function RegistrationForm() {
@@ -34,7 +32,7 @@ function RegistrationForm() {
             alert.getBuilder().setTitle("Error in email").setMessage("Email format is uncorrect").show()
             return
         }
-        if (formData.password != formData.confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             alert.getBuilder().setTitle("Error in signup").setMessage("Confirm password is different from password").show()
             return
         }
@@ -46,7 +44,7 @@ function RegistrationForm() {
         )
         const credentials = new CredentialCustomer(profile, formData.password)
         const response = await CustomerAPI.signup(credentials)
-        if (response == HttpStatusCode.CREATED) {
+        if (response === HttpStatusCode.CREATED) {
             setFormData({
                 "name": "",
                 "surname": "",
@@ -56,7 +54,7 @@ function RegistrationForm() {
                 "confirmPassword": "",
             });
             setShowToast(true)
-        } else if (response == HttpStatusCode.CONFLICT) {
+        } else if (response === HttpStatusCode.CONFLICT) {
             alert.getBuilder().setTitle("Conflict").setMessage("User with this email already exist").setButtonsOk(undefined).show()
         } else {
             alert.getBuilder().setTitle("Error").setMessage("Unexpected error").show()

@@ -4,7 +4,7 @@ function HasAnyRole({
                      children,
                      roles
                  }: {
-    children: JSX.Element[] | JSX.Element,
+    children: (JSX.Element | null)[] | JSX.Element | null,
     roles: string[]
 }): JSX.Element | null {
     const auth = useAuthentication()
