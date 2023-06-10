@@ -37,6 +37,7 @@ interface TicketCardProps{
 }
 
 function TicketCard(props: TicketCardProps){
+
     return <></>
 }
 

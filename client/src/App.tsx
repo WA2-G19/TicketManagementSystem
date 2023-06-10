@@ -1,4 +1,4 @@
-import './App.css';
+import './index.css';
 import {Container} from 'react-bootstrap';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {AuthenticationContextProvider} from "./contexts/Authentication";
@@ -7,7 +7,6 @@ import LoginPage from "./pages/LoginPage";
 import {AlertContextProvider} from "./contexts/Alert";
 import SignupPage from "./pages/SignupPage";
 import NavbarLayout from "./components/layout/NavbarLayout";
-import {useState} from "react";
 
 function App() {
     return (
