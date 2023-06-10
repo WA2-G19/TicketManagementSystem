@@ -10,7 +10,6 @@ import NavbarLayout from "./components/layout/NavbarLayout";
 import {useState} from "react";
 
 function App() {
-    const [select, useSelect] = useState("")
     return (
         <AlertContextProvider>
             <AuthenticationContextProvider>
@@ -19,7 +18,7 @@ function App() {
                         <NavbarLayout>
                             <Routes>
                                 <Route path={"/"} element={<></>}/>
-                                <Route path={"/home"} element={<HomePage select={select}/>}/>
+                                <Route path={"/home"} element={<HomePage/>}/>
                                 <Route path={"/login"} element={<LoginPage/>}/>
                                 <Route path={"/signup"} element={<SignupPage/>}/>
                             </Routes>

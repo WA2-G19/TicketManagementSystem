@@ -7,6 +7,7 @@ import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import jakarta.validation.Valid
+import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.net.URI
 
 @RestController
+@CrossOrigin
 @Validated
 @RequestMapping("/API/tickets")
 @Observed
@@ -28,7 +30,7 @@ class TicketController(
     @Qualifier("requestMappingHandlerMapping") private val handlerMapping: RequestMappingHandlerMapping
 ) {
 
-    @GetMapping("")
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     fun getTickets(
         principal: JwtAuthenticationToken,
@@ -37,7 +39,7 @@ class TicketController(
         @RequestParam(required = false) status: TicketStatusEnum?,
         @RequestParam(required = false) priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
-
+        println(principal)
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
 

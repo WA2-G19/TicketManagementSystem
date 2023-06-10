@@ -15,8 +15,10 @@ interface Authentication {
 }
 
 interface User {
-    username: string
+    email: string
+    name: string
     role: string[]
+    token: string
 }
 
 const AuthenticationContext = createContext<Authentication | null>(null)
@@ -31,7 +33,10 @@ function AuthenticationContextProvider({ children }: {
                 return null
             }
             try {
-                return jwt_decode<User>(token)
+                const user = jwt_decode<User>(token)
+                console.log(token)
+                user.token = token
+               return user
             } catch (e) {
                 console.error(e)
                 localStorage.removeItem("jwt")

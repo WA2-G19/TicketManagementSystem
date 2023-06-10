@@ -2,12 +2,13 @@ import Ticket from "../../classes/Ticket"
 import TicketOut from "../../classes/Ticket"
 import TicketStatusEnum from "../../classes/Ticket"
 
-const { REACT_APP_SERVER_URL } = process.env;
+const {REACT_APP_SERVER_URL} = process.env;
 
-async function getTickets(token: string) {
+
+async function getTickets(token: string | undefined) {
 
     try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets", {
+        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/all", {
             headers: {
                 "Authorization": "Bearer " + token
             }
@@ -23,7 +24,8 @@ async function getTickets(token: string) {
 
 }
 
-async function getTicketById(token: string, ticketId: number) {
+
+async function getTicketById(token: string | undefined, ticketId: number) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId, {
@@ -41,6 +43,7 @@ async function getTicketById(token: string, ticketId: number) {
     }
 
 }
+
 
 
 async function postTicket(token: string, ticket: Ticket) {
@@ -79,5 +82,5 @@ async function putTicket(token: string, status: TicketStatusEnum) {
 
 }
 
-const TicketAPI = { getTickets, getTicketById, postTicket, putTicket}
+const TicketAPI = {getTickets, getTicketById, postTicket, putTicket}
 export default TicketAPI

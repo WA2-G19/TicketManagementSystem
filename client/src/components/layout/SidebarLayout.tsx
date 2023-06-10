@@ -16,7 +16,7 @@ function SidebarLayout({children}: { children: JSX.Element[] | JSX.Element }): J
     return (
         <>
             <Row>
-                <Col xs={5} id="sidebar-wrapper">
+                <Col xs={2} id="sidebar-wrapper">
                     {_sidebar}
                 </Col>
                 <Col xs={10} id="page-content-wrapper">
