@@ -14,7 +14,7 @@ async function getTickets(token: string | undefined) {
             }
         })
         if(response.ok) {
-            return await response.json() as Array<TicketOut>
+            return await response.json()
         } else {
             return undefined
         }

@@ -2,7 +2,7 @@ import Product from "../../classes/Product";
 
 const { REACT_APP_SERVER_URL } = process.env;
 
-async function getAllProducts(token: string) {
+async function getAllProducts(token: string | undefined) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/products", {

@@ -24,6 +24,7 @@ import java.net.URI
 @Validated
 @RequestMapping("/API/tickets")
 @Observed
+@Slf4j
 class TicketController(
     private val ticketService: TicketService,
     @Autowired
@@ -61,7 +62,7 @@ class TicketController(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int
     ): TicketOutDTO {
-
+        println(principal)
         return ticketService.getTicket(ticketId)
     }
 
