@@ -17,7 +17,7 @@ function MyNavbar() {
     }
 
     const goToHome = () => {
-        navigate("/home")
+        navigate("/")
     }
 
     return <Navbar bg="primary" variant="dark">

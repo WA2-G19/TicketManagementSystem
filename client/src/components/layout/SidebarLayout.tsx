@@ -1,10 +1,12 @@
-import {Col, Container, Row} from "react-bootstrap";
+import {Col, Row} from "react-bootstrap";
 import {Children} from "react";
 
-function SidebarLayout({children}: { children: JSX.Element[] | JSX.Element }): JSX.Element {
+function SidebarLayout({children}: { children: (JSX.Element | null)[] | JSX.Element | null }): JSX.Element {
     let _sidebar = null, _main = null;
 
     Children.forEach(children, child => {
+        if (!child)
+            return
         if (child.type === Sidebar) {
             _sidebar = child
         }
@@ -14,16 +16,14 @@ function SidebarLayout({children}: { children: JSX.Element[] | JSX.Element }): J
     })
 
     return (
-        <>
-            <Row>
-                <Col xs={5} id="sidebar-wrapper">
-                    {_sidebar}
-                </Col>
-                <Col xs={10} id="page-content-wrapper">
-                    {_main}
-                </Col>
-            </Row>
-        </>
+        <Row className={"vh-100"}>
+            <Col className={"col-md-3 d-none d-md-flex bg-light p-0"}>
+                {_sidebar}
+            </Col>
+            <Col className={"col-xs-12 col-md-9 p-0"}>
+                {_main}
+            </Col>
+        </Row>
     )
 }
 

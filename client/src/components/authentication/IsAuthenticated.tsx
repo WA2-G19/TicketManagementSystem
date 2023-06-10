@@ -4,7 +4,7 @@ function IsAuthenticated({
     children
  }:
      {
-         children: JSX.Element[] | JSX.Element
+         children: (JSX.Element | null)[] | JSX.Element | null
      }): JSX.Element | null {
     const auth = useAuthentication()
     if (auth.isLoggedIn()) {

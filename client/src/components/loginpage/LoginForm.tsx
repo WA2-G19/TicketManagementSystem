@@ -1,5 +1,4 @@
-import {Container, Form, Card, Button, Row, Col, ToastContainer, Toast} from 'react-bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import {Container, Form, Card, Button, Row, Col} from 'react-bootstrap';
 import React, {useState} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useAlert} from "../../contexts/Alert";
@@ -20,7 +19,7 @@ function LoginForm() {
                 return
             }
             await auth.login({username: email, password: pwd})
-            navigate("/home")
+            navigate("/")
         } catch (e) {
             alert.getBuilder().setTitle("Error in login").setMessage("Email or password incorrect").show()
         }
