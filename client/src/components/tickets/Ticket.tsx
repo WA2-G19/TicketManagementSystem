@@ -1,9 +1,10 @@
 import {useAuthentication} from "../../contexts/Authentication";
 import TicketAPI from "../../API/Ticketing/tickets";
 import Ticket from "../../classes/Ticket";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import ProductAPI from "../../API/Products/products";
 import Product from "../../classes/Product";
+import {Col, Row} from "react-bootstrap";
 
 interface TicketsProps {
     token: string | undefined
@@ -11,26 +12,21 @@ interface TicketsProps {
 
 function Tickets(props: TicketsProps) {
 
-    //   const [tickets, setTickets] = useState(
+    const auth = useAuthentication()
+
     useEffect(() => {
         async function getTickets() {
-            const tickets = await TicketAPI.getTicketById(props.token,0)
+
+            const tickets = await TicketAPI.getTickets(localStorage.getItem("jwt") as string)
             console.log(tickets)
         }
         getTickets()
     }, [])
 
-    // return (
-    //     <Row>
-    //         <Col xs={12} md={3}>
-    //             <h5>{user?.name} (Nome Cognome)</h5>
-    //             <p>{user?.email} (Email)</p>
-    //         </Col>
-    //     </Row>
-    // );
-    return <></>
-
-};
+    return (
+        <></>
+    );
+}
 
 interface TicketCardProps{
     ticket: Ticket

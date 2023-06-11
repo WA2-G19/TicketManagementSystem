@@ -8,17 +8,20 @@ const {REACT_APP_SERVER_URL} = process.env;
 async function getTickets(token: string | undefined) {
 
     try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/all", {
+        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets", {
+            method: "GET",
             headers: {
-                "Authorization": "Bearer " + token
+                "Authorization": "Bearer " + token,
+                "accept": "application/json"
             }
         })
         if(response.ok) {
-            return await response.json()
+            return await response.json() as Array<TicketOut>
         } else {
             return undefined
         }
     } catch (e) {
+        console.log(e)
         throw e
     }
 
@@ -29,8 +32,10 @@ async function getTicketById(token: string | undefined, ticketId: number) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId, {
+            method: "GET",
             headers: {
-                "Authorization": "Bearer " + token
+                "Authorization": "Bearer " + token,
+                "accept": "application/json"
             }
         })
         if(response.ok) {
