@@ -64,7 +64,7 @@ export function StaffCard(props: StaffCardProps): JSX.Element {
                     <Typography variant="body2" color="primary">
                         <strong>Skills</strong>
                     </Typography>
-                    {props.staff?.skills.map((it, idx) => <Grid>{it}</Grid>)}
+                    {props.staff?.skills.map((it, idx) => <Grid key={idx}>{it}</Grid>)}
                 </Grid>
             </Grid>
         </CardContent>

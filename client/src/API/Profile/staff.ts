@@ -5,7 +5,7 @@ const {REACT_APP_SERVER_URL} = process.env;
 async function getProfiles(token: string | undefined) {
     try {
 
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/staff/all", {
+        const response = await fetch(REACT_APP_SERVER_URL + "/API/staff/profiles", {
             headers: {
                 "Authorization": "Bearer " + token,
                 "Accept": "Application/Json"

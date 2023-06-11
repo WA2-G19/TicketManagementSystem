@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.*
 @Validated
 @RequestMapping("/API/staff")
 @Observed
+@CrossOrigin
 class StaffController(
 
     private val staffService: StaffService
 ){
 
-    @GetMapping("/all")
+    @GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
     fun getProfiles(
         principal: JwtAuthenticationToken
