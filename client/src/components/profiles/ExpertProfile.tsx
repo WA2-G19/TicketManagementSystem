@@ -3,7 +3,7 @@ import {Card, CardContent, Grid, Typography} from "@mui/material";
 import React from "react";
 
 
-const ClientProfile = () => {
+const ExpertProfile = () => {
     const auth = useAuthentication()
     const user = auth.user
     return <Card>
@@ -26,4 +26,4 @@ const ClientProfile = () => {
     </Card>
 };
 
-export default ClientProfile;
+export default ExpertProfile;

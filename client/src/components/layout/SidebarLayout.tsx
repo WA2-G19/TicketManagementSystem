@@ -1,4 +1,4 @@
-import {Col, Container, Row} from "react-bootstrap";
+import {Col, Row} from "react-bootstrap";
 import {Children} from "react";
 
 function SidebarLayout({children}: { children: JSX.Element[] | JSX.Element }): JSX.Element {
