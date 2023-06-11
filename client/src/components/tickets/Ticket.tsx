@@ -17,7 +17,7 @@ function Tickets(props: TicketsProps) {
     useEffect(() => {
         async function getTickets() {
 
-            const tickets = await TicketAPI.getTickets(localStorage.getItem("jwt") as string)
+            const tickets = await TicketAPI.getTickets(props.token)
             console.log(tickets)
         }
         getTickets()

@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.net.URI
+import javax.ws.rs.core.SecurityContext
 
 @RestController
 @CrossOrigin
@@ -31,15 +33,15 @@ class TicketController(
     @Qualifier("requestMappingHandlerMapping") private val handlerMapping: RequestMappingHandlerMapping
 ) {
 
-    @GetMapping("/all")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     fun getTickets(
-        principal: JwtAuthenticationToken,
         @RequestParam(required = false) customer: String?,
         @RequestParam(required = false) expert: String?,
         @RequestParam(required = false) status: TicketStatusEnum?,
         @RequestParam(required = false) priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
+        val principal = SecurityContextHolder.getContext().authentication
         println(principal)
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
@@ -59,10 +61,9 @@ class TicketController(
     @GetMapping("/{ticketId}")
     @ResponseStatus(HttpStatus.OK)
     fun getTicketById(
-        principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int
     ): TicketOutDTO {
-        println(principal)
+        val principal = SecurityContextHolder.getContext().authentication
         return ticketService.getTicket(ticketId)
     }
 

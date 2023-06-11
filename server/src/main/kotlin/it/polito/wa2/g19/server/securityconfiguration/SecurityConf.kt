@@ -27,9 +27,10 @@ class ResourceServerConfig {
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
 
         http
-            .cors().disable()
             .csrf().disable()
+            .cors().disable()
             .authorizeHttpRequests()
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers("/index.html","/", "/static/**", "/manifest.json", "/signup").permitAll()
             .requestMatchers("/actuator/prometheus")
             .hasRole("Prometheus")
@@ -49,7 +50,7 @@ class ResourceServerConfig {
                 .authenticated()
             .requestMatchers("/API/stats/**")
                 .hasRole("Manager")
-            .requestMatchers("/API/tickets/*")
+                .requestMatchers("/API/tickets/*")
                 .authenticated()
             .requestMatchers(HttpMethod.POST, "/API/tickets")
                 .hasRole("Client")
