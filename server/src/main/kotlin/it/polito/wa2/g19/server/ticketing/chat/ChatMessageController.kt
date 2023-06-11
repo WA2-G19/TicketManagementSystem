@@ -20,6 +20,7 @@ import java.net.URI
 
 @RestController
 @Validated
+@CrossOrigin
 @RequestMapping("/API/tickets")
 @Observed
 class ChatMessageController(

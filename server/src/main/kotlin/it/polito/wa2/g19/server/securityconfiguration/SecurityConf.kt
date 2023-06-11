@@ -28,10 +28,13 @@ class ResourceServerConfig {
 
         http
             .csrf().disable()
+            // Cors options
+            // ================================== //
             .cors().disable()
             .authorizeHttpRequests()
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers("/index.html","/", "/static/**", "/manifest.json", "/signup").permitAll()
+            // ================================== //
             .requestMatchers("/actuator/prometheus")
             .hasRole("Prometheus")
             .requestMatchers("/API/products/**")

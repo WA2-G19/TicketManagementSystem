@@ -2,13 +2,11 @@ package it.polito.wa2.g19.server.ticketing.statuses
 
 import io.micrometer.observation.annotation.Observed
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @Validated
+@CrossOrigin
 @RequestMapping("/API/stats")
 @Observed
 class TicketStatusController(
