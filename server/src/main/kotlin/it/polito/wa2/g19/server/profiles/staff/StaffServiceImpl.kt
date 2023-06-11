@@ -30,7 +30,7 @@ class StaffServiceImpl(
 
     @PreAuthorize("hasRole('Manager')")
     override fun getAll(): List<StaffDTO> {
-        return staffRepository.findAll().map { it.toDTO() }
+        return staffRepository.findAll().filter { it -> it.toDTO().type.toString() === "Expert" }.map { it.toDTO() }
     }
 
     @PreAuthorize("isAuthenticated() and ((#email == #principal.username and hasRole('Expert')) or hasRole('Manager'))")
