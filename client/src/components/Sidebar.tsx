@@ -13,28 +13,28 @@ function Sidebar(props: SidebarProps) {
     return <>
         <Nav className="col-md-12 d-none d-md-block bg-light sidebar" style={{display: "flex", height: "100vh"}}>
             <div className="sidebar-sticky"></div>
-            <HasRole role={"Manager"} key={"manager"}>
+            <HasRole role={["Manager"]} key={"manager"}>
                 <ListGroup>
                     {Object.keys(ManagerSideBar).filter(item => isNaN(Number(item))).map((e) => {
                         return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>
                     })}
                 </ListGroup>
             </HasRole>
-            <HasRole role={"Client"} key={"client"}>
+            <HasRole role={["Client"]} key={"client"}>
                 <ListGroup>
                     {Object.keys(ClientSideBar).filter(item => isNaN(Number(item))).map((e) => {
                         return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>
                     })}
                 </ListGroup>
             </HasRole>
-            <HasRole role={"Expert"} key={"expert"}>
+            <HasRole role={["Expert"]} key={"expert"}>
                 <ListGroup>
                     {Object.keys(ExpertSideBar).filter(item => isNaN(Number(item))).map((e) => {
                         return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>
                     })}
                 </ListGroup>
             </HasRole>
-            <HasRole role={"Vendor"} key={"vendor"}>
+            <HasRole role={["Vendor"]} key={"vendor"}>
                 <ListGroup>
                     {Object.keys(VendorSideBar).filter(item => isNaN(Number(item))).map((e) => {
                         return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>

@@ -50,11 +50,14 @@ export class TicketOut extends Ticket {
 
     status: TicketStatusEnum
 
-    constructor(id: number, customerEmail: string, productEan: string, description: string, status: TicketStatusEnum, priorityLevel: PriorityLevelEnum | undefined, expertEmail: string | undefined) {
+    warrantyUUID : string
+
+    constructor(id: number, customerEmail: string, productEan: string, description: string, status: TicketStatusEnum, priorityLevel: PriorityLevelEnum | undefined, expertEmail: string | undefined, warrantyUUID: string) {
         super(id, customerEmail, productEan, description);
         this.status = status
         this.expertEmail = expertEmail
         this.priorityLevel = priorityLevel
+        this.warrantyUUID = warrantyUUID
     }
 
     toJSONObject(): string {
@@ -74,4 +77,4 @@ export class TicketOut extends Ticket {
 
 }
 
-export default Ticket
+export default Ticket;

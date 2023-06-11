@@ -1,15 +1,14 @@
 import {useAuthentication} from "../../contexts/Authentication";
 
 function HasRole({
-    children,
-    role
-}: {
+                     children,
+                     role
+                 }: {
     children: (JSX.Element | null)[] | JSX.Element | null,
-    role: string
+    role: string[]
 }): JSX.Element | null {
     const auth = useAuthentication()
-
-    if (auth.isLoggedIn() && auth.user!.role.includes(role)) {
+    if (auth.isLoggedIn() && role.some(role => auth.user!.role.includes(role))) {
         return (
             <>
                 {children}

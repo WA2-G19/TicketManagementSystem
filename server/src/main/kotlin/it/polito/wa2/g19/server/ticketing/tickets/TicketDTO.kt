@@ -18,7 +18,7 @@ class TicketOutDTO(id: Int?,
                    description: String,
 
                    var customerEmail: String,
-                   var productEam: String,
+                   var productEan: String,
                    var priorityLevel: PriorityLevelEnum?,
                    var expertEmail: String?,
                    var status: TicketStatusEnum = TicketStatusEnum.Open

@@ -2,9 +2,9 @@ import HasRole from "../components/authentication/HasRole";
 import SidebarLayout from "../components/layout/SidebarLayout";
 import Sidebar from "../components/Sidebar";
 import {useState} from "react";
-import {ClientSideBar} from "../utils/pageSwitch";
+import {ClientSideBar, ExpertSideBar} from "../utils/pageSwitch";
 import ClientProfile from "../components/profiles/ClientProfile";
-import Tickets from "../components/tickets/Ticket";
+import {Tickets, TicketCard} from "../components/tickets/Ticket";
 import {useAuthentication} from "../contexts/Authentication";
 
 function HomePage() {
@@ -17,28 +17,41 @@ function HomePage() {
             <Sidebar active={active} setActive={setActive}/>
         </SidebarLayout.Sidebar>
         <SidebarLayout.Main>
-            <HasRole role={"Manager"} key={"manager"}>
+            <HasRole role={["Manager"]} key={"manager"}>
                 <p>Manager page</p>
             </HasRole>
-            <HasRole role={"Client"} key={"client"}>
+            <HasRole role={["Client"]} key={"client"}>
                 {switchClient(active, token)}
             </HasRole>
-            <HasRole role={"Expert"} key={"expert"}>
-                <p>Expert page</p>
+            <HasRole role={["Expert"]} key={"expert"}>
+                {switchExpert(active, token)}
             </HasRole>
-            <HasRole role={"Vendor"} key={"vendor"}>
+            <HasRole role={["Vendor"]} key={"vendor"}>
                 <p>Vendor page</p>
             </HasRole>
         </SidebarLayout.Main>
     </SidebarLayout>
 }
 
-function switchClient(active: string,token: string | undefined): JSX.Element {
+function switchClient(active: string, token: string | undefined): JSX.Element {
     switch (active) {
         case ClientSideBar[ClientSideBar.Profile]:
             return <ClientProfile/>
         case ClientSideBar[ClientSideBar.Tickets]:
-            return <Tickets token ={token}/>
+            return <Tickets token={token}/>
+        case ClientSideBar[ClientSideBar.Ticket]:
+            return <TicketCard ticket={undefined}/>
+        default:
+            return <></>
+    }
+}
+
+function switchExpert(active: string, token: string | undefined): JSX.Element {
+    switch (active) {
+        case ExpertSideBar[ExpertSideBar.Tickets]:
+            return <Tickets token={token}/>
+        case ExpertSideBar[ExpertSideBar.Ticket]:
+            return <TicketCard ticket={undefined}/>
         default:
             return <></>
     }

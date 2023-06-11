@@ -34,7 +34,6 @@ function AuthenticationContextProvider({ children }: {
             }
             try {
                 const user = jwt_decode<User>(token)
-                console.log(token)
                 user.token = token
                return user
             } catch (e) {
