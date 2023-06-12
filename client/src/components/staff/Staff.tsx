@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {Card, Container} from "react-bootstrap";
+import {Button, Card, Container} from "react-bootstrap";
 import {CardContent, Grid, Typography} from "@mui/material";
 import {Staff} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
+import TicketAPI from "../../API/Ticketing/tickets";
+import {useAuthentication} from "../../contexts/Authentication";
 
 interface StaffsProps {
     token: string | undefined
@@ -35,10 +37,17 @@ export function Staffs(props: StaffsProps) {
 }
 
 interface StaffCardProps {
-    staff: Staff | undefined
+    staff: Staff | undefined,
+    assign?: boolean
 }
 
 export function StaffCard(props: StaffCardProps): JSX.Element {
+
+    const auth = useAuthentication()
+
+    const assignTicket = async () => {
+        await TicketAPI.putTicket(auth.user?.token, undefined)
+    }
 
     return <Card>
         <CardContent>
@@ -67,6 +76,7 @@ export function StaffCard(props: StaffCardProps): JSX.Element {
                     {props.staff?.skills.map((it, idx) => <Grid key={idx}>{it}</Grid>)}
                 </Grid>
             </Grid>
+            {props.assign ? <Button>Assign</Button> : <></>}
         </CardContent>
     </Card>
 }

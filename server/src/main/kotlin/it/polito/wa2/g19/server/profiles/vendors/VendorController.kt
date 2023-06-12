@@ -16,7 +16,7 @@ class VendorController(
     private val vendorService: VendorService
 ){
 
-    @GetMapping("/")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     fun getProfiles(): List<VendorDTO> {
         return vendorService.getAll()

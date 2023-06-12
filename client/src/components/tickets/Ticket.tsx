@@ -4,6 +4,10 @@ import React, {useEffect, useState} from "react";
 import HasRole from "../authentication/HasRole";
 import {Button, Card, Container} from "react-bootstrap";
 import {CardContent, Grid, Typography} from "@mui/material";
+import {ModalDialog} from "../modals/ModalDialog";
+import {useAuthentication} from "../../contexts/Authentication";
+import {Staff} from "../../classes/Profile";
+import StaffAPI from "../../API/Profile/staff";
 
 interface TicketsProps {
     token: string | undefined
@@ -40,6 +44,19 @@ interface TicketCardProps {
 }
 
 export function TicketCard(props: TicketCardProps): JSX.Element {
+
+    const [show, setShow] = useState(false)
+    const [experts, setExperts] = useState<Array<Staff> | undefined>()
+    const auth = useAuthentication()
+
+    useEffect(() => {
+        async function getExperts() {
+            setExperts(await StaffAPI.getProfiles(auth.user?.token) as Array<Staff>)
+        }
+        if(auth.user?.role[0] == "Manager") {
+            getExperts()
+        }
+    }, [])
 
     return <Card>
         <CardContent>
@@ -95,6 +112,10 @@ export function TicketCard(props: TicketCardProps): JSX.Element {
                 </Grid>
             </Grid>
             <Button>Apri chat</Button>
+            <HasRole role={["Manager"]}>
+                <Button onClick = {() => setShow(true)}>Assign Ticket</Button>
+                <ModalDialog show={show} setShow={setShow} elements={experts}/>
+            </HasRole>
         </CardContent>
     </Card>
 }
