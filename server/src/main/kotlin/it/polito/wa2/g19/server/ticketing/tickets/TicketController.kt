@@ -53,6 +53,8 @@ class TicketController(
             Role.ROLE_Expert -> ticketService.getTickets(customer, email, status, priorityLevel)
 
             Role.ROLE_Manager -> ticketService.getTickets(customer, expert, status, priorityLevel)
+
+            Role.ROLE_Vendor -> throw ForbiddenException()
         }
 
         return tickets

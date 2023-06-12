@@ -7,13 +7,6 @@ interface WarrantyService {
 
     fun getById(id: UUID): WarrantyOutDTO
 
-    fun getByCustomerEmail(email: String): List<WarrantyOutDTO>
-
-    fun getByCustomerId(id: UUID): List<WarrantyOutDTO>
-
-    fun getByVendorEmail(email: String): List<WarrantyOutDTO>
-
-    fun getByVendorId(id: UUID): List<WarrantyOutDTO>
 
     fun insertWarranty(warranty: WarrantyInDTO): WarrantyOutDTO
 

@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -26,7 +27,6 @@ import java.util.UUID
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
-    private val productRepository: ProductRepository,
     private val staffRepository: StaffRepository,
     private val priorityLevelRepository: PriorityLevelRepository,
     private val ticketStatusRepository: TicketStatusRepository,
@@ -44,6 +44,7 @@ class TicketServiceImpl(
                 Role.ROLE_Client -> ticketRepository.findTicketByIdAndCustomerEmail(id, email)
                 Role.ROLE_Expert -> ticketRepository.findTicketByIdAndExpertEmail(id, email)
                 Role.ROLE_Manager -> ticketRepository.findByIdOrNull(id)
+                Role.ROLE_Vendor -> throw ForbiddenException()
             } ?: throw TicketNotFoundException()
         return ticket.toOutDTO()
     }
@@ -86,6 +87,8 @@ class TicketServiceImpl(
     override fun createTicket(ticket: TicketDTO): Int {
 
         val w = warrantyRepository.findByIdOrNull(ticket.warrantyUUID) ?: throw WarrantyNotFoundException()
+
+
         if (w.creationTimestamp.plus(w.duration) < LocalDateTime.now()) throw WarrantyExpiredException()
 
         val t = Ticket().apply {
@@ -243,6 +246,8 @@ class TicketServiceImpl(
                 Role.ROLE_Client -> warrantyRepository.getReferenceById(ticket.warrantyUUID).customer!!.email == author
                 Role.ROLE_Expert -> ticket.expertEmail == author
                 Role.ROLE_Manager -> email == author
+                Role.ROLE_Vendor -> throw ForbiddenException()
+
             }
         return flag
     }

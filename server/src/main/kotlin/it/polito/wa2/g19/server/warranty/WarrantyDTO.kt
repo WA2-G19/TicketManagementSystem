@@ -33,10 +33,12 @@ data class WarrantyOutDTO(
     @Email
     val customerEmail: String?,
     val creationTimestamp: LocalDateTime,
-    val activationTimestamp: LocalDateTime?
+    val activationTimestamp: LocalDateTime?,
+    val duration: Duration
 ) {
     @AssertFalse
-    fun isValid(): Boolean = (customerEmail == null) xor (activationTimestamp == null)
+    fun isValid(): Boolean = (customerEmail != null) and (activationTimestamp != null)
+
 }
 
-fun Warranty.toDTO() = WarrantyOutDTO(id.toString(), product.ean, vendor.email, customer?.email, creationTimestamp, activationTimestamp)
+fun Warranty.toDTO() = WarrantyOutDTO(id.toString(), product.ean, vendor.email, customer?.email, creationTimestamp, activationTimestamp, duration)

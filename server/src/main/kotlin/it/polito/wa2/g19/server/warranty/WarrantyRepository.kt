@@ -9,6 +9,8 @@ interface WarrantyRepository: JpaRepository<Warranty, UUID> {
     @Query("select w from Warranty w where w.customer.email = ?1")
     fun findByCustomerEmail(email: String): List<Warranty>
 
+    fun findByIdAndCustomerEmail(id: UUID, email: String): Warranty?
+
     @Query("select w from Warranty w where w.customer.id = ?1")
     fun findByCustomerId(id: UUID): List<Warranty>
 
@@ -17,6 +19,9 @@ interface WarrantyRepository: JpaRepository<Warranty, UUID> {
 
     @Query("select w from Warranty w where w.vendor.id = ?1")
     fun findByVendorId(id: UUID): List<Warranty>
+
+    fun findByIdAndVendorEmail(id: UUID, email: String): Warranty?
+
 
     @Query("select w from Warranty w where w.customer.id = ?1 and w.product.ean = ?2")
     fun findWarrantyByCustomerIdAndProductEan(customerId: UUID, productEan: String): Warranty?

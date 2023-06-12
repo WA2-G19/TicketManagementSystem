@@ -16,7 +16,7 @@ class Ticket : EntityBase<Int>() {
     @JoinColumn(nullable = false)
     lateinit var warranty: Warranty
     @OneToMany(mappedBy = "ticket", cascade = [CascadeType.ALL])
-    lateinit var statusHistory: MutableSet<TicketStatus>
+    var statusHistory: MutableSet<TicketStatus> = mutableSetOf()
     @Column(nullable = false)
     var description: String = ""
     @Column(nullable = true)

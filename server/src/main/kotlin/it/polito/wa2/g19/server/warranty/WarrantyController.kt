@@ -28,7 +28,7 @@ class WarrantyController(
     @Qualifier("requestMappingHandlerMapping") private val handlerMapping: RequestMappingHandlerMapping
 
 ) {
-    @GetMapping("/")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     fun getAll(): List<WarrantyOutDTO> {
         return warrantyService.getAll()
@@ -40,7 +40,7 @@ class WarrantyController(
         return warrantyService.getById(warrantyId)
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     fun insertWarranty(@RequestBody warranty: WarrantyInDTO): ResponseEntity<WarrantyOutDTO> {
         val warrantyOutDTO = warrantyService.insertWarranty(warranty)
