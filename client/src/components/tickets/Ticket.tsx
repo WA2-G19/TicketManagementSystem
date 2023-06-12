@@ -58,10 +58,10 @@ export function TicketCard(props: TicketCardProps): JSX.Element {
             setExperts(mappedStaffStats)
         }
 
-        if (auth.user?.role[0] == "Manager") {
+        if (auth.user?.role[0] === "Manager") {
             getExperts()
         }
-    }, [])
+    }, [auth.user?.role, auth.user?.token])
 
     return <Container className={"pt-3"}>
         <Card>

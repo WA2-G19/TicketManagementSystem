@@ -1,8 +1,7 @@
-import {Button, Container, ListGroup, ListGroupItem, Modal} from "react-bootstrap";
+import {Button, Container, ListGroupItem, Modal} from "react-bootstrap";
 import React, {Dispatch} from "react";
 import {StaffCard} from "../staff/Staff";
 import {Staff} from "../../classes/Profile";
-import {List} from "@mui/material";
 
 interface ModalProps<T> {
     show: boolean,

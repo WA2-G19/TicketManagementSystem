@@ -4,9 +4,9 @@ function HasRole({
                      children,
                      role
                  }: {
-    children: (JSX.Element | null)[] | JSX.Element | null,
+    children: JSX.Element[] | JSX.Element,
     role: string[]
-}): JSX.Element | null {
+}): JSX.Element {
     const auth = useAuthentication()
     if (auth.isLoggedIn() && role.some(role => auth.user!.role.includes(role))) {
         return (
@@ -15,7 +15,7 @@ function HasRole({
             </>
         )
     }
-    return null
+    return <>{false}</>
 }
 
 export default HasRole

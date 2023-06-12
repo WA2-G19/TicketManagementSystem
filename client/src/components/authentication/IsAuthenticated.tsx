@@ -4,8 +4,8 @@ function IsAuthenticated({
     children
  }:
      {
-         children: (JSX.Element | null)[] | JSX.Element | null
-     }): JSX.Element | null {
+         children: JSX.Element[] | JSX.Element
+     }): JSX.Element {
     const auth = useAuthentication()
     if (auth.isLoggedIn()) {
         return (
@@ -14,7 +14,7 @@ function IsAuthenticated({
             </>
         )
     }
-    return null
+    return <>{false}</>
 }
 
 export default IsAuthenticated

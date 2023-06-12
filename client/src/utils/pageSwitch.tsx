@@ -1,5 +1,3 @@
-"use strict"
-
 export enum ClientSideBar {"Warranty", "Tickets", "Add ticket", "Profile"}
 
 export enum ManagerSideBar {"Stats", "Tickets", "Staff", "Vendor", "Products", "Warranty", "Profile"}

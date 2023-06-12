@@ -1,7 +1,7 @@
 import Navbar from "../Navbar";
 import {Container} from "react-bootstrap";
 
-function NavbarLayout({ children }: { children: (JSX.Element | null)[] | JSX.Element | null}): JSX.Element {
+function NavbarLayout({ children }: { children: JSX.Element[] | JSX.Element}): JSX.Element {
     return (
         <>
             <Navbar/>

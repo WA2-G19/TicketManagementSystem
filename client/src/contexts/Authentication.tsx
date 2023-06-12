@@ -26,7 +26,7 @@ const AuthenticationContext = createContext<Authentication | null>(null)
 function AuthenticationContextProvider({ children }: {
     children: JSX.Element[] | JSX.Element
 }) {
-    const [authentication, _] = useState( new class implements Authentication {
+    const [authentication, _] = useState(new class implements Authentication {
         get user(): User | null {
             const token = localStorage.getItem("jwt")
             if (token === null) {
@@ -58,7 +58,7 @@ function AuthenticationContextProvider({ children }: {
                 throw new Error("you are not logged in, please log in first")
             localStorage.removeItem("jwt")
         }
-    });
+    }());
     return (
         <AuthenticationContext.Provider value={authentication}>
             {children}

@@ -1,6 +1,6 @@
 import {ListGroup, Nav} from "react-bootstrap";
 import HasRole from "./authentication/HasRole";
-import {Dispatch, useState} from "react";
+import {Dispatch} from "react";
 import {ClientSideBar, ExpertSideBar, ManagerSideBar, VendorSideBar} from "../utils/pageSwitch";
 
 interface SidebarProps{
@@ -54,7 +54,7 @@ interface ListItemProps {
 function ListItem(props: ListItemProps): JSX.Element {
     return <ListGroup.Item onClick={() => {
         props.setActive(props.item)
-    }} active={props.item == props.active}>
+    }} active={props.item === props.active}>
         <Nav.Link>{props.item}</Nav.Link>
     </ListGroup.Item>
 

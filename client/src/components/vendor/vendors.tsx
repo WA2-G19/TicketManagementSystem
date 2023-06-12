@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Container, Row} from "react-bootstrap";
-import {CardContent, Grid, Typography} from "@mui/material";
+import {Button, Col, Container, Row} from "react-bootstrap";
+import {Typography} from "@mui/material";
 import {Staff, Vendor} from "../../classes/Profile";
 import TicketAPI from "../../API/Ticketing/tickets";
 import {useAuthentication} from "../../contexts/Authentication";
@@ -31,7 +31,7 @@ export function Vendors(props: StaffsProps) {
     }
 
     return <Container fluid>
-        {vendors.length != 0 && vendors.map((vendorSubArray, idx) => {
+        {vendors.length !== 0 && vendors.map((vendorSubArray, idx) => {
             return <Row key={idx} className={"pt-3"}>
                 {vendorSubArray.map((vendor, idx) => {
                     return <Col md={4} style={{height: "100%"}}><></></Col>
@@ -81,7 +81,7 @@ export function StaffCard(props: StaffCardProps): JSX.Element {
                             <strong>Skills</strong>
                         </Typography>
                     </Col>
-                    {props.staff?.skills.length != 0 ? props.staff?.skills.map((it, idx) => <Col key={idx}>{it}</Col>) :
+                    {props.staff?.skills.length !== 0 ? props.staff?.skills.map((it, idx) => <Col key={idx}>{it}</Col>) :
                         <Col>No Skills</Col>}
                 </Col>
             </Row>

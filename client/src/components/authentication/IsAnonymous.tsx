@@ -2,8 +2,8 @@ import {useAuthentication} from "../../contexts/Authentication";
 
 function IsAnonymous({ children }:
      {
-         children: (JSX.Element | null)[] | JSX.Element | null
-     }): JSX.Element | null {
+         children: JSX.Element[] | JSX.Element
+     }): JSX.Element {
     const auth = useAuthentication()
     if (!auth.isLoggedIn()) {
         return (
@@ -12,7 +12,7 @@ function IsAnonymous({ children }:
             </>
         )
     }
-    return null
+    return <>{false}</>
 }
 
 export default IsAnonymous
