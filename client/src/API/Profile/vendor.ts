@@ -5,7 +5,7 @@ const {REACT_APP_SERVER_URL} = process.env;
 async function getVendors(token: string | undefined) {
     try {
 
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor", {
+        const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/profiles", {
             headers: {
                 "Authorization": "Bearer " + token,
                 "Accept": "Application/Json"

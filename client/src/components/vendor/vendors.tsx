@@ -34,7 +34,7 @@ export function Vendors(props: StaffsProps) {
         {vendors.length !== 0 && vendors.map((vendorSubArray, idx) => {
             return <Row key={idx} className={"pt-3"}>
                 {vendorSubArray.map((vendor, idx) => {
-                    return <Col md={4} style={{height: "100%"}}><></></Col>
+                    return <Col md={4} style={{height: "100%"}}>Ciaooo</Col>
                 })}
             </Row>
         })}

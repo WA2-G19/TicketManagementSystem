@@ -47,7 +47,7 @@ class ResourceServerConfig {
                 .authenticated()
             .requestMatchers("/API/vendor/")
                 .hasRole("Manager")
-            .requestMatchers("/API/vendor/")
+            .requestMatchers("/API/vendor/profiles")
                 .hasAnyRole("Manager", "Vendor")
             .requestMatchers("/API/tickets/*/chat-messages/**")
                 .authenticated()
