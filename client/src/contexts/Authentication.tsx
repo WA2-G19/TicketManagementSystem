@@ -26,41 +26,38 @@ const AuthenticationContext = createContext<Authentication | null>(null)
 function AuthenticationContextProvider({ children }: {
     children: JSX.Element[] | JSX.Element
 }) {
-    const [authentication, _] = useState(new class implements Authentication {
-        get user(): User | null {
-            const token = localStorage.getItem("jwt")
-            if (token === null) {
-                return null
-            }
-            try {
-                const user = jwt_decode<User>(token)
-                user.token = token
-               return user
-            } catch (e) {
-                console.error(e)
-                localStorage.removeItem("jwt")
-                return null
-            }
-        }
+    const [user, setUser] = useState<User | null>(null)
 
-        get isLoggedIn(): boolean {
-            return this.user !== null
+    async function login(credentials: Credentials): Promise<void> {
+        if (user !== null)
+            throw new Error("you are already logged in as another user, please log out first")
+        const token = await API.login(credentials.username, credentials.password)
+        try {
+            const user = jwt_decode<User>(token)
+            user.token = token
+            localStorage.setItem("jwt", token)
+            setUser(user)
+        } catch (e) {
+            console.error(e)
         }
+    }
 
-        async login(credentials: Credentials): Promise<void> {
-            if (this.isLoggedIn)
-                throw new Error("you are already logged in as another user, please log out first")
-            localStorage.setItem("jwt", await API.login(credentials.username, credentials.password))
-        }
+    async function logout(): Promise<void> {
+        if (user === null)
+            throw new Error("you are not logged in, please log in first")
+        localStorage.removeItem("jwt")
+        setUser(null)
+    }
 
-        async logout(): Promise<void> {
-            if (!this.isLoggedIn)
-                throw new Error("you are not logged in, please log in first")
-            localStorage.removeItem("jwt")
-        }
-    }());
     return (
-        <AuthenticationContext.Provider value={authentication}>
+        <AuthenticationContext.Provider value={{
+            user,
+            get isLoggedIn() {
+                return user !== null
+            },
+            login,
+            logout
+        }}>
             {children}
         </AuthenticationContext.Provider>);
 }
