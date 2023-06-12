@@ -26,7 +26,19 @@ const AuthenticationContext = createContext<Authentication | null>(null)
 function AuthenticationContextProvider({ children }: {
     children: JSX.Element[] | JSX.Element
 }) {
-    const [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User | null>((() => {
+        const token = localStorage.getItem("jwt")
+        if (token === null)
+            return null
+        try {
+            const user = jwt_decode<User>(token)
+            user.token = token
+            return user
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+    })())
 
     async function login(credentials: Credentials): Promise<void> {
         if (user !== null)
