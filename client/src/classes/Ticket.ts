@@ -2,7 +2,7 @@ import APIObject from "./APIObject"
 import Any = jasmine.Any;
 
 
-class Ticket extends APIObject {
+export class Ticket extends APIObject {
     id: number
     customerEmail: string
     productEan: string
@@ -76,5 +76,3 @@ export class TicketOut extends Ticket {
     }
 
 }
-
-export default Ticket;

@@ -1,6 +1,5 @@
-import Ticket from "../../classes/Ticket"
-import TicketOut from "../../classes/Ticket"
-import TicketStatusEnum from "../../classes/Ticket"
+import {Ticket, TicketOut} from "../../classes/Ticket";
+
 
 const {REACT_APP_SERVER_URL} = process.env;
 
@@ -69,7 +68,7 @@ async function postTicket(token: string, ticket: Ticket) {
 
 }
 
-async function putTicket(token: string, status: TicketStatusEnum) {
+async function putTicket(token: string | undefined, ticket: Ticket | undefined) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/", {
@@ -78,7 +77,7 @@ async function putTicket(token: string, status: TicketStatusEnum) {
                 "Authorization": "Bearer " + token,
                 'Content-Type': 'application/json'
             },
-            body: status.toJSONObject()
+            body: ticket?.toJSONObject()
         })
         return response.ok
     } catch (e) {

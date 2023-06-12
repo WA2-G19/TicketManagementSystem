@@ -9,6 +9,7 @@ import {useAuthentication} from "../contexts/Authentication";
 import ExpertProfile from "../components/profiles/ExpertProfile";
 import ManagerProfile from "../components/profiles/ManagerProfile";
 import VendorProfile from "../components/profiles/VendorProfile";
+import {Staffs} from "../components/staff/Staff";
 
 function HomePage() {
     const auth = useAuthentication()
@@ -63,6 +64,8 @@ function switchManager(active: string, token: string | undefined): JSX.Element {
             return <ExpertProfile/>
         case ManagerSideBar[ManagerSideBar.Tickets]:
             return <Tickets token={token}/>
+        case ManagerSideBar[ManagerSideBar.Staff]:
+            return <Staffs token={token}/>
         default:
             return <></>
     }

@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @Validated
+@CrossOrigin
 @RequestMapping("/API/vendor")
 @Observed
 class VendorController(
     private val vendorService: VendorService
 ){
 
-    @GetMapping("/")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     fun getProfiles(): List<VendorDTO> {
         return vendorService.getAll()
