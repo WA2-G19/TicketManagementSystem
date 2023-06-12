@@ -1,6 +1,6 @@
 const { REACT_APP_SERVER_URL } = process.env;
 
-async function getTicketClosedByExpert(token: string, expertEmail: string) {
+async function getTicketClosedByExpert(token: string | undefined, expertEmail: string) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/stats/tickets-closed/" + expertEmail,
@@ -21,7 +21,7 @@ async function getTicketClosedByExpert(token: string, expertEmail: string) {
     }
 }
 
-async function getAverageTimedByExpert(token: string, expertEmail: string) {
+async function getAverageTimedByExpert(token: string | undefined, expertEmail: string) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/stats/average-time/" + expertEmail,

@@ -57,12 +57,21 @@ export class Staff extends Profile {
 
     type: StaffType
     skills: Array<string>
-
+    avgTime: number | undefined
+    ticketClosed: number | undefined
 
     constructor(email: string, name: string, surname: string, address: string, type: StaffType, skills: Array<string>) {
         super(email, name, surname, address);
         this.type = type
         this.skills = skills
+    }
+
+    setAvgTime(avgTime: number) {
+        this.avgTime = avgTime
+    }
+
+    setTicketsClosed(ticketClosed: number) {
+        this.ticketClosed = ticketClosed
     }
 
     toJsonObject(): string {

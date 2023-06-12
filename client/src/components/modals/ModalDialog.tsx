@@ -16,17 +16,18 @@ export function ModalDialog<T>(props: ModalProps<T>) {
         props.setShow(false)
     }
 
-    return <Modal show={props.show} onHide={handleClose}>
+    return <Modal show={props.show} onHide={handleClose} scrollable={true} fullscreen={"md-down"}>
         <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>Assign Ticket</Modal.Title>
         </Modal.Header>
         <Modal.Body>
             <Container>
-                <ListGroup>
-                    {props.elements ? props.elements?.map((e, idx) => <ListGroupItem>
+                <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0"
+                     className="scrollspy-example" >
+                    {props.elements ? props.elements?.map((e, idx) => <ListGroupItem className={"pt-2"}>
                         <StaffCard key={idx} staff={e as Staff} assign={true}/>
                     </ListGroupItem>) : <></>}
-                </ListGroup>
+                </div>
             </Container>
         </Modal.Body>
         <Modal.Footer>

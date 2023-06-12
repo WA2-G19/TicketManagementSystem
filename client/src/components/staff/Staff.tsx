@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Container} from "react-bootstrap";
+import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {CardContent, Grid, Typography} from "@mui/material";
 import {Staff} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
 import TicketAPI from "../../API/Ticketing/tickets";
 import {useAuthentication} from "../../contexts/Authentication";
+import StatsAPI from "../../API/Ticketing/statuses";
 
 interface StaffsProps {
     token: string | undefined
@@ -12,27 +13,44 @@ interface StaffsProps {
 
 export function Staffs(props: StaffsProps) {
 
-    const [staffs, setStaffs] = useState(Array<Staff>)
+    const [staffs, setStaffs] = useState(Array<Array<Staff>>)
     useEffect(() => {
         async function getStaffs() {
             const tmp = await StaffAPI.getProfiles(props.token) as Array<Staff>
-            setStaffs(tmp)
+            const mappedStaffStats = await Promise.all(tmp.map(async (staff) => {
+                staff.avgTime = await StatsAPI.getAverageTimedByExpert(props.token, staff.email)
+                staff.ticketClosed = await StatsAPI.getTicketClosedByExpert(props.token, staff.email)
+                return staff
+            }))
+            setStaffs(divideArray(mappedStaffStats, 3))
         }
 
         getStaffs()
     }, [props.token])
 
-    return <Container>
-        {staffs.length > 0 && staffs.map((it, idx) => <StaffCard key={idx} staff={it}/>)}
+    function divideArray<T>(array: T[], chunkSize: number): T[][] {
+        const result: T[][] = [];
+        while (array.length > 0) {
+            result.push(array.splice(0, chunkSize));
+        }
+        return result;
+    }
+
+    return <Container fluid>
+        {staffs.length != 0 && staffs.map((staffSubArray, idx) => {
+            return <Row key={idx} className={"pt-3"}>
+                {staffSubArray.map((staff, idx) => {
+                    return <Col md={4} style={{height: "100%"}}><StaffCard staff={staff} key={idx}/></Col>
+                })}
+            </Row>
+        })}
         {staffs.length === 0 &&
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="div" color="primary">
-                        No staff found
-                    </Typography>
-                </Grid>
-            </Grid>}
+            <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
+                <strong>No staff found</strong>
+            </Typography>
+        }
     </Container>
+
 
 }
 
@@ -49,34 +67,50 @@ export function StaffCard(props: StaffCardProps): JSX.Element {
         await TicketAPI.putTicket(auth.user?.token, undefined)
     }
 
-    return <Card>
-        <CardContent>
-            <Grid container spacing={2}>
-                <Grid item xs={24}>
-                    <Typography variant="h5" component="div" color="primary">
-                        Email: {props.staff?.email}
-                    </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                    <Typography variant="body2" color="primary">
-                        <strong>Name</strong>
-                    </Typography>
-                    {props.staff?.name}
-                </Grid>
-                <Grid item xs={6}>
-                    <Typography variant="body2" color="primary">
-                        <strong>Surname</strong>
-                    </Typography>
-                    {props.staff?.surname}
-                </Grid>
-                <Grid item xs={6}>
-                    <Typography variant="body2" color="primary">
-                        <strong>Skills</strong>
-                    </Typography>
-                    {props.staff?.skills.map((it, idx) => <Grid key={idx}>{it}</Grid>)}
-                </Grid>
-            </Grid>
-            {props.assign ? <Button>Assign</Button> : <></>}
-        </CardContent>
-    </Card>
+    return <Container className={"border border-3 rounded border-primary"}>
+        <Row className={"ps-3 mt-3"}>
+            <Typography variant="h5" component="div" color="primary">
+                {props.staff?.name + " " + props.staff?.surname}
+            </Typography>
+        </Row>
+        <Row className={"p-3"}>
+            <Row>
+                <Col>
+                    <Col><Typography variant="body2" color="primary">
+                        <strong>Email</strong>
+                    </Typography></Col>
+                    <Col>{props.staff?.email}</Col>
+                </Col>
+                <Col>
+                    <Col>
+                        <Typography variant="body2" color="primary">
+                            <strong>Skills</strong>
+                        </Typography>
+                    </Col>
+                    {props.staff?.skills.length != 0 ? props.staff?.skills.map((it, idx) => <Col key={idx}>{it}</Col>) :
+                        <Col>No Skills</Col>}
+                </Col>
+            </Row>
+            <Row className={"pt-2"}>
+                <Col><Typography display={"inline"} variant="body1" color="primary">
+                    <strong>Ticket Closed:</strong>
+                </Typography>
+                    {" " + props.staff?.ticketClosed}
+                </Col>
+            </Row>
+            <Row>
+                <Col><Typography display={"inline"} variant="body1" color="primary">
+                    <strong>Average Time:</strong>
+                </Typography>
+                    {" " + props.staff?.avgTime}
+                </Col>
+            </Row>
+        </Row>
+        {props.assign ? <Row className={"p-3"}>
+            <Col>
+                <Button onClick={() => assignTicket()}>Assign</Button>
+            </Col>
+        </Row> : <></>
+        }
+    </Container>
 }
