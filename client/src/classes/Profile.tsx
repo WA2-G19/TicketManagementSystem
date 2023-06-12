@@ -66,14 +66,6 @@ export class Staff extends Profile {
         this.skills = skills
     }
 
-    setAvgTime(avgTime: number) {
-        this.avgTime = avgTime
-    }
-
-    setTicketsClosed(ticketClosed: number) {
-        this.ticketClosed = ticketClosed
-    }
-
     toJsonObject(): string {
         return JSON.stringify({
             email: this.email,
@@ -102,6 +94,53 @@ export class CredentialStaff extends APIObject {
 
         return JSON.stringify({
             profile: this.staff.toJsonObject(),
+            password: this.password
+        })
+    }
+
+}
+
+export class Vendor extends APIObject {
+
+    email: string
+    businessName: string
+    phoneNumber: string
+    address: string
+
+    constructor(email: string, businessName: string, phoneNumber: string, address: string) {
+        super()
+        this.email = email
+        this.businessName = businessName
+        this.phoneNumber = phoneNumber
+        this.address = address
+    }
+
+    toJsonObject(): string {
+        return JSON.stringify({
+            email: this.email,
+            businessName: this.businessName,
+            phoneNumber: this.phoneNumber,
+            address: this.address,
+        })
+    }
+}
+
+export class CredentialVendor extends APIObject {
+
+    vendor: Vendor
+    password: string
+
+
+    constructor(vendor: Vendor, password: string) {
+        super()
+        this.vendor = vendor
+        this.password = password
+    }
+
+    toJsonObject(): string {
+
+        return JSON.stringify({
+            profile: this.vendor.toJsonObject(),
             password: this.password
         })
     }
