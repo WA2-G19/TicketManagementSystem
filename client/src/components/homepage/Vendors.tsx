@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Container, Row} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
-import {Staff, Vendor} from "../../classes/Profile";
+import {Vendor} from "../../classes/Profile";
 import VendorAPI from "../../API/Profile/vendor";
 import {useAuthentication} from "../../contexts/Authentication";
 
 function Vendors() {
     const { user } = useAuthentication()
-    const [vendors, setVendors] = useState(Array<Array<Vendor>>)
+    const [vendors, setVendors] = useState(Array<Vendor>)
     useEffect(() => {
         async function getVendors() {
             const tmp = await VendorAPI.getVendors(user!.token) as Array<Vendor>
-            setVendors(divideArray(tmp, 3))
+            setVendors(tmp)
         }
 
         getVendors()
@@ -20,23 +20,16 @@ function Vendors() {
             })
     }, [user!.token])
 
-    function divideArray<T>(array: T[], chunkSize: number): T[][] {
-        const result: T[][] = [];
-        while (array.length > 0) {
-            result.push(array.splice(0, chunkSize));
-        }
-        return result;
-    }
-
     return <Container fluid>
-        {vendors.length !== 0 && vendors.map((vendorSubArray, idx) => {
-            return <Row key={idx} className={"pt-3"}>
-                {vendorSubArray.map(vendor => {
-                    return <Col key={idx} md={4} style={{height: "100%"}}><VendorCard vendor={vendor} key={vendor.email} /></Col>
-                })}
-            </Row>
-        })}
-        {vendors.length === 0 &&
+        {
+            vendors.length !== 0 && vendors.map(vendor =>
+                <Col xs={12} sm={6} md={4} className={"pt-3"}>
+                    <VendorCard vendor={vendor} key={vendor.email}/>
+                </Col>
+            )
+        }
+        {
+            vendors.length === 0 &&
             <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
                 <strong>No vendors found</strong>
             </Typography>
