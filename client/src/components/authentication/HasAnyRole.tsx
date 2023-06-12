@@ -9,7 +9,7 @@ function HasAnyRole({
 }): JSX.Element {
     const auth = useAuthentication()
 
-    if (auth.isLoggedIn() && roles.some(role => auth.user!.role.includes(role))) {
+    if (auth.isLoggedIn && roles.some(role => auth.user!.role.includes(role))) {
         return (
             <>
                 {children}

@@ -14,16 +14,14 @@ function SidebarLayout({children}: { children: JSX.Element[] | JSX.Element }): J
     })
 
     return (
-        <>
-            <Row>
-                <Col xs={2} id="sidebar-wrapper">
-                    {_sidebar}
-                </Col>
-                <Col xs={10} id="page-content-wrapper">
-                    {_main}
-                </Col>
-            </Row>
-        </>
+        <Row className={"vh-100"}>
+            <Col className={"col-md-3 d-none d-md-flex bg-light p-0"}>
+                {_sidebar}
+            </Col>
+            <Col className={"col-xs-12 col-md-9 p-0"}>
+                {_main}
+            </Col>
+        </Row>
     )
 }
 

@@ -5,7 +5,7 @@ function IsAnonymous({ children }:
          children: JSX.Element[] | JSX.Element
      }): JSX.Element {
     const auth = useAuthentication()
-    if (!auth.isLoggedIn()) {
+    if (!auth.isLoggedIn) {
         return (
             <>
                 {children}

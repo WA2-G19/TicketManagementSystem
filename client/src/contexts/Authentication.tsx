@@ -9,7 +9,7 @@ interface Credentials {
 
 interface Authentication {
     readonly user: User | null
-    isLoggedIn(): boolean
+    readonly isLoggedIn: boolean
     login(credentials: Credentials): Promise<void>
     logout(): Promise<void>
 }
@@ -43,18 +43,18 @@ function AuthenticationContextProvider({ children }: {
             }
         }
 
-        isLoggedIn(): boolean {
+        get isLoggedIn(): boolean {
             return this.user !== null
         }
 
         async login(credentials: Credentials): Promise<void> {
-            if (this.isLoggedIn())
+            if (this.isLoggedIn)
                 throw new Error("you are already logged in as another user, please log out first")
             localStorage.setItem("jwt", await API.login(credentials.username, credentials.password))
         }
 
         async logout(): Promise<void> {
-            if (!this.isLoggedIn())
+            if (!this.isLoggedIn)
                 throw new Error("you are not logged in, please log in first")
             localStorage.removeItem("jwt")
         }

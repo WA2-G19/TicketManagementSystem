@@ -5,10 +5,10 @@ function HasRole({
                      role
                  }: {
     children: JSX.Element[] | JSX.Element,
-    role: string[]
+    role: string
 }): JSX.Element {
     const auth = useAuthentication()
-    if (auth.isLoggedIn() && role.some(role => auth.user!.role.includes(role))) {
+    if (auth.isLoggedIn && auth.user!.role.includes(role)) {
         return (
             <>
                 {children}

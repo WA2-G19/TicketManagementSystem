@@ -4,64 +4,72 @@ import React, {useEffect, useState} from "react";
 import HasRole from "../authentication/HasRole";
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import {CardContent, Grid, Typography} from "@mui/material";
-import {ModalDialog} from "../modals/ModalDialog";
+import ModalDialog from "../modals/ModalDialog";
 import {useAuthentication} from "../../contexts/Authentication";
 import {Staff} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
 import StatsAPI from "../../API/Ticketing/statuses";
+import HasAnyRole from "../authentication/HasAnyRole";
+import StaffCard from "../staff/StaffCard";
 
-interface TicketsProps {
-    token: string | undefined
-}
-
-export function Tickets(props: TicketsProps) {
-
+function Tickets() {
     const [tickets, setTickets] = useState(Array<TicketOut>)
+    const { user } = useAuthentication()
+    const token = user!.token
     useEffect(() => {
         async function getTickets() {
-            const tmp = await TicketAPI.getTickets(props.token) as Array<TicketOut>
+            const tmp = await TicketAPI.getTickets(token) as Array<TicketOut>
             setTickets(tmp)
         }
         getTickets()
-    }, [props.token])
+            .catch(err => {
 
-    return <Container>
-        {tickets.length > 0 && tickets.map((it, idx) => <TicketCard key={idx} ticket={it}/>)}
-        {tickets.length === 0 &&
-            <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
-                <strong>No tickets found</strong>
-            </Typography>
-        }
-    </Container>
+            })
+    }, [token])
 
+    return (
+        <Container>
+            {tickets.length > 0 && tickets.map(it => <TicketCard key={it.id} ticket={it}/>)}
+            {tickets.length === 0 &&
+                <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
+                    <strong>No tickets found</strong>
+                </Typography>
+            }
+        </Container>
+    )
 }
 
-interface TicketCardProps {
-    ticket: TicketOut | undefined
-}
-
-export function TicketCard(props: TicketCardProps): JSX.Element {
-
+function TicketCard({ ticket }: {
+    ticket: TicketOut
+}): JSX.Element {
     const [show, setShow] = useState(false)
     const [experts, setExperts] = useState<Array<Staff> | undefined>()
-    const auth = useAuthentication()
+    const { user } = useAuthentication()
+    const token = user!.token
+    const isManager = user!.role.includes("Manager")
 
     useEffect(() => {
         async function getExperts() {
-            const tmp = await StaffAPI.getProfiles(auth.user?.token) as Array<Staff>
+            const tmp = await StaffAPI.getProfiles(token) as Array<Staff>
             const mappedStaffStats = await Promise.all(tmp.map(async (staff) => {
-                staff.avgTime = await StatsAPI.getAverageTimedByExpert(auth.user?.token, staff.email)
-                staff.ticketClosed = await StatsAPI.getTicketClosedByExpert(auth.user?.token, staff.email)
+                staff.avgTime = await StatsAPI.getAverageTimedByExpert(token, staff.email)
+                staff.ticketClosed = await StatsAPI.getTicketClosedByExpert(token, staff.email)
                 return staff
             }))
-
             setExperts(mappedStaffStats)
         }
 
-        if (auth.user?.role[0] === "Manager") {
+        if (isManager) {
             getExperts()
+                .catch(err => {
+
+                })
         }
-    }, [auth.user?.role, auth.user?.token])
+    }, [token, isManager])
+
+    async function onAssigned(profile: Staff | undefined) {
+        //TODO: Assign Ticket
+    }
 
     return <Container className={"pt-3"}>
         <Card>
@@ -69,60 +77,65 @@ export function TicketCard(props: TicketCardProps): JSX.Element {
                 <Grid container spacing={2}>
                     <Grid item xs={24}>
                         <Typography variant="h5" component="div" color="primary">
-                            Ticket ID: {props.ticket?.id}
+                            Ticket ID: {ticket.id}
                         </Typography>
                     </Grid>
-                    <HasRole role={["Expert", "Manager"]}>
+                    <HasAnyRole roles={["Expert", "Manager"]}>
                         <Grid item xs={6}>
                             <Typography variant="body2" color="primary">
                                 <strong>Customer Email:</strong>
                             </Typography>
-                            {props.ticket?.customerEmail}
+                            {ticket.customerEmail}
                         </Grid>
-                    </HasRole>
+                    </HasAnyRole>
                     <Grid item xs={6}>
                         <Typography variant="body2" color="primary">
                             <strong>Product EAN:</strong>
                         </Typography>
-                        {props.ticket?.productEan}
+                        {ticket.productEan}
                     </Grid>
                     <Grid item xs={6}>
                         <Typography variant="body2" color="primary">
                             <strong>Description:</strong>
                         </Typography>
-                        {props.ticket?.description}
+                        {ticket.description}
                     </Grid>
                     <Grid item xs={6}>
                         <Typography variant="body2" color="primary">
                             <strong>Status:</strong>
                         </Typography>
-                        {props.ticket?.status}
+                        {ticket.status}
                     </Grid>
                     <Grid item xs={6}>
                         <Typography variant="body2" color="primary">
                             <strong>Expert Email:</strong>
                         </Typography>
-                        {props.ticket?.expertEmail || 'Not assigned yet'}
+                        {ticket.expertEmail || 'Not assigned yet'}
                     </Grid>
                     <Grid item xs={6}>
                         <Typography variant="body2" color="primary">
                             <strong>Priority Level:</strong>
                         </Typography>
-                        {props.ticket?.priorityLevel || 'Not assigned yet'}
+                        {ticket.priorityLevel || 'Not assigned yet'}
                     </Grid>
                     <Grid item xs={6}>
                         <Typography variant="body2" color="primary">
                             <strong>Warranty UUID:</strong>
                         </Typography>
-                        {props.ticket?.warrantyUUID}
+                        {ticket.warrantyUUID}
                     </Grid>
                 </Grid>
                 <Row className={"pt-3"}>
                     <Col md={2}><Button>Open chat</Button></Col>
-                    <HasRole role={["Manager"]}>
+                    <HasRole role={"Manager"}>
                         <Col>
                             <Button onClick={() => setShow(true)}>Assign Ticket</Button>
-                            <ModalDialog show={show} setShow={setShow} elements={experts}/>
+                            <ModalDialog show={show}
+                                         setShow={setShow}
+                                         elements={experts}
+                                         onComplete={onAssigned}
+                                         render={(e) => <StaffCard key={e.email} staff={e}/>}
+                            />
                         </Col>
                     </HasRole>
                 </Row>
@@ -130,3 +143,5 @@ export function TicketCard(props: TicketCardProps): JSX.Element {
         </Card>
     </Container>
 }
+
+export default Tickets
