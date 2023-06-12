@@ -9,6 +9,7 @@ import Warranties from "../components/homepage/Warranties";
 import {Route, Routes} from "react-router-dom";
 import IsAuthenticated from "../components/authentication/IsAuthenticated";
 import Profile from "../components/homepage/Profile";
+import Welcome from "../components/homepage/Welcome";
 
 function HomePage() {
     return (
@@ -44,6 +45,7 @@ function HomePage() {
                     <IsAuthenticated>
                         <Routes>
                             <Route path={"/profile"} element={<Profile />} />
+                            <Route path={"/"} element={<Welcome />} />
                         </Routes>
                     </IsAuthenticated>
                 </SidebarLayout.Main>
