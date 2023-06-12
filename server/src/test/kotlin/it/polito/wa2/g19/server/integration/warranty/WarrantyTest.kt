@@ -229,7 +229,7 @@ class WarrantyTest {
         headers.setBearerAuth(vendorToken)
         val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
         val response = restTemplate.exchange(
-            "$prefixEndPoint/", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
+            "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
         )
         assert(response.statusCode == HttpStatus.CREATED)
@@ -237,13 +237,14 @@ class WarrantyTest {
         assert(response.body!!.customerEmail == null)
         assert(response.body!!.productEan == product.ean)
 
-        headers.setBearerAuth(customerToken)
+        headers.setBearerAuth(managerToken)
         val getResponse = restTemplate.exchange(
             response.headers.location,
             HttpMethod.GET,
             HttpEntity(null, headers),
             WarrantyOutDTO::class.java
         )
+        println(getResponse.body!!.vendorEmail)
         assert(getResponse.body!!.vendorEmail == vendor.email)
         assert(getResponse.body!!.customerEmail == null)
         assert(getResponse.body!!.productEan == product.ean)
@@ -257,7 +258,7 @@ class WarrantyTest {
             headers.setBearerAuth(token)
             val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
             val response = restTemplate.exchange(
-                "$prefixEndPoint/", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
+                "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
                 WarrantyOutDTO::class.java
             )
 
@@ -268,7 +269,7 @@ class WarrantyTest {
 
         val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
         val response = restTemplate.exchange(
-            "$prefixEndPoint/", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
+            "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
         )
 
@@ -281,7 +282,7 @@ class WarrantyTest {
         headers.setBearerAuth(vendorToken)
         val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
         val response = restTemplate.exchange(
-            "$prefixEndPoint/", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
+            "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
         )
         assert(response.statusCode == HttpStatus.CREATED)
@@ -301,7 +302,7 @@ class WarrantyTest {
         headers.setBearerAuth(vendorToken)
         val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
         val response = restTemplate.exchange(
-            "$prefixEndPoint/", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
+            "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
         )
         assert(response.statusCode == HttpStatus.CREATED)
@@ -343,7 +344,7 @@ class WarrantyTest {
         headers.setBearerAuth(vendorToken)
         val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
         val response = restTemplate.exchange(
-            "$prefixEndPoint/", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
+            "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
         )
         assert(response.statusCode == HttpStatus.CREATED)
@@ -371,7 +372,7 @@ class WarrantyTest {
         headers.setBearerAuth(vendorToken)
         val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(-1))
         val response = restTemplate.exchange(
-            "$prefixEndPoint/", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
+            "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
         )
         assert(response.statusCode == HttpStatus.CREATED)

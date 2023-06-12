@@ -1,10 +1,12 @@
 package it.polito.wa2.g19.server.warranty
 
+import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.products.ProductNotFoundException
 import it.polito.wa2.g19.server.products.ProductRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.vendors.VendorRepository
+import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
@@ -19,29 +21,34 @@ class WarrantyServiceImpl(
     private val customerRepository: CustomerRepository,
     private val productRepository: ProductRepository
 ): WarrantyService {
+
+
+
+    @PreAuthorize("hasAnyRole('Client', 'Manager', 'Vendor')")
     override fun getAll(): List<WarrantyOutDTO> {
-        return warrantyRepository.findAll().map { it.toDTO() }
+        val principal = SecurityContextHolder.getContext().authentication
+        return when(Role.valueOf(principal.authorities.iterator().next().authority)){
+            Role.ROLE_Client-> warrantyRepository.findByCustomerEmail(principal.name)
+            Role.ROLE_Manager -> warrantyRepository.findAll()
+            Role.ROLE_Vendor -> warrantyRepository.findByVendorEmail(principal.name)
+            else -> throw ForbiddenException()
+        }.map { it.toDTO() }
     }
 
+
+    @PreAuthorize("hasAnyRole('Client', 'Manager', 'Vendor')")
     override fun getById(id: UUID): WarrantyOutDTO {
-        return warrantyRepository.findByIdOrNull(id)?.toDTO() ?: throw WarrantyNotFoundException()
+        val principal = SecurityContextHolder.getContext().authentication
+        return when(Role.valueOf(principal.authorities.iterator().next().authority)){
+            Role.ROLE_Client -> warrantyRepository.findByIdAndCustomerEmail(id, principal.name)
+            Role.ROLE_Manager -> warrantyRepository.findByIdOrNull(id)
+            Role.ROLE_Vendor -> warrantyRepository.findByIdAndVendorEmail(id, principal.name)
+            else -> throw ForbiddenException()
+        }?.toDTO() ?: throw WarrantyNotFoundException()
+
     }
 
-    override fun getByCustomerEmail(email: String): List<WarrantyOutDTO> {
-        return warrantyRepository.findByCustomerEmail(email).map { it.toDTO() }
-    }
 
-    override fun getByCustomerId(id: UUID): List<WarrantyOutDTO> {
-        return warrantyRepository.findByCustomerId(id).map { it.toDTO() }
-    }
-
-    override fun getByVendorEmail(email: String): List<WarrantyOutDTO> {
-        return warrantyRepository.findByVendorEmail(email).map { it.toDTO() }
-    }
-
-    override fun getByVendorId(id: UUID): List<WarrantyOutDTO> {
-        return warrantyRepository.findByVendorId(id).map { it.toDTO() }
-    }
 
     @PreAuthorize("hasRole('Vendor')")
     override fun insertWarranty(warranty: WarrantyInDTO): WarrantyOutDTO {

@@ -16,9 +16,9 @@ class WarrantyProblemDetailsHandler: ResponseEntityExceptionHandler() {
         .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
 
     @ExceptionHandler(WarrantyExpiredException::class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     fun handleWarrantyExpired(e: WarrantyExpiredException) = ProblemDetail
-        .forStatusAndDetail( HttpStatus.CONFLICT, e.message!! )
+        .forStatusAndDetail( HttpStatus.FORBIDDEN, e.message!! )
 
     @ExceptionHandler(WarrantyAlreadyActivated::class)
     @ResponseStatus(HttpStatus.CONFLICT)

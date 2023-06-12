@@ -82,6 +82,7 @@ class CustomerServiceImpl(
         user.lastName = credentials.customerDTO.surname
         user.attributes = HashMap()
         user.attributes["address"] = listOf(credentials.customerDTO.address)
+
         user.isEnabled = true
         user.isEmailVerified = true
 
