@@ -28,7 +28,7 @@ function StaffCard({ staff }: {
                             <strong>Skills</strong>
                         </Typography>
                     </Col>
-                    {staff.skills.length !== 0 ? staff?.skills.map(it => <Col key={it}>{it}</Col>) :
+                    {staff.skills.length !== 0 ? staff?.skills.map((it,idx) => <Col key={idx}>{it}</Col>) :
                         <Col>No Skills</Col>}
                 </Col>
             </Row>

@@ -25,9 +25,9 @@ function Staffs() {
         <Container fluid>
             <Row>
                 {
-                    staffs.length !== 0 && staffs.map(staff =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3"}>
-                            <StaffCard staff={staff} key={staff.email}/>
+                    staffs.length !== 0 && staffs.map((staff,idx) =>
+                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={idx}>
+                            <StaffCard staff={staff} key={idx}/>
                         </Col>
                     )
                 }
