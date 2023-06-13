@@ -11,7 +11,7 @@ function ProductCard({product}: {
             <Typography variant="h5" component="div" color="primary">
                 <strong>EAN</strong>
             </Typography>
-            {product.ean}
+            <Col>{product.ean}</Col>
         </Row>
         <Row className={"p-3"}>
             <Row>

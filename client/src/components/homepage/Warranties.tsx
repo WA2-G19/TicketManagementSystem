@@ -5,14 +5,17 @@ import {Typography} from "@mui/material";
 import {Warranty} from "../../classes/Warranty";
 import WarrantyAPI from "../../API/Warranty/warranty";
 import WarrantyCard from "../warranty/WarrantyCard";
+import {Loading} from "../Loading";
 
 function Warranties(): JSX.Element {
     const {user} = useAuthentication()
     const [warranties, setWarranties] = useState(Array<Warranty>)
+    const [loading, setLoading]= useState(true)
     useEffect(() => {
         async function getWarranties() {
             const tmp = await WarrantyAPI.getAllWarranty(user!.token) as Array<Warranty>
             setWarranties(tmp)
+            setLoading(false)
         }
 
         getWarranties()
@@ -23,16 +26,17 @@ function Warranties(): JSX.Element {
 
     return (
         <Container fluid>
+            {loading && <Loading/>}
             <Row>
                 {
-                    warranties.length !== 0 && warranties.map((warranty, idx) =>
+                    !loading && warranties.length !== 0 && warranties.map((warranty, idx) =>
                         <Col xs={12} sm={6} md={4} className={"pt-3"} key={idx}>
                             <WarrantyCard warranty={warranty} key={idx}/>
                         </Col>
                     )
                 }
                 {
-                    warranties.length === 0 &&
+                    !loading && warranties.length === 0 &&
                     <Typography variant="h5" component="div" color="primary"
                                 className={"position-absolute top-50 start-50"}>
                         <strong>No warranties found</strong>

@@ -9,6 +9,7 @@ import StaffAPI from "../../API/Profile/staff";
 import {Staff} from "../../classes/Profile";
 import StaffCard from "../staff/StaffCard";
 import ModalDialog from "../modals/ModalDialog";
+import {Loading} from "../Loading";
 
 function Tickets() {
     const [tickets, setTickets] = useState(Array<TicketOut>)
@@ -17,10 +18,12 @@ function Tickets() {
     const { user} = useAuthentication()
     const token = user!.token
     const isManager = user!.role.includes("Manager")
+    const [loading,setLoading]= useState(true)
     useEffect(() => {
         async function getTickets() {
             const tmp = await TicketAPI.getTickets(token) as Array<TicketOut>
             setTickets(tmp)
+            setLoading(false)
         }
         getTickets()
             .catch(err => {
@@ -47,16 +50,17 @@ function Tickets() {
 
     return (
         <Container>
+            {loading && <Loading/>}
             <Row>
                 {
-                    tickets.length > 0 && tickets.map(it =>
+                    !loading && tickets.length > 0 && tickets.map(it =>
                         <Col xs={12} className={"pt-3"} key={it.id}>
                             <TicketCard ticket={it} setSelected={isManager ? () => setSelectedTicket(it) : undefined}/>
                         </Col>
                     )
                 }
                 {
-                    tickets.length === 0 &&
+                    !loading && tickets.length === 0 &&
                     <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
                         <strong>No tickets found</strong>
                     </Typography>

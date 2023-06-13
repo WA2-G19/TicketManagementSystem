@@ -15,7 +15,7 @@ function WarrantyCard({warranty}: {
             <Typography variant="h5" component="div" color="primary">
                 <strong>ID</strong>
             </Typography>
-            {warranty.id}
+            <Col>{warranty.id}</Col>
         </Row>
         <Row className={"p-3"}>
             <Row>

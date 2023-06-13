@@ -5,14 +5,17 @@ import {Staff} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
 import {useAuthentication} from "../../contexts/Authentication";
 import StaffCard from "../staff/StaffCard";
+import {Loading} from "../Loading";
 
 function Staffs() {
     const { user } = useAuthentication()
     const [staffs, setStaffs] = useState(Array<Staff>)
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         async function getStaffs() {
             const tmp = await StaffAPI.getProfilesWithStatistics(user!.token) as Array<Staff>
             setStaffs(tmp)
+            setLoading(false)
         }
 
         getStaffs()
@@ -23,16 +26,17 @@ function Staffs() {
 
     return (
         <Container fluid>
+            {loading && <Loading/>}
             <Row>
                 {
-                    staffs.length !== 0 && staffs.map((staff,idx) =>
+                    !loading && staffs.length !== 0 && staffs.map((staff,idx) =>
                         <Col xs={12} sm={6} md={4} className={"pt-3"} key={idx}>
                             <StaffCard staff={staff} key={idx}/>
                         </Col>
                     )
                 }
                 {
-                    staffs.length === 0 &&
+                    !loading && staffs.length === 0 &&
                     <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
                         <strong>No staff found</strong>
                     </Typography>

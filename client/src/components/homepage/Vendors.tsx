@@ -4,14 +4,17 @@ import {Typography} from "@mui/material";
 import {Vendor} from "../../classes/Profile";
 import VendorAPI from "../../API/Profile/vendor";
 import {useAuthentication} from "../../contexts/Authentication";
+import {Loading} from "../Loading";
 
 function Vendors() {
     const { user } = useAuthentication()
     const [vendors, setVendors] = useState(Array<Vendor>)
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         async function getVendors() {
             const tmp = await VendorAPI.getVendors(user!.token) as Array<Vendor>
             setVendors(tmp)
+            setLoading(false)
         }
 
         getVendors()
@@ -21,15 +24,16 @@ function Vendors() {
     }, [user!.token])
 
     return <Container fluid>
+        {loading && <Loading/>}
         {
-            vendors.length !== 0 && vendors.map(vendor =>
+            !loading && vendors.length !== 0 && vendors.map(vendor =>
                 <Col xs={12} sm={6} md={4} className={"pt-3"}>
                     <VendorCard vendor={vendor} key={vendor.email}/>
                 </Col>
             )
         }
         {
-            vendors.length === 0 &&
+            !loading && vendors.length === 0 &&
             <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
                 <strong>No vendors found</strong>
             </Typography>
