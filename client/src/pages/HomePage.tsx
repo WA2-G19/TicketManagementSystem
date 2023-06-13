@@ -11,6 +11,7 @@ import IsAuthenticated from "../components/authentication/IsAuthenticated";
 import Profile from "../components/homepage/Profile";
 import Welcome from "../components/homepage/Welcome";
 import TicketForm from "../components/ticket/TicketForm";
+import Stats from "../components/stats/Stats";
 
 function HomePage() {
     return (
@@ -19,7 +20,7 @@ function HomePage() {
                 <SidebarLayout.Main>
                     <HasRole role={"Manager"} key={"manager"}>
                         <Routes>
-                            <Route path={"/stats"} element={<p>Stats</p>} />
+                            <Route path={"/stats"} element={<p><Stats/></p>} />
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/staff"} element={<Staffs />} />
                             <Route path={"/vendors"} element={<Vendors />} />
