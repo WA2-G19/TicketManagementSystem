@@ -40,32 +40,38 @@ export class Duration {
     minutes: number
     seconds: number
     hours: number
+    days: number
+    weeks: number
+    months: number
+    years: number
 
-    constructor(hours: number, minutes: number, seconds: number) {
+    constructor(years: number = 0, months: number = 0, weeks: number = 0, days: number = 0, hours: number = 0, minutes: number = 0, seconds: number = 0) {
+        this.years = years
+        this.months = months
+        this.weeks = weeks
+        this.days = days
         this.hours = hours
         this.minutes = minutes
         this.seconds = seconds
     }
 
     static fromString(durationString: string): Duration {
-        const regexH = /PT(\d+)H(\d+)M(\d+)S/
-        const regexM = /PT(\d+)M(\d+)S/
-        const matchesH = durationString.match(regexH)
-        const matchesM = durationString.match(regexM)
-
-        if (matchesH && matchesH.length === 4) {
-            const hours = parseInt(matchesH[1], 10)
-            const minutes = parseInt(matchesH[2], 10)
-            const seconds = parseInt(matchesH[3], 10)
-            return new Duration(hours, minutes, seconds);
+        const integer = /[1-9][0-9]*|0/
+        const float = /[1-9][0-9]*[.,][0-9]+|0[.,][0-9]+/
+        const validation = new RegExp("P((?<years>" + float.source+ ")Y)?((?<months>" + integer.source + ")M)?((?<days>" + integer.source + ")D)?(T((?<hours>" + integer.source + ")H)?((?<minutes>" + integer.source + ")M)?((?<seconds>" + float.source + ")S)?)?|P(?<weeks>" + integer.source + ")W")
+        const match = durationString.match(validation)
+        if (!match || !match.groups) {
+            throw new Error('Invalid duration string');
         }
 
-        if (matchesM && matchesM.length === 3) {
-            const minutes = parseInt(matchesM[1], 10);
-            const seconds = parseInt(matchesM[2], 10);
-            return new Duration(0, minutes, seconds);
-        }
-
-        throw new Error('Invalid duration string');
+        return new Duration(
+            parseFloat(match.groups["years"]) | 0,
+            parseInt(match.groups["months"]) | 0,
+            parseInt(match.groups["weeks"]) | 0,
+            parseInt(match.groups["days"]) | 0,
+            parseInt(match.groups["hours"]) | 0,
+            parseInt(match.groups["minutes"]) | 0,
+            parseFloat(match.groups["seconds"]) | 0
+        )
     }
 }
