@@ -1,12 +1,15 @@
-import {Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import React from "react";
 import {Warranty, Duration} from "../../classes/Warranty";
 import {parseISO} from 'date-fns';
+import HasRole from "../authentication/HasRole";
+import {useNavigate} from "react-router-dom";
 
 function WarrantyCard({warranty}: {
     warranty: Warranty
 }): JSX.Element {
+    const navigate = useNavigate()
     const duration = Duration.fromString(warranty.duration)
     const creationTime = parseISO(warranty.creationTimestamp)
     const activationTime = parseISO(warranty.activationTimestamp)
@@ -75,6 +78,19 @@ function WarrantyCard({warranty}: {
                 </Col>
             </Row>
         </Row>
+        <HasRole role={"Client"}>
+            <Row className={"p-3"}>
+                <Col>
+                    <Button variant={"primary"} onClick={() => navigate("/tickets/add", {
+                        state: {
+                            warranty: warranty
+                        }
+                    })}>
+                        Open ticket
+                    </Button>
+                </Col>
+            </Row>
+        </HasRole>
     </Container>
 }
 

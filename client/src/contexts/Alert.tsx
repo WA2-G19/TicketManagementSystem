@@ -10,10 +10,10 @@ interface Alert {
 interface AlertBuilder {
     setTitle(title: JSX.Element | string): AlertBuilder
     setMessage(message: JSX.Element | string): AlertBuilder
-    setButtonsOk(okCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
-    setButtonsOkCancel(okCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, cancelCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
-    setButtonsYesNoCancel(yesCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, noCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, cancelCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
-    setButtonsYesNo(yesCallback: React.MouseEventHandler<HTMLButtonElement> | undefined, noCallback: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
+    setButtonsOk(okCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
+    setButtonsOkCancel(okCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined, cancelCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
+    setButtonsYesNoCancel(yesCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined, noCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined, cancelCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
+    setButtonsYesNo(yesCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined, noCallback?: React.MouseEventHandler<HTMLButtonElement> | undefined): AlertBuilder
     addButton(button: JSX.Element): AlertBuilder
     show(): void
 }
@@ -97,7 +97,7 @@ function AlertContextProvider({ children }: {
                 show(): void {
                     setShow(true)
                 }
-            }
+            }()
         }
     }
 

@@ -10,6 +10,7 @@ import {Route, Routes} from "react-router-dom";
 import IsAuthenticated from "../components/authentication/IsAuthenticated";
 import Profile from "../components/homepage/Profile";
 import Welcome from "../components/homepage/Welcome";
+import TicketForm from "../components/ticket/TicketForm";
 
 function HomePage() {
     return (
@@ -30,6 +31,7 @@ function HomePage() {
                         <Routes>
                             <Route path={"/warranties"} element={<Warranties />} />
                             <Route path={"/tickets"} element={<Tickets />} />
+                            <Route path={"/tickets/add"} element={<TicketForm />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Expert"} key={"expert"}>

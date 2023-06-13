@@ -1,25 +1,18 @@
 import APIObject from "./APIObject"
 
-export class Ticket extends APIObject {
-    id: number
-    customerEmail: string
-    productEan: string
+export class Ticket {
+    warrantyUUID: string
     description: string
 
-    constructor(id: number, customerEmail: string, productEan: string, description: string) {
-        super()
-        this.id = id
-        this.customerEmail = customerEmail
-        this.productEan = productEan
+    constructor(warrantyUUID: string, description: string) {
+        this.warrantyUUID = warrantyUUID
         this.description = description
     }
 
     toJSONObject(): string {
 
         const ticketMap = {
-            "id": this.id,
-            "customerEmail": this.customerEmail,
-            "productEan": this.productEan,
+            "warrantyUUID": this.warrantyUUID,
             "description": this.description
         }
 
@@ -40,7 +33,11 @@ export enum TicketStatusEnum {
     Reopened
 }
 
-export class TicketOut extends Ticket {
+export class TicketOut extends APIObject {
+    id: number
+    customerEmail: string
+    productEan: string
+    description: string
 
     expertEmail: string | undefined
 
@@ -51,7 +48,11 @@ export class TicketOut extends Ticket {
     warrantyUUID : string
 
     constructor(id: number, customerEmail: string, productEan: string, description: string, status: TicketStatusEnum, priorityLevel: PriorityLevelEnum | undefined, expertEmail: string | undefined, warrantyUUID: string) {
-        super(id, customerEmail, productEan, description);
+        super()
+        this.id = id
+        this.customerEmail = customerEmail
+        this.productEan = productEan
+        this.description = description
         this.status = status
         this.expertEmail = expertEmail
         this.priorityLevel = priorityLevel
