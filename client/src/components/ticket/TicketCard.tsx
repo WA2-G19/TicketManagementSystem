@@ -4,28 +4,28 @@ import {Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import HasAnyRole from "../authentication/HasAnyRole";
 
-function TicketCard({ ticket, setSelected }: {
+function TicketCard({ticket, setSelected}: {
     ticket: TicketOut,
     setSelected?: (() => void)
 }): JSX.Element {
     return <Container className={"border border-3 rounded border-primary p-3"}>
         <Row className={"ps-3"}>
             <Typography variant="h5" component="div" color="primary">
-                Ticket ID: {ticket.id}
+                ID {ticket.id}
             </Typography>
         </Row>
         <Row className={"pt-3"}>
             <HasAnyRole roles={["Expert", "Manager"]}>
                 <Col>
                     <Typography variant="body2" color="primary">
-                        <strong>Customer Email:</strong>
+                        <strong>Customer Email</strong>
                     </Typography>
                     {ticket.customerEmail}
                 </Col>
             </HasAnyRole>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Product EAN:</strong>
+                    <strong>EAN</strong>
                 </Typography>
                 {ticket.productEan}
             </Col>
@@ -33,13 +33,13 @@ function TicketCard({ ticket, setSelected }: {
         <Row className={"pt-3"}>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Description:</strong>
+                    <strong>Description</strong>
                 </Typography>
                 {ticket.description}
             </Col>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Status:</strong>
+                    <strong>Status</strong>
                 </Typography>
                 {ticket.status}
             </Col>
@@ -47,13 +47,13 @@ function TicketCard({ ticket, setSelected }: {
         <Row className={"pt-3"}>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Expert Email:</strong>
+                    <strong>Expert Email</strong>
                 </Typography>
                 {ticket.expertEmail || 'Not assigned yet'}
             </Col>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Priority Level:</strong>
+                    <strong>Priority Level</strong>
                 </Typography>
                 {ticket.priorityLevel || 'Not assigned yet'}
             </Col>
@@ -61,7 +61,7 @@ function TicketCard({ ticket, setSelected }: {
         <Row className={"pt-3"}>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Warranty UUID:</strong>
+                    <strong>Warranty UUID</strong>
                 </Typography>
                 {ticket.warrantyUUID}
             </Col>

@@ -1,6 +1,4 @@
 import APIObject from "./APIObject"
-import Any = jasmine.Any;
-
 
 export class Ticket extends APIObject {
     id: number
