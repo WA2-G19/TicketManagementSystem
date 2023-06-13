@@ -32,22 +32,28 @@ function StaffCard({ staff }: {
                         <Col>No Skills</Col>}
                 </Col>
             </Row>
-            <Row className={"pt-2"}>
-                <Col>
-                    <Typography display={"inline"} variant="body1" color="primary">
-                        <strong>Ticket Closed:</strong>
-                    </Typography>
-                    {" " + staff.ticketClosed}
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Typography display={"inline"} variant="body1" color="primary">
-                        <strong>Average Time:</strong>
-                    </Typography>
-                    {" " + staff.avgTime}
-                </Col>
-            </Row>
+            {
+                staff.ticketClosed !== undefined &&
+                <Row className={"pt-2"}>
+                    <Col>
+                        <Typography display={"inline"} variant="body1" color="primary">
+                            <strong>Ticket Closed:</strong>
+                        </Typography>
+                        {" " + staff.ticketClosed}
+                    </Col>
+                </Row>
+            }
+            {
+                staff.avgTime !== undefined &&
+                <Row>
+                    <Col>
+                        <Typography display={"inline"} variant="body1" color="primary">
+                            <strong>Average Time:</strong>
+                        </Typography>
+                        {" " + staff.avgTime}
+                    </Col>
+                </Row>
+            }
         </Row>
     </Container>
 }

@@ -4,7 +4,6 @@ import {Typography} from "@mui/material";
 import {Staff} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
 import {useAuthentication} from "../../contexts/Authentication";
-import StatsAPI from "../../API/Ticketing/statuses";
 import StaffCard from "../staff/StaffCard";
 
 function Staffs() {
@@ -12,13 +11,8 @@ function Staffs() {
     const [staffs, setStaffs] = useState(Array<Staff>)
     useEffect(() => {
         async function getStaffs() {
-            const tmp = await StaffAPI.getProfiles(user!.token) as Array<Staff>
-            const mappedStaffStats = await Promise.all(tmp.map(async (staff) => {
-                staff.avgTime = await StatsAPI.getAverageTimedByExpert(user!.token, staff.email)
-                staff.ticketClosed = await StatsAPI.getTicketClosedByExpert(user!.token, staff.email)
-                return staff
-            }))
-            setStaffs(mappedStaffStats)
+            const tmp = await StaffAPI.getProfilesWithStatistics(user!.token) as Array<Staff>
+            setStaffs(tmp)
         }
 
         getStaffs()
