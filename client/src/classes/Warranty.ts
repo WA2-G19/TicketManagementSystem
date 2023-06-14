@@ -57,8 +57,8 @@ export class Duration {
 
     static fromString(durationString: string): Duration {
         const integer = /[1-9][0-9]*|0/
-        const float = /[1-9][0-9]*[.,][0-9]+|0[.,][0-9]+/
-        const validation = new RegExp("P((?<years>" + float.source+ ")Y)?((?<months>" + integer.source + ")M)?((?<days>" + integer.source + ")D)?(T((?<hours>" + integer.source + ")H)?((?<minutes>" + integer.source + ")M)?((?<seconds>" + float.source + ")S)?)?|P(?<weeks>" + integer.source + ")W")
+        const float = new RegExp("(" + integer.source + ")([.,][0-9]+)?")
+        const validation = new RegExp("P((?<years>" + float.source + ")Y)?((?<months>" + integer.source + ")M)?((?<days>" + integer.source + ")D)?(T((?<hours>" + integer.source + ")H)?((?<minutes>" + integer.source + ")M)?((?<seconds>" + float.source + ")S)?)?|P(?<weeks>" + integer.source + ")W")
         const match = durationString.match(validation)
         if (!match || !match.groups) {
             throw new Error('Invalid duration string');
