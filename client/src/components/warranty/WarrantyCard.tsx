@@ -17,25 +17,25 @@ function WarrantyCard({warranty}: {
     function isExpired() {
         let expiredDate = activationTime
         if(duration.days != 0) {
-            expiredDate = addDays(expiredDate, duration.hours)
+            expiredDate = addDays(expiredDate, duration.days)
         }
         if(duration.months != 0) {
-            expiredDate = addMonths(expiredDate, duration.hours)
+            expiredDate = addMonths(expiredDate, duration.months)
         }
         if(duration.years != 0) {
-            expiredDate = addYears(expiredDate, duration.hours)
+            expiredDate = addYears(expiredDate, duration.years)
         }
         if(duration.weeks != 0) {
-            expiredDate = addWeeks(expiredDate, duration.hours)
+            expiredDate = addWeeks(expiredDate, duration.weeks)
         }
         if(duration.hours != 0) {
             expiredDate = addHours(expiredDate, duration.hours)
         }
         if(duration.minutes != 0) {
-            expiredDate = addMinutes(expiredDate, duration.hours)
+            expiredDate = addMinutes(expiredDate, duration.minutes)
         }
         if(duration.seconds != 0) {
-            expiredDate = addSeconds(expiredDate, duration.hours)
+            expiredDate = addSeconds(expiredDate, duration.seconds)
         }
         return new Date(Date.now()) < expiredDate
     }
