@@ -12,6 +12,7 @@ import Profile from "../components/homepage/Profile";
 import Welcome from "../components/homepage/Welcome";
 import TicketForm from "../components/ticket/TicketForm";
 import Stats from "../components/stats/Stats";
+import WarrantyForm from "../components/warranty/WarrantyForm";
 
 function HomePage() {
     return (
@@ -43,6 +44,7 @@ function HomePage() {
                     <HasRole role={"Vendor"} key={"vendor"}>
                         <Routes>
                             <Route path={"/warranties"} element={<Warranties />} />
+                            <Route path={"/warranties/add"} element={<WarrantyForm />} />
                         </Routes>
                     </HasRole>
                     <IsAuthenticated>

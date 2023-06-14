@@ -1,13 +1,15 @@
 import {Badge, Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import React from "react";
+import {WarrantyOut, Duration} from "../../classes/Warranty";
+import {parseISO} from 'date-fns';
 import {Warranty, Duration} from "../../classes/Warranty";
 import {addDays, addHours, addMinutes, addMonths, addSeconds, addWeeks, addYears, parseISO} from 'date-fns';
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
 
 function WarrantyCard({warranty}: {
-    warranty: Warranty
+    warranty: WarrantyOut
 }): JSX.Element {
     const navigate = useNavigate()
     const duration = Duration.fromString(warranty.duration)
@@ -106,7 +108,7 @@ function WarrantyCard({warranty}: {
                             <strong>Duration</strong>
                         </Typography>
                     </Col>
-                    <Col>{duration.toString()}</Col>
+                    <Col>{duration.toFormattedString()}</Col>
                 </Col>
             </Row>
         </Row>

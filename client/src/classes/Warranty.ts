@@ -1,6 +1,27 @@
 import APIObject from "./APIObject";
 
-export class Warranty extends APIObject {
+export class WarrantyIn extends APIObject{
+    productEan: string
+    duration: string
+
+    constructor(productEan: string, duration: string) {
+        super()
+        this.productEan = productEan
+        this.duration = duration
+        Duration.fromString(duration)
+    }
+
+    toJSONObject(): string {
+        const warrantyMap = {
+            "productEan": this.productEan,
+            "duration": this.duration
+        }
+
+        return JSON.stringify(warrantyMap)
+    }
+}
+
+export class WarrantyOut extends APIObject {
     id: number
     productEan: string
     vendorEmail: string
@@ -55,7 +76,7 @@ export class Duration {
         this.seconds = seconds
     }
 
-    toString(): string {
+    toFormattedString(): string {
         const pieces = [
             this.years > 0 ? `${this.years} Y` : "",
             this.months > 0 ? `${this.months} M` : "",
@@ -67,6 +88,31 @@ export class Duration {
         ]
 
         return pieces.filter(p => p !== "").join(" ")
+    }
+
+    toString(): string {
+        const datePieces = [
+            this.years > 0 ? `${this.years}Y` : "",
+            this.months > 0 ? `${this.months}M` : "",
+            this.days > 0 ? `${this.days}D` : "",
+        ].filter(p => p !== "")
+
+        const weekPiece = this.weeks > 0 ? `${this.weeks}W` : ""
+
+        const timePieces = [
+            this.hours > 0 ? `${this.hours}H` : "",
+            this.minutes > 0 ? `${this.minutes}M` : "",
+            this.seconds > 0 ? `${this.seconds}S` : "",
+        ].filter(p => p !== "")
+
+        if (weekPiece !== "" && (datePieces.length > 0 || timePieces.length > 0)) {
+            throw new Error('Invalid duration string');
+        }
+
+        if (weekPiece !== "") {
+            return `P${weekPiece}`
+        }
+        return `P${datePieces.join("")}${timePieces.length > 0 ? `T${timePieces.join("")}` : ""}`
     }
 
     static fromString(durationString: string): Duration {
