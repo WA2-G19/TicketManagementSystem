@@ -32,33 +32,53 @@ class ResourceServerConfig {
             // ================================== //
             .cors().disable()
             .authorizeHttpRequests()
-//          .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-        //  .requestMatchers("/index.html","/", "/static/**", "/manifest.json", "/signup").permitAll()
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/index.html","/", "/static/**", "/manifest.json", "/signup").permitAll()
+            // ================================== //
+            // Actuator API
             // ================================== //
             .requestMatchers("/actuator/prometheus")
             .hasRole("Prometheus")
+            // ================================== //
+            // Products API
+            // ================================== //
             .requestMatchers("/API/products/**")
                 .permitAll()
+            // ================================== //
+            // Staff API
+            // ================================== //
             .requestMatchers("/API/staff/*")
                 .hasAnyRole("Expert", "Manager")
+            // ================================== //
+            // Profiles API
+            // ================================== //
             .requestMatchers("/API/profiles")
                 .hasRole("Manager")
             .requestMatchers("/API/profiles/*")
                 .authenticated()
+            // ================================== //
+            // Vendor API
+            // ================================== //
             .requestMatchers("/API/vendor/")
                 .hasRole("Manager")
-            .requestMatchers("/API/vendor/")
+            .requestMatchers("/API/vendor/profiles")
                 .hasAnyRole("Manager", "Vendor")
+            // ================================== //
+            // Tickets API
+            // ================================== //
             .requestMatchers("/API/tickets/*/chat-messages/**")
-                .authenticated()
+            .authenticated()
             .requestMatchers("/API/stats/**")
                 .hasRole("Manager")
-                .requestMatchers("/API/tickets/*")
+            .requestMatchers("/API/tickets/*")
                 .authenticated()
             .requestMatchers(HttpMethod.POST, "/API/tickets")
                 .hasRole("Client")
             .requestMatchers(HttpMethod.GET, "/API/tickets**")
-                .authenticated()
+            .authenticated()
+            // ================================== //
+            // Warranty API
+            // ================================== //
             .requestMatchers(HttpMethod.POST,"/API/warranty")
                 .hasRole("Vendor")
             .requestMatchers(HttpMethod.GET, "/API/warranty")
@@ -66,7 +86,10 @@ class ResourceServerConfig {
             .requestMatchers("/API/warranty/*/activate")
                 .hasRole("Client")
             .requestMatchers(HttpMethod.GET, "/API/warranty/*")
-            .hasAnyRole("Client", "Vendor", "Manager")
+                .hasAnyRole("Client", "Vendor", "Manager")
+            // ================================== //
+            // Login/Sign up API
+            // ================================== //
             .requestMatchers("/API/login")
                 .permitAll()
             .requestMatchers("/API/signup")

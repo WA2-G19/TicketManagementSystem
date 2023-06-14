@@ -53,7 +53,7 @@ async function getTicketById(token: string | undefined, ticketId: number) {
 async function postTicket(token: string, ticket: Ticket) {
 
     try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/", {
+        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets", {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + token,

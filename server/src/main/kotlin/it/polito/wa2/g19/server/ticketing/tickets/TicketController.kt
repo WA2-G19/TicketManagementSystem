@@ -6,20 +6,24 @@ import it.polito.wa2.g19.server.common.Util
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.net.URI
-import javax.ws.rs.core.SecurityContext
+
 
 @RestController
 @CrossOrigin

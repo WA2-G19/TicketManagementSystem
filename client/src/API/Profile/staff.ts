@@ -1,4 +1,5 @@
 import {CredentialStaff, Staff} from "../../classes/Profile";
+import StatsAPI from "../Ticketing/statuses";
 
 const {REACT_APP_SERVER_URL} = process.env;
 
@@ -13,6 +14,31 @@ async function getProfiles(token: string | undefined) {
         })
         if (response.ok) {
             return await response.json() as Array<Staff>
+        } else {
+            return undefined
+        }
+
+    } catch (e) {
+        throw e
+    }
+}
+
+async function getProfilesWithStatistics(token: string | undefined) {
+    try {
+
+        const response = await fetch(REACT_APP_SERVER_URL + "/API/staff/profiles", {
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Accept": "Application/Json"
+            }
+        })
+        if (response.ok) {
+            const staff = await response.json() as Array<Staff>
+            return await Promise.all(staff.map(async (member) => {
+                member.avgTime = await StatsAPI.getAverageTimedByExpert(token, member.email)
+                member.ticketClosed = await StatsAPI.getTicketClosedByExpert(token, member.email)
+                return member
+            }))
         } else {
             return undefined
         }
@@ -61,5 +87,5 @@ async function createExpert(token: string, credentials: CredentialStaff) {
     }
 }
 
-const StaffAPI = {getProfile, createExpert, getProfiles}
+const StaffAPI = {getProfile, createExpert, getProfiles, getProfilesWithStatistics}
 export default StaffAPI

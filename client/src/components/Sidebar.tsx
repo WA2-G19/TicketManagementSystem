@@ -1,61 +1,98 @@
 import {ListGroup, Nav} from "react-bootstrap";
 import HasRole from "./authentication/HasRole";
-import {Dispatch, useState} from "react";
-import {ClientSideBar, ExpertSideBar, ManagerSideBar, VendorSideBar} from "../utils/pageSwitch";
+import {useLocation, useNavigate} from "react-router-dom";
 
-interface SidebarProps{
-    active: string;
-    setActive: Dispatch<string>
+interface SidebarLink {
+    path: string
+    display: string
 }
 
+const clientSideBar: Array<SidebarLink> = [{
+    path: "/warranties",
+    display: "Warranties"
+}, {
+    path: "/tickets",
+    display: "Tickets"
+}, {
+    path: "/profile",
+    display: "Profile"
+}]
+const managerSideBar: Array<SidebarLink> = [{
+    path: "/stats",
+    display: "Stats"
+}, {
+    path: "/tickets",
+    display: "Tickets"
+}, {
+    path: "/staff",
+    display: "Staff Members"
+}, {
+    path: "/vendors",
+    display: "Vendors"
+}, {
+    path: "/products",
+    display: "Products"
+}, {
+    path: "/warranties",
+    display: "Warranties"
+}, {
+    path: "/profile",
+    display: "Profile"
+}]
+const expertSideBar: Array<SidebarLink> = [{
+    path: "/tickets",
+    display: "Tickets"
+}, {
+    path: "/profile",
+    display: "Profile"
+}]
+const vendorSideBar: Array<SidebarLink> = [{
+    path: "/warranties",
+    display: "Warranties"
+}, {
+    path: "/profile",
+    display: "Profile"
+}]
 
-function Sidebar(props: SidebarProps) {
-    return <>
-        <Nav className="col-md-12 d-none d-md-block bg-light sidebar" style={{display: "flex", height: "100vh"}}>
-            <div className="sidebar-sticky"></div>
-            <HasRole role={["Manager"]} key={"manager"}>
-                <ListGroup>
-                    {Object.keys(ManagerSideBar).filter(item => isNaN(Number(item))).map((e) => {
-                        return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>
-                    })}
-                </ListGroup>
-            </HasRole>
-            <HasRole role={["Client"]} key={"client"}>
-                <ListGroup>
-                    {Object.keys(ClientSideBar).filter(item => isNaN(Number(item))).map((e) => {
-                        return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>
-                    })}
-                </ListGroup>
-            </HasRole>
-            <HasRole role={["Expert"]} key={"expert"}>
-                <ListGroup>
-                    {Object.keys(ExpertSideBar).filter(item => isNaN(Number(item))).map((e) => {
-                        return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>
-                    })}
-                </ListGroup>
-            </HasRole>
-            <HasRole role={["Vendor"]} key={"vendor"}>
-                <ListGroup>
-                    {Object.keys(VendorSideBar).filter(item => isNaN(Number(item))).map((e) => {
-                        return <ListItem active={props.active} setActive={props.setActive} key={e} item={e}/>
-                    })}
-                </ListGroup>
-            </HasRole>
-        </Nav>
-    </>
+function Sidebar() {
+    return (
+        <Nav className={"w-100"}>
+            <ListGroup variant={"flush"} className={"w-100"}>
+                <HasRole role={"Manager"} key={"manager"}>
+                    {
+                        managerSideBar.map((e) => <ListItem key={e.path} item={e}/>)
+                    }
+                </HasRole>
+                <HasRole role={"Client"} key={"client"}>
+                    {
+                        clientSideBar.map((e) => <ListItem key={e.path} item={e}/>)
+                    }
+                </HasRole>
+                <HasRole role={"Expert"} key={"expert"}>
+                    {
+                        expertSideBar.map((e) => <ListItem key={e.path} item={e}/>)
+                    }
+                </HasRole>
+                <HasRole role={"Vendor"} key={"vendor"}>
+                    {
+                        vendorSideBar.map((e) => <ListItem key={e.path} item={e}/>)
+                    }
+                </HasRole>
+            </ListGroup>
+    </Nav>
+    )
 }
 
-interface ListItemProps {
-    item: string
-    active: string
-    setActive: Dispatch<string>
-}
-
-function ListItem(props: ListItemProps): JSX.Element {
+function ListItem({ item }: {
+    item: SidebarLink
+}): JSX.Element {
+    const navigate = useNavigate()
+    const { pathname } = useLocation()
+    const active = item.path === pathname
     return <ListGroup.Item onClick={() => {
-        props.setActive(props.item)
-    }} active={props.item == props.active}>
-        <Nav.Link>{props.item}</Nav.Link>
+        navigate(item.path)
+    }} active={active} action={true} className={!active ? "bg-transparent" : ""}>
+        <Nav.Link className={"link-dark"}>{item.display}</Nav.Link>
     </ListGroup.Item>
 
 }

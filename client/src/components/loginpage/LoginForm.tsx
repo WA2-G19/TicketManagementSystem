@@ -19,7 +19,7 @@ function LoginForm() {
                 return
             }
             await auth.login({username: email, password: pwd})
-            navigate("/home")
+            navigate("/")
         } catch (e) {
             alert.getBuilder().setTitle("Error in login").setMessage("Email or password incorrect").show()
         }

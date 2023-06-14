@@ -1,12 +1,13 @@
 package it.polito.wa2.g19.server.warranty
 
+import it.polito.wa2.g19.server.common.PeriodStringConverter
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.vendors.Vendor
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
-import java.time.Duration
 import java.time.LocalDateTime
+import java.time.Period
 import java.util.UUID
 
 @Entity
@@ -30,7 +31,8 @@ class Warranty() {
     @Temporal(TemporalType.TIMESTAMP)
     var creationTimestamp: LocalDateTime = LocalDateTime.now()
     @Column(nullable = false)
-    var duration: Duration = Duration.ZERO
+    @Convert(converter = PeriodStringConverter::class)
+    var duration: Period = Period.ZERO
     @Column(nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     var activationTimestamp: LocalDateTime? = null

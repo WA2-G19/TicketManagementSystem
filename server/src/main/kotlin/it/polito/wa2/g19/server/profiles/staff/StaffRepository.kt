@@ -10,4 +10,6 @@ interface StaffRepository: JpaRepository<Staff, Int> {
     fun findByEmailIgnoreCase(email: String): Staff?
     fun existsByEmailIgnoreCase(email: String): Boolean
 
+    @Query(value="select e from Expert e")
+    fun findAllExpert(): Array<Staff>
 }

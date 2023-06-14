@@ -4,21 +4,24 @@ import io.micrometer.observation.annotation.Observed
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import org.springframework.http.HttpStatus
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @Validated
-@CrossOrigin
 @RequestMapping("/API/vendor")
 @Observed
+@CrossOrigin
 class VendorController(
     private val vendorService: VendorService
-){
+) {
 
-    @GetMapping("")
+    @GetMapping("/profiles")
     @ResponseStatus(HttpStatus.OK)
-    fun getProfiles(): List<VendorDTO> {
+    fun getProfiles(
+        principal: JwtAuthenticationToken
+    ): List<VendorDTO> {
         return vendorService.getAll()
     }
 

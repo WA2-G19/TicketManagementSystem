@@ -1,4 +1,3 @@
-import './index.css';
 import {Container} from 'react-bootstrap';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {AuthenticationContextProvider} from "./contexts/Authentication";
@@ -16,10 +15,9 @@ function App() {
                     <BrowserRouter>
                         <NavbarLayout>
                             <Routes>
-                                <Route path={"/"} element={<></>}/>
-                                <Route path={"/home"} element={<HomePage/>}/>
                                 <Route path={"/login"} element={<LoginPage/>}/>
                                 <Route path={"/signup"} element={<SignupPage/>}/>
+                                <Route index path={"*"} element={<HomePage/>}/>
                             </Routes>
                         </NavbarLayout>
                     </BrowserRouter>
