@@ -3,6 +3,7 @@ package it.polito.wa2.g19.server.profiles.staff
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import it.polito.wa2.g19.server.repositories.jpa.StaffRepository
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-@Transactional
+@Transactional("transactionManager")
 class StaffServiceImpl(
     private val staffRepository: StaffRepository
 ) : StaffService {

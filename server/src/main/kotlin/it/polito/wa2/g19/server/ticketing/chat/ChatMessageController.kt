@@ -40,18 +40,20 @@ class ChatMessageController(
         @PathVariable chatMessageId: Int
     ): ChatMessageOutDTO {
         return chatMessageService.getChatMessage(ticketId, chatMessageId).apply {
+
             stubAttachments?.forEach { stub ->
                 stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId, chatMessageId, stub.url)
             }
         }
     }
 
-    @GetMapping("/{ticketId}/chat-messages")
+    @GetMapping("/{ticketId}/chat-messages", produces = [MediaType.APPLICATION_NDJSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     suspend fun getMessages(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int
     ): Flow<ChatMessageOutDTO> {
+
         val messages = chatMessageService.getChatMessages(ticketId)
         messages.collect {
 
@@ -68,7 +70,7 @@ class ChatMessageController(
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseStatus(HttpStatus.CREATED)
-    fun postChatMessage(
+    suspend fun postChatMessage(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int,
         @RequestPart message: ChatMessageInDTO,

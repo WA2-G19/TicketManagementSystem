@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import it.polito.wa2.g19.server.products.Product
 import it.polito.wa2.g19.server.products.ProductNotFoundException
-import it.polito.wa2.g19.server.products.ProductRepository
+import it.polito.wa2.g19.server.repositories.jpa.ProductRepository
 import it.polito.wa2.g19.server.products.ProductServiceImpl
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

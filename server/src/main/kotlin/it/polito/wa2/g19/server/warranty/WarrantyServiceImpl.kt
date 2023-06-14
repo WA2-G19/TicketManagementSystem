@@ -2,19 +2,22 @@ package it.polito.wa2.g19.server.warranty
 
 import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.products.ProductNotFoundException
-import it.polito.wa2.g19.server.products.ProductRepository
+import it.polito.wa2.g19.server.repositories.jpa.ProductRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
-import it.polito.wa2.g19.server.profiles.vendors.VendorRepository
+import it.polito.wa2.g19.server.repositories.jpa.CustomerRepository
+import it.polito.wa2.g19.server.repositories.jpa.VendorRepository
+import it.polito.wa2.g19.server.repositories.jpa.WarrantyRepository
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
+@Transactional("transactionManager")
 class WarrantyServiceImpl(
     private val warrantyRepository: WarrantyRepository,
     private val vendorRepository: VendorRepository,

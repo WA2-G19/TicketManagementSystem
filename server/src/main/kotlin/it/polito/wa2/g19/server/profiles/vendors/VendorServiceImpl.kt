@@ -3,7 +3,7 @@ package it.polito.wa2.g19.server.profiles.vendors
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import jakarta.transaction.Transactional
+import it.polito.wa2.g19.server.repositories.jpa.VendorRepository
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.representations.idm.CredentialRepresentation
@@ -12,10 +12,11 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-@Transactional
+@Transactional("transactionManager")
 class VendorServiceImpl(
     private val vendorRepository: VendorRepository,
     private val keycloak: Keycloak,

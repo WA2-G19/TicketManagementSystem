@@ -15,15 +15,15 @@ abstract class ChatMessageDTO(
 class ChatMessageInDTO( body: String):
     ChatMessageDTO( body)
 
-class ChatMessageOutDTO(val id: Int, val authorEmail:  String, body: String, val stubAttachments: Set<StubAttachmentDTO>?,
-                         val timestamp: LocalDateTime):
+class ChatMessageOutDTO(val id: Int, var authorEmail:  String, body: String, val stubAttachments: Set<StubAttachmentDTO>?,
+                        val timestamp: LocalDateTime):
         ChatMessageDTO(body)
 
 
 
-fun ChatMessage.toOutDTO(attachmentsProjection: List<AttachmentProjection>) = ChatMessageOutDTO(
-    getId()!!,
-    getAuthor().email,
+fun ChatMessage.toOutDTO(attachmentsProjection: List<AttachmentProjection>, authorEmail: String) = ChatMessageOutDTO(
+    id!!.toInt(),
+    authorEmail,
     body,
     attachmentsProjection.map { it.toStubDTO() }.toSet(),
     timestamp

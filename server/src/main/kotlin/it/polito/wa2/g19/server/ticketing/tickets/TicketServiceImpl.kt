@@ -1,29 +1,23 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.common.Role
-import it.polito.wa2.g19.server.products.ProductNotFoundException
-import it.polito.wa2.g19.server.products.ProductRepository
-import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.staff.Expert
 import it.polito.wa2.g19.server.profiles.staff.Manager
-import it.polito.wa2.g19.server.profiles.staff.StaffRepository
+import it.polito.wa2.g19.server.repositories.jpa.*
 import it.polito.wa2.g19.server.ticketing.statuses.*
 import it.polito.wa2.g19.server.warranty.WarrantyExpiredException
 import it.polito.wa2.g19.server.warranty.WarrantyNotFoundException
-import it.polito.wa2.g19.server.warranty.WarrantyRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Duration
 import java.time.LocalDateTime
-import java.util.UUID
 
 @Service
-@Transactional
+@Transactional("transactionManager")
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,

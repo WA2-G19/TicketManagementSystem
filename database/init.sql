@@ -225,3 +225,7 @@ COPY public.ticket("id", "description", "warranty_id", "expert_id", "priority_le
 COPY public.ticket_status("dtype", "id", "timestamp", "ticket_id", "by_id", "expert_id", "priority_name")
     FROM '/docker-entrypoint-initdb.d/ticket_status.csv'
     WITH DELIMITER ',' CSV HEADER;
+
+COPY public.chat_message("dtype", "id", "body", "timestamp","ticket_id", "customer_author_id", "staff_author_id")
+    FROM '/docker-entrypoint-initdb.d/chat_message.csv'
+    WITH DELIMITER ',' CSV HEADER;

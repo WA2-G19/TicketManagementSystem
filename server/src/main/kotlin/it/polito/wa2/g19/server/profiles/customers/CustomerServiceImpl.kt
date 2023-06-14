@@ -3,6 +3,7 @@ package it.polito.wa2.g19.server.profiles.customers
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import it.polito.wa2.g19.server.repositories.jpa.CustomerRepository
 import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
@@ -18,7 +19,7 @@ import kotlin.collections.HashMap
 
 
 @Service
-@Transactional
+@Transactional("transactionManager")
 class CustomerServiceImpl(
     private val customerRepository: CustomerRepository
 ) : CustomerService {

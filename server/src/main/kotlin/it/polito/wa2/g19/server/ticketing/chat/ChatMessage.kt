@@ -5,76 +5,75 @@ import it.polito.wa2.g19.server.profiles.Profile
 import it.polito.wa2.g19.server.profiles.customers.Customer
 import it.polito.wa2.g19.server.profiles.staff.Staff
 import it.polito.wa2.g19.server.ticketing.attachments.Attachment
+import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 import org.hibernate.annotations.CreationTimestamp
+import org.springframework.web.bind.annotation.RequestBody
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Entity
-@Table(
+
+@org.springframework.data.relational.core.mapping.Table(
     name = "chat_message",
-    indexes = [
-        Index(name = "IX_chat_message_timestamp", columnList = "timestamp DESC"),
-        Index(name = "IX_chat_message_ticket_id", columnList = "ticket_id DESC"),
-        Index(name = "IX_chat_message_customer_author_id", columnList = "customer_author_id DESC"),
-        Index(name = "IX_chat_message_staff_author_id", columnList = "staff_author_id DESC")
-    ]
 )
-abstract class ChatMessage : EntityBase<Int>() {
+data class ChatMessage(
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @org.springframework.data.annotation.Id
 
-    companion object {
-        fun withAuthor(author: Profile): ChatMessage =
-            when (author) {
-                is Staff -> {
-                    StaffChatMessage().apply {
-                        staffAuthor = author
-                    }
-                }
+    var id: Int? = null,
 
-                is Customer -> {
-                    CustomerChatMessage().apply {
-                        customerAuthor = author
-                    }
-                }
+    @Column(name = "ticket_id")
+    open  var ticketId: Int,
 
-                else -> {
-                    throw IllegalArgumentException("author cannot be of type ${author::class}")
-                }
-            }
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "ticket_id", nullable = false)
-    open lateinit var ticket: Ticket
-    @OneToMany(mappedBy = "message")
-    open lateinit var attachments: Set<Attachment>
     @Column(nullable = false)
-    open var body: String = ""
+    open var body: String = "",
+
     @CreationTimestamp
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    open var timestamp: LocalDateTime = LocalDateTime.now()
+    open var timestamp: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "customer_author_id")
+    var customerAuthorId: UUID? = null,
 
-    abstract fun getAuthor(): Profile
+
+    @Column(name = "staff_author_id")
+    var staffAuthorId: UUID? = null
+) {
+
+
+
+
+
+    fun getAuthor(): UUID {
+
+        if (customerAuthorId != null) {
+            return this.customerAuthorId!!
+        } else if (staffAuthorId != null) {
+            return this.staffAuthorId!!
+        }
+        throw Exception("BOOM")
+    }
+
+    companion object {
+        fun withAuthor(profile: Profile, ticket: Ticket, body: String): ChatMessage{
+            val chatMessage = ChatMessage(null, ticket.getId()!!, body, LocalDateTime.now(), null, null)
+            if (profile is Staff){
+                chatMessage.staffAuthorId = profile.id
+            } else if (profile is Customer) {
+                chatMessage.customerAuthorId = profile.id
+            } else{
+                throw ForbiddenException()
+            }
+            return chatMessage
+
+        }
+    }
 }
 
-@Entity
-class CustomerChatMessage : ChatMessage() {
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "customer_author_id", nullable = true)
-    lateinit var customerAuthor: Customer
 
-    override fun getAuthor(): Profile = customerAuthor
-}
 
-@Entity
-class StaffChatMessage : ChatMessage() {
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "staff_author_id", nullable = true)
-    lateinit var staffAuthor: Staff
 
-    override fun getAuthor(): Profile = staffAuthor
-}

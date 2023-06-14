@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import it.polito.wa2.g19.server.profiles.*
 import it.polito.wa2.g19.server.profiles.customers.*
+import it.polito.wa2.g19.server.repositories.jpa.CustomerRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows

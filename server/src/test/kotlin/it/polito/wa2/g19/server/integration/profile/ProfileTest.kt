@@ -1,16 +1,15 @@
 package it.polito.wa2.g19.server.integration.profile
 
-import com.nimbusds.jose.shaded.gson.Gson
 import dasniko.testcontainers.keycloak.KeycloakContainer
 import it.polito.wa2.g19.server.Util
 
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
-import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.LoginDTO
 import it.polito.wa2.g19.server.profiles.customers.CredentialCustomerDTO
 import it.polito.wa2.g19.server.profiles.customers.CustomerDTO
-import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
+import it.polito.wa2.g19.server.repositories.jpa.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.*
+import it.polito.wa2.g19.server.repositories.jpa.StaffRepository
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -28,14 +27,12 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.shaded.okhttp3.Headers
 import java.util.*
 
 @Testcontainers

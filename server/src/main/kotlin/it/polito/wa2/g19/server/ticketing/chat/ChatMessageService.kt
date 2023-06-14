@@ -8,9 +8,9 @@ interface ChatMessageService {
 
     suspend fun getChatMessage(ticketId: Int,chatMessageId: Int): ChatMessageOutDTO
 
-    fun getChatMessages(ticketId: Int): Flow<ChatMessageOutDTO>
+    suspend fun getChatMessages(ticketId: Int): Flow<ChatMessageOutDTO>
 
-    fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?): Int
+    suspend fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?): Int
 
     fun getAttachment(ticketId: Int, attachmentId: Int): AttachmentDTO
 }

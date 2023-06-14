@@ -1,16 +1,17 @@
 package it.polito.wa2.g19.server.ticketing.statuses
 
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.profiles.staff.StaffRepository
-import it.polito.wa2.g19.server.ticketing.tickets.PriorityLevelRepository
-import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
+import it.polito.wa2.g19.server.repositories.jpa.StaffRepository
+import it.polito.wa2.g19.server.repositories.jpa.PriorityLevelRepository
+import it.polito.wa2.g19.server.repositories.jpa.TicketRepository
+import it.polito.wa2.g19.server.repositories.jpa.TicketStatusRepository
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 
 @Service
-@Transactional
+@Transactional("transactionManager")
 
 class TicketStatusServiceImpl(
     private val ticketRepository: TicketRepository,
