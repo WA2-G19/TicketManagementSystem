@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.EAN
 import org.hibernate.validator.constraints.UUID
 import org.springframework.boot.convert.DurationFormat
 import org.springframework.boot.convert.DurationStyle
-import java.time.Duration
 import java.time.LocalDateTime
+import java.time.Period
 
 data class WarrantyInDTO(
     @NotBlank
@@ -16,8 +16,8 @@ data class WarrantyInDTO(
     val productEan: String,
 
     @NotBlank
-    @DurationFormat(DurationStyle.SIMPLE)
-    val duration: Duration
+    @DurationFormat(DurationStyle.ISO8601)
+    val duration: Period
 )
 
 data class WarrantyOutDTO(
@@ -34,7 +34,8 @@ data class WarrantyOutDTO(
     val customerEmail: String?,
     val creationTimestamp: LocalDateTime,
     val activationTimestamp: LocalDateTime?,
-    val duration: Duration
+    @DurationFormat(DurationStyle.ISO8601)
+    val duration: Period
 ) {
     @AssertFalse
     fun isValid(): Boolean = (customerEmail != null) and (activationTimestamp != null)

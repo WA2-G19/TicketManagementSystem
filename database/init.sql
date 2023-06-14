@@ -86,7 +86,7 @@ create table public.warranty
     id                   uuid         not null default gen_random_uuid(),
     activation_timestamp timestamp(6),
     creation_timestamp   timestamp(6) not null,
-    duration             numeric(21)  not null,
+    duration             varchar(255) not null,
     customer_id          uuid,
     product_ean          varchar(13) not null,
     vendor_id            uuid         not null,
