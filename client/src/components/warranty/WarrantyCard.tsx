@@ -74,7 +74,7 @@ function WarrantyCard({warranty}: {
                             <strong>Duration</strong>
                         </Typography>
                     </Col>
-                    <Col>{duration.hours}:{duration.minutes}:{duration.seconds}</Col>
+                    <Col>{duration.toString()}</Col>
                 </Col>
             </Row>
         </Row>

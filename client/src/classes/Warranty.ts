@@ -55,6 +55,20 @@ export class Duration {
         this.seconds = seconds
     }
 
+    toString(): string {
+        const pieces = [
+            this.years > 0 ? `${this.years} years` : "",
+            this.months > 0 ? `${this.months} months` : "",
+            this.weeks > 0 ? `${this.weeks} weeks` : "",
+            this.days > 0 ? `${this.days} days` : "",
+            this.hours > 0 ? `${this.hours} hours` : "",
+            this.minutes > 0 ? `${this.minutes} minutes` : "",
+            this.seconds > 0 ? `${this.seconds} seconds` : "",
+        ]
+
+        return pieces.filter(p => p !== "").join(" ")
+    }
+
     static fromString(durationString: string): Duration {
         const integer = /[1-9][0-9]*|0/
         const float = new RegExp("(" + integer.source + ")([.,][0-9]+)?")
