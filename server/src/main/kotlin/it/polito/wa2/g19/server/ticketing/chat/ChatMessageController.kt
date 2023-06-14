@@ -3,6 +3,9 @@ package it.polito.wa2.g19.server.ticketing.chat
 import io.micrometer.observation.annotation.Observed
 import it.polito.wa2.g19.server.common.Util
 import jakarta.validation.Valid
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.forEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.io.ByteArrayResource
@@ -31,7 +34,7 @@ class ChatMessageController(
 
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}")
     @ResponseStatus(HttpStatus.OK)
-    fun getMessage(
+    suspend fun getMessage(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int,
         @PathVariable chatMessageId: Int
@@ -45,12 +48,13 @@ class ChatMessageController(
 
     @GetMapping("/{ticketId}/chat-messages")
     @ResponseStatus(HttpStatus.OK)
-    fun getMessages(
+    suspend fun getMessages(
         principal: JwtAuthenticationToken,
         @PathVariable ticketId: Int
-    ): Set<ChatMessageOutDTO> {
+    ): Flow<ChatMessageOutDTO> {
         val messages = chatMessageService.getChatMessages(ticketId)
-        messages.forEach {
+        messages.collect {
+
             it.stubAttachments?.forEach { stub ->
                 stub.url = Util.getUri(handlerMapping, ::getAttachment.name, ticketId, it.id, stub.url)
             }

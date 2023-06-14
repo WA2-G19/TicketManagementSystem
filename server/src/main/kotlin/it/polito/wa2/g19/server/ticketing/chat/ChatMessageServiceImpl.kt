@@ -11,6 +11,8 @@ import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import it.polito.wa2.g19.server.ticketing.tickets.TicketService
 import it.polito.wa2.g19.server.warranty.Warranty
 import it.polito.wa2.g19.server.warranty.WarrantyRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -28,6 +30,7 @@ import java.time.ZoneId
 
 class ChatMessageServiceImpl(
     private val chatMessageRepository: ChatMessageRepository,
+    private val chatMessageRepositoryJPA: ChatMessageRepositoryJPA,
     private val attachmentRepository: AttachmentRepository,
     private val ticketRepository: TicketRepository,
     private val customerRepository: CustomerRepository,
@@ -37,20 +40,20 @@ class ChatMessageServiceImpl(
     ) : ChatMessageService {
 
     @PreAuthorize("isAuthenticated()")
-    override fun getChatMessage(ticketId: Int, chatMessageId: Int): ChatMessageOutDTO {
+    override suspend fun getChatMessage(ticketId: Int, chatMessageId: Int): ChatMessageOutDTO {
         ticketService.getTicket(ticketId)
-        val message = chatMessageRepository.findByTicketIdAndId(ticketId, chatMessageId) ?: throw MessageNotFoundException()
+        val message = chatMessageRepository.findById( chatMessageId) ?: throw MessageNotFoundException()
         val attachmentProjections = attachmentRepository.findByMessage(message)
         return message.toOutDTO(attachmentProjections)
     }
 
     @PreAuthorize("isAuthenticated()")
-    override fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO> {
+    override fun getChatMessages(ticketId: Int): Flow<ChatMessageOutDTO> {
         ticketService.getTicket(ticketId)
-        return chatMessageRepository.findByTicketId(ticketId)!!
-            .map {
+        return chatMessageRepository.findByTicketId(ticketId)
+            .map() {
                 it.toOutDTO(attachmentRepository.findByMessage(it))
-            }.toSet()
+            }
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -65,7 +68,7 @@ class ChatMessageServiceImpl(
             ticket = referredTicket
             body = messageToSave.body
         }
-        chatMessageRepository.save(createdMessage)
+        chatMessageRepositoryJPA.save(createdMessage)
 
         if (files != null) {
             for (file in files) {
