@@ -57,13 +57,13 @@ export class Duration {
 
     toString(): string {
         const pieces = [
-            this.years > 0 ? `${this.years} years` : "",
-            this.months > 0 ? `${this.months} months` : "",
-            this.weeks > 0 ? `${this.weeks} weeks` : "",
-            this.days > 0 ? `${this.days} days` : "",
-            this.hours > 0 ? `${this.hours} hours` : "",
-            this.minutes > 0 ? `${this.minutes} minutes` : "",
-            this.seconds > 0 ? `${this.seconds} seconds` : "",
+            this.years > 0 ? `${this.years} Y` : "",
+            this.months > 0 ? `${this.months} M` : "",
+            this.weeks > 0 ? `${this.weeks} W` : "",
+            this.days > 0 ? `${this.days} D` : "",
+            this.hours > 0 ? `${this.hours} H` : "",
+            this.minutes > 0 ? `${this.minutes} M` : "",
+            this.seconds > 0 ? `${this.seconds} S` : "",
         ]
 
         return pieces.filter(p => p !== "").join(" ")
