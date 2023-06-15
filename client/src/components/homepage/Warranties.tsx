@@ -17,7 +17,19 @@ function Warranties(): JSX.Element {
     const {user} = useAuthentication()
     const [warranties, setWarranties] = useState(Array<WarrantyOut>)
     const [loading, setLoading]= useState(true)
+    const [now, setNow] = useState(() => new Date(Date.now()))
     const token = user!.token
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setNow(new Date(Date.now()))
+        }, 1000)
+
+        return () => {
+            clearInterval(interval)
+        }
+    }, [])
+
     useEffect(() => {
         async function getWarranties() {
             const tmp = await WarrantyAPI.getAllWarranty(token)
@@ -60,7 +72,7 @@ function Warranties(): JSX.Element {
                 {
                     !loading && warranties.length !== 0 && warranties.map(warranty =>
                         <Col xs={12} sm={6} md={4} className={"pt-3"} key={warranty.id}>
-                            <WarrantyCard warranty={warranty} />
+                            <WarrantyCard warranty={warranty} now={now} />
                         </Col>
                     )
                 }

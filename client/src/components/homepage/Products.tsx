@@ -7,8 +7,12 @@ import Product from "../../classes/Product";
 import ProductCard from "../product/ProductCard";
 import {Loading} from "../Loading";
 import { useAlert } from "../../contexts/Alert";
+import {BsPlus} from "react-icons/bs";
+import HasRole from "../authentication/HasRole";
+import {useNavigate} from "react-router-dom";
 
 function Products(): JSX.Element {
+    const navigate = useNavigate()
     const {user} = useAuthentication()
     const alert = useAlert()
     const [products, setProducts] = useState(Array<Product>)
@@ -41,6 +45,16 @@ function Products(): JSX.Element {
 
     return (
         <Container fluid>
+            <Row>
+                <Col>
+                    <h1>Products</h1>
+                </Col>
+                <HasRole role={"Manager"}>
+                    <Col className={"d-flex flex-row align-items-center"} xs={1}>
+                        <BsPlus size={"2em"} onClick={() => navigate("/products/add")} role={"button"} />
+                    </Col>
+                </HasRole>
+            </Row>
             {loading && <Loading/>}
             <Row>
                 {

@@ -7,8 +7,12 @@ import {useAuthentication} from "../../contexts/Authentication";
 import StaffCard from "../staff/StaffCard";
 import {Loading} from "../Loading";
 import {useAlert} from "../../contexts/Alert";
+import {BsPlus} from "react-icons/bs";
+import HasRole from "../authentication/HasRole";
+import {useNavigate} from "react-router-dom";
 
 function Staffs() {
+    const navigate = useNavigate()
     const { user } = useAuthentication()
     const alert = useAlert()
     const [staffs, setStaffs] = useState(Array<Staff>)
@@ -41,6 +45,16 @@ function Staffs() {
 
     return (
         <Container fluid>
+            <Row>
+                <Col>
+                    <h1>Staff members</h1>
+                </Col>
+                <HasRole role={"Manager"}>
+                    <Col className={"d-flex flex-row align-items-center"} xs={1}>
+                        <BsPlus size={"2em"} onClick={() => navigate("/staffs/add")} role={"button"} />
+                    </Col>
+                </HasRole>
+            </Row>
             {loading && <Loading/>}
             <Row>
                 {

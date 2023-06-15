@@ -24,9 +24,6 @@ function WarrantyForm(): JSX.Element {
     const yearsRef = useRef<HTMLInputElement>(null)
     const monthsRef = useRef<HTMLInputElement>(null)
     const daysRef = useRef<HTMLInputElement>(null)
-    const hoursRef = useRef<HTMLInputElement>(null)
-    const minutesRef = useRef<HTMLInputElement>(null)
-    const secondsRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         async function getProducts() {
@@ -56,7 +53,7 @@ function WarrantyForm(): JSX.Element {
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
-        if (isVendor && productRef.current && yearsRef.current && monthsRef.current && daysRef.current && hoursRef.current && minutesRef.current && secondsRef.current) {
+        if (isVendor && productRef.current && yearsRef.current && monthsRef.current && daysRef.current) {
             try {
                 const response = await WarrantyAPI.postWarranty(token, new WarrantyIn(
                     productRef.current.value,
@@ -64,10 +61,7 @@ function WarrantyForm(): JSX.Element {
                         parseFloat(yearsRef.current.value),
                         parseInt(monthsRef.current.value),
                         0,
-                        parseInt(daysRef.current.value),
-                        parseInt(hoursRef.current.value),
-                        parseInt(minutesRef.current.value),
-                        parseFloat(secondsRef.current.value),
+                        parseInt(daysRef.current.value)
                     ).toString()
                 ))
                 if (response) {
@@ -178,30 +172,6 @@ function WarrantyForm(): JSX.Element {
                                         className={"mb-3"}
                                     >
                                         <Form.Control type={"number"} step={"1"} min={"0"} ref={daysRef} defaultValue={0} />
-                                    </Form.FloatingLabel>
-                                </Col>
-                                <Col>
-                                    <Form.FloatingLabel
-                                        label={"Hours"}
-                                        className={"mb-3"}
-                                    >
-                                        <Form.Control type={"number"} step={"1"} min={"0"} ref={hoursRef} defaultValue={0} />
-                                    </Form.FloatingLabel>
-                                </Col>
-                                <Col>
-                                    <Form.FloatingLabel
-                                        label={"Minutes"}
-                                        className={"mb-3"}
-                                    >
-                                        <Form.Control type={"number"} step={"1"} min={"0"} ref={minutesRef} defaultValue={0} />
-                                    </Form.FloatingLabel>
-                                </Col>
-                                <Col>
-                                    <Form.FloatingLabel
-                                        label={"Seconds"}
-                                        className={"mb-3"}
-                                    >
-                                        <Form.Control type={"number"} step={"0.01"} min={"0"} ref={secondsRef} defaultValue={0} />
                                     </Form.FloatingLabel>
                                 </Col>
                             </Row>

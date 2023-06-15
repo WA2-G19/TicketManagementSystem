@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Col, Container} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import {Vendor} from "../../classes/Profile";
 import VendorAPI from "../../API/Profile/vendor";
@@ -7,8 +7,12 @@ import {useAuthentication} from "../../contexts/Authentication";
 import {Loading} from "../Loading";
 import {useAlert} from "../../contexts/Alert";
 import VendorCard from "../vendor/VendorCard";
+import {BsPlus} from "react-icons/bs";
+import HasRole from "../authentication/HasRole";
+import {useNavigate} from "react-router-dom";
 
 function Vendors() {
+    const navigate = useNavigate()
     const { user } = useAuthentication()
     const alert = useAlert()
     const [vendors, setVendors] = useState(Array<Vendor>)
@@ -41,20 +45,32 @@ function Vendors() {
 
     return (
         <Container fluid>
-            {loading && <Loading/>}
-            {
-                !loading && vendors.length !== 0 && vendors.map(vendor =>
-                    <Col xs={12} sm={6} md={4} className={"pt-3"} key={vendor.email}>
-                        <VendorCard vendor={vendor}/>
+            <Row>
+                <Col>
+                    <h1>Vendors</h1>
+                </Col>
+                <HasRole role={"Manager"}>
+                    <Col className={"d-flex flex-row align-items-center"} xs={1}>
+                        <BsPlus size={"2em"} onClick={() => navigate("/vendors/add")} role={"button"} />
                     </Col>
-                )
-            }
-            {
-                !loading && vendors.length === 0 &&
-                <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
-                    <strong>No vendors found</strong>
-                </Typography>
-            }
+                </HasRole>
+            </Row>
+            {loading && <Loading/>}
+            <Row>
+                {
+                    !loading && vendors.length !== 0 && vendors.map(vendor =>
+                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={vendor.email}>
+                            <VendorCard vendor={vendor}/>
+                        </Col>
+                    )
+                }
+                {
+                    !loading && vendors.length === 0 &&
+                    <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
+                        <strong>No vendors found</strong>
+                    </Typography>
+                }
+            </Row>
         </Container>
     )
 }

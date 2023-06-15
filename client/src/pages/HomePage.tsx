@@ -13,6 +13,7 @@ import Welcome from "../components/homepage/Welcome";
 import TicketForm from "../components/ticket/TicketForm";
 import Stats from "../components/stats/Stats";
 import WarrantyForm from "../components/warranty/WarrantyForm";
+import VendorForm from "../components/vendor/VendorForm";
 
 function HomePage() {
     return (
@@ -25,6 +26,7 @@ function HomePage() {
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/staff"} element={<Staffs />} />
                             <Route path={"/vendors"} element={<Vendors />} />
+                            <Route path={"/vendors/add"} element={<VendorForm />} />
                             <Route path={"/products"} element={<Products />} />
                             <Route path={"/warranties"} element={<Warranties />} />
                         </Routes>

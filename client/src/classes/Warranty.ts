@@ -58,8 +58,8 @@ export class WarrantyOut extends APIObject {
 }
 
 export class Duration {
-    minutes: number
     seconds: number
+    minutes: number
     hours: number
     days: number
     weeks: number
@@ -74,6 +74,20 @@ export class Duration {
         this.hours = hours
         this.minutes = minutes
         this.seconds = seconds
+    }
+
+    addToDate(date: Date): Date {
+        const d = new Date(date)
+        const years = Math.floor(this.years)
+        const months = Math.floor(this.months + this.years - years)
+        const days = Math.floor(this.days + this.months - months)
+        d.setFullYear(d.getFullYear() + years, d.getMonth() + months, d.getDate() + days)
+        const hours = Math.floor(this.hours + this.days - days)
+        const minutes = Math.floor(this.minutes + this.hours - hours)
+        const seconds = Math.floor(this.seconds + this.minutes - minutes)
+        const milliSeconds = Math.floor((this.seconds - seconds) * 1000)
+        d.setHours(d.getHours() + hours, d.getMinutes() + minutes, d.getSeconds() + seconds, d.getMilliseconds() + milliSeconds)
+        return d
     }
 
     toFormattedString(): string {

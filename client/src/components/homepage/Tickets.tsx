@@ -76,7 +76,13 @@ function Tickets() {
     }
 
     return (
-        <Container>
+        <Container fluid>
+            <Row>
+                <Col>
+                    <h1>Tickets</h1>
+                </Col>
+
+            </Row>
             {loading && <Loading/>}
             <Row>
                 {
