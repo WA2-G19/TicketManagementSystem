@@ -54,5 +54,17 @@ async function postWarranty(token: string, warranty: WarrantyIn) {
     }
 }
 
-const WarrantyAPI = {getAllWarranty, getWarrantyByID, postWarranty}
+async function activateWarranty(token: string, warrantyId: string) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/warranty/" + encodeURIComponent(warrantyId) + "/activate", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    if (response.ok) {
+        return await response.json() as WarrantyOut
+    }
+}
+
+const WarrantyAPI = {getAllWarranty, getWarrantyByID, postWarranty, activateWarranty}
 export default WarrantyAPI

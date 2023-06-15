@@ -32,6 +32,7 @@ function HomePage() {
                     <HasRole role={"Client"} key={"client"}>
                         <Routes>
                             <Route path={"/warranties"} element={<Warranties />} />
+                            <Route path={"/warranties/add"} element={<WarrantyForm />} />
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/tickets/add"} element={<TicketForm />} />
                         </Routes>
