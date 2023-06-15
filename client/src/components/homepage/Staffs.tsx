@@ -6,32 +6,47 @@ import StaffAPI from "../../API/Profile/staff";
 import {useAuthentication} from "../../contexts/Authentication";
 import StaffCard from "../staff/StaffCard";
 import {Loading} from "../Loading";
+import {useAlert} from "../../contexts/Alert";
 
 function Staffs() {
     const { user } = useAuthentication()
+    const alert = useAlert()
     const [staffs, setStaffs] = useState(Array<Staff>)
     const [loading, setLoading] = useState(true)
+    const token = user!.token
     useEffect(() => {
         async function getStaffs() {
-            const tmp = await StaffAPI.getProfilesWithStatistics(user!.token) as Array<Staff>
-            setStaffs(tmp)
+            const tmp = await StaffAPI.getProfilesWithStatistics(token)
+            if (tmp) {
+                setStaffs(tmp)
+            } else {
+                alert.getBuilder()
+                    .setTitle("Error")
+                    .setMessage("Error loading staff members. Try again later.")
+                    .setButtonsOk()
+                    .show()
+            }
             setLoading(false)
         }
 
         getStaffs()
             .catch(err => {
-
+                alert.getBuilder()
+                    .setTitle("Error")
+                    .setMessage("Error loading staff members. Details: " + err)
+                    .setButtonsOk()
+                    .show()
             })
-    }, [user!.token])
+    }, [token])
 
     return (
         <Container fluid>
             {loading && <Loading/>}
             <Row>
                 {
-                    !loading && staffs.length !== 0 && staffs.map((staff,idx) =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={idx}>
-                            <StaffCard staff={staff} key={idx}/>
+                    !loading && staffs.length !== 0 && staffs.map(staff =>
+                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={staff.email}>
+                            <StaffCard staff={staff} />
                         </Col>
                     )
                 }

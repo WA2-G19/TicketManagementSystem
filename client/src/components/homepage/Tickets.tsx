@@ -10,24 +10,38 @@ import {Staff} from "../../classes/Profile";
 import StaffCard from "../staff/StaffCard";
 import ModalDialog from "../modals/ModalDialog";
 import {Loading} from "../Loading";
+import {useAlert} from "../../contexts/Alert";
 
 function Tickets() {
     const [tickets, setTickets] = useState(Array<TicketOut>)
     const [selectedTicket, setSelectedTicket] = useState<TicketOut | null>(null)
     const [experts, setExperts] = useState(Array<Staff>)
     const { user} = useAuthentication()
+    const alert = useAlert()
     const token = user!.token
     const isManager = user!.role.includes("Manager")
     const [loading,setLoading]= useState(true)
     useEffect(() => {
         async function getTickets() {
-            const tmp = await TicketAPI.getTickets(token) as Array<TicketOut>
-            setTickets(tmp)
+            const tmp = await TicketAPI.getTickets(token)
+            if (tmp) {
+                setTickets(tmp)
+            } else {
+                alert.getBuilder()
+                    .setTitle("Error")
+                    .setMessage("Error loading tickets. Try again later.")
+                    .setButtonsOk()
+                    .show()
+            }
             setLoading(false)
         }
         getTickets()
             .catch(err => {
-
+                alert.getBuilder()
+                    .setTitle("Error")
+                    .setMessage("Error loading tickets. Details: " + err)
+                    .setButtonsOk()
+                    .show()
             })
     }, [token])
 
@@ -35,9 +49,22 @@ function Tickets() {
         if (isManager) {
             StaffAPI.getProfilesWithStatistics(token)
                 .then(experts => {
-                    if (experts !== undefined) {
+                    if (experts) {
                         setExperts(experts)
+                    } else {
+                        alert.getBuilder()
+                            .setTitle("Error")
+                            .setMessage("Error loading experts. Try again later.")
+                            .setButtonsOk()
+                            .show()
                     }
+                })
+                .catch(err => {
+                    alert.getBuilder()
+                        .setTitle("Error")
+                        .setMessage("Error loading experts. Details: " + err)
+                        .setButtonsOk()
+                        .show()
                 })
         }
     }, [token, isManager])
@@ -53,9 +80,9 @@ function Tickets() {
             {loading && <Loading/>}
             <Row>
                 {
-                    !loading && tickets.length > 0 && tickets.map(it =>
-                        <Col xs={12} className={"pt-3"} key={it.id}>
-                            <TicketCard ticket={it} setSelected={isManager ? () => setSelectedTicket(it) : undefined}/>
+                    !loading && tickets.length > 0 && tickets.map(ticket =>
+                        <Col xs={12} className={"pt-3"} key={ticket.id}>
+                            <TicketCard ticket={ticket} setSelected={isManager ? () => setSelectedTicket(ticket) : undefined}/>
                         </Col>
                     )
                 }

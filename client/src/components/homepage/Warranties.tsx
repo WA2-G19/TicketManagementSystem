@@ -20,8 +20,16 @@ function Warranties(): JSX.Element {
     const token = user!.token
     useEffect(() => {
         async function getWarranties() {
-            const tmp = await WarrantyAPI.getAllWarranty(token) as Array<WarrantyOut>
-            setWarranties(tmp)
+            const tmp = await WarrantyAPI.getAllWarranty(token)
+            if (tmp) {
+                setWarranties(tmp)
+            } else {
+                alert.getBuilder()
+                    .setTitle("Error")
+                    .setMessage("Error loading warranties. Try again later.")
+                    .setButtonsOk()
+                    .show()
+            }
             setLoading(false)
         }
 
