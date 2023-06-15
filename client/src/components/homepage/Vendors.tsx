@@ -45,7 +45,7 @@ function Vendors() {
 
     return (
         <Container fluid>
-            <Row>
+            <Row className={"mt-3"}>
                 <Col>
                     <h1>Vendors</h1>
                 </Col>

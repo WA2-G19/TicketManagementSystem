@@ -1,6 +1,6 @@
 import {Badge, Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
-import React, {useEffect} from "react";
+import React from "react";
 import {WarrantyOut, Duration} from "../../classes/Warranty";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
@@ -14,10 +14,6 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
     const creationTime = new Date(warranty.creationTimestamp)
     const activationTime = new Date(warranty.activationTimestamp)
     const isExpired = duration.addToDate(creationTime) < now
-
-    useEffect(() => {
-        console.log("Creation", creationTime.toISOString(), "Expiration", duration.addToDate(creationTime).toISOString())
-    }, [])
 
     return <Container className={"border border-3 rounded border-primary"}>
         <Row className={"pt-3 ms-1"} style={{display: "flex", justifyContent: "left"}}>

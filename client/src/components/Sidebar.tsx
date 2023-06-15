@@ -24,7 +24,7 @@ const managerSideBar: Array<SidebarLink> = [{
     path: "/tickets",
     display: "Tickets"
 }, {
-    path: "/staff",
+    path: "/staffs",
     display: "Staff Members"
 }, {
     path: "/vendors",

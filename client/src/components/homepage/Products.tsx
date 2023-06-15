@@ -45,7 +45,7 @@ function Products(): JSX.Element {
 
     return (
         <Container fluid>
-            <Row>
+            <Row className={"mt-3"}>
                 <Col>
                     <h1>Products</h1>
                 </Col>

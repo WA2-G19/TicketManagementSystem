@@ -14,6 +14,7 @@ import TicketForm from "../components/ticket/TicketForm";
 import Stats from "../components/stats/Stats";
 import WarrantyForm from "../components/warranty/WarrantyForm";
 import VendorForm from "../components/vendor/VendorForm";
+import StaffForm from "../components/staff/StaffForm";
 
 function HomePage() {
     return (
@@ -24,7 +25,8 @@ function HomePage() {
                         <Routes>
                             <Route path={"/stats"} element={<p><Stats/></p>} />
                             <Route path={"/tickets"} element={<Tickets />} />
-                            <Route path={"/staff"} element={<Staffs />} />
+                            <Route path={"/staffs"} element={<Staffs />} />
+                            <Route path={"/staffs/add"} element={<StaffForm />} />
                             <Route path={"/vendors"} element={<Vendors />} />
                             <Route path={"/vendors/add"} element={<VendorForm />} />
                             <Route path={"/products"} element={<Products />} />

@@ -1,5 +1,4 @@
 import APIObject from "./APIObject"
-import exp from "constants";
 
 
 export class Profile extends APIObject {
@@ -48,20 +47,25 @@ export class CredentialCustomer extends APIObject {
     }
 }
 
-enum StaffType {
+export enum StaffType {
     Manager,
     Expert
 }
 
-export class Staff extends Profile {
-
+export class Staff extends APIObject {
+    name: string
+    surname: string
+    email: string
     type: StaffType
     skills: Array<string>
     avgTime: number | undefined
     ticketClosed: number | undefined
 
-    constructor(email: string, name: string, surname: string, address: string, type: StaffType, skills: Array<string>) {
-        super(email, name, surname, address);
+    constructor(email: string, name: string, surname: string, type: StaffType, skills: Array<string>) {
+        super()
+        this.name = name
+        this.surname = surname
+        this.email = email
         this.type = type
         this.skills = skills
     }
@@ -71,7 +75,6 @@ export class Staff extends Profile {
             email: this.email,
             name: this.name,
             surname: this.surname,
-            address: this.address,
             type: this.type,
             skills: JSON.stringify(this.skills)
         })
@@ -93,7 +96,7 @@ export class CredentialStaff extends APIObject {
     toJsonObject(): string {
 
         return JSON.stringify({
-            profile: this.staff.toJsonObject(),
+            staffDTO: this.staff,
             password: this.password
         })
     }
@@ -140,7 +143,7 @@ export class CredentialVendor extends APIObject {
     toJsonObject(): string {
 
         return JSON.stringify({
-            profile: this.vendor.toJsonObject(),
+            profile: this.vendor,
             password: this.password
         })
     }

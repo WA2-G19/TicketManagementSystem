@@ -45,7 +45,7 @@ function Staffs() {
 
     return (
         <Container fluid>
-            <Row>
+            <Row className={"mt-3"}>
                 <Col>
                     <h1>Staff members</h1>
                 </Col>

@@ -9,7 +9,7 @@ async function getProfiles(token: string | undefined) {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/staff/profiles", {
             headers: {
                 "Authorization": "Bearer " + token,
-                "Accept": "Application/Json"
+                "Accept": "application/json"
             }
         })
         if (response.ok) {
@@ -29,7 +29,7 @@ async function getProfilesWithStatistics(token: string | undefined) {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/staff/profiles", {
             headers: {
                 "Authorization": "Bearer " + token,
-                "Accept": "Application/Json"
+                "Accept": "application/json"
             }
         })
         if (response.ok) {
@@ -54,7 +54,7 @@ async function getProfile(token: string, email: string) {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/staff/" + email, {
             headers: {
                 "Authorization": "Bearer " + token,
-                "Accept": "Application/Json"
+                "Accept": "application/json"
             }
         })
         if (response.ok) {
@@ -75,8 +75,8 @@ async function createExpert(token: string, credentials: CredentialStaff) {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + token,
-                "Accept": "Application/Json",
-                "Content": "Application/Json"
+                "Accept": "application/json",
+                "Content-Type": "application/json"
             },
             body: credentials.toJsonObject()
         })

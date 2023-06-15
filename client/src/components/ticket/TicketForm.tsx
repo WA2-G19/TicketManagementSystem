@@ -51,7 +51,7 @@ function TicketForm(): JSX.Element {
     
     return (
         <Container fluid>
-            <Row>
+            <Row className={"mt-3"}>
                 <Col className={"d-flex flex-row align-items-center"} xs={1}>
                     <BsArrowLeft size={"2em"} onClick={() => navigate(-1)} role={"button"} />
                 </Col>
