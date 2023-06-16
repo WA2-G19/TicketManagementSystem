@@ -13,7 +13,7 @@ abstract class ChatMessageDTO(
 )
 
 class ChatMessageInDTO( body: String):
-    ChatMessageDTO( body)
+    ChatMessageDTO(body)
 
 class ChatMessageOutDTO(val id: Int, var authorEmail:  String, body: String, val stubAttachments: Set<StubAttachmentDTO>?,
                         val timestamp: LocalDateTime):
