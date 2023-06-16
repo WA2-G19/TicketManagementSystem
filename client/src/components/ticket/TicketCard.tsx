@@ -22,13 +22,14 @@ function TicketCard({ticket, setSelected}: {
                     </Typography>
                     {ticket.customerEmail}
                 </Col>
+                <Col>
+                    <Typography variant="body2" color="primary">
+                        <strong>Priority Level</strong>
+                    </Typography>
+                    {ticket.priorityLevel || 'Not assigned yet'}
+                </Col>
             </HasAnyRole>
-            <Col>
-                <Typography variant="body2" color="primary">
-                    <strong>EAN</strong>
-                </Typography>
-                {ticket.productEan}
-            </Col>
+
         </Row>
         <Row className={"pt-3"}>
             <Col>
@@ -47,23 +48,23 @@ function TicketCard({ticket, setSelected}: {
         <Row className={"pt-3"}>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Expert Email</strong>
+                    <strong>Warranty UUID</strong>
                 </Typography>
-                {ticket.expertEmail || 'Not assigned yet'}
+                {ticket.warrantyUUID}
             </Col>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Priority Level</strong>
+                    <strong>Expert Email</strong>
                 </Typography>
-                {ticket.priorityLevel || 'Not assigned yet'}
+                {ticket.expertEmail || 'Not assigned yet'}
             </Col>
         </Row>
         <Row className={"pt-3"}>
             <Col>
                 <Typography variant="body2" color="primary">
-                    <strong>Warranty UUID</strong>
+                    <strong>EAN</strong>
                 </Typography>
-                {ticket.warrantyUUID}
+                {ticket.productEan}
             </Col>
         </Row>
         <Row className={"pt-3"}>
