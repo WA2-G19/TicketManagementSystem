@@ -21,7 +21,7 @@ async function getAllProducts(token: string | undefined) {
 
 }
 
-async function getProductByEAN(token: string, ean: string) {
+async function getProductByEAN(token: string | undefined, ean: string) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/products/" + ean, {

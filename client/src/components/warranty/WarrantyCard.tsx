@@ -1,9 +1,15 @@
-import {Badge, Button, Col, Container, Row} from "react-bootstrap";
+import {Badge, Button, Col, Container, Modal, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
-import React from "react";
+import React, {useState} from "react";
 import {WarrantyOut, Duration} from "../../classes/Warranty";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
+import ProductAPI from "../../API/Products/products";
+import {useAuthentication} from "../../contexts/Authentication";
+import ModalDialog from "../modals/ModalDialog";
+import ProductCard from "../product/ProductCard";
+import Product from "../../classes/Product";
+import {ModalProduct} from "../modals/ModalProduct";
 
 function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
     warranty: WarrantyOut,
@@ -14,6 +20,15 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
     const creationTime = new Date(warranty.creationTimestamp)
     const activationTime = new Date(warranty.activationTimestamp)
     const isExpired = duration.addToDate(creationTime) < now
+    const auth = useAuthentication()
+    const [show, setShow] = useState(false)
+    const [product, setProduct] = useState<Product | undefined>(undefined)
+
+    const seeDetailsProduct = async() => {
+        const productInfo = await ProductAPI.getProductByEAN(auth.user?.token, warranty.productEan)
+        setProduct(productInfo)
+        setShow(true)
+    }
 
     return <Container className={"border border-3 rounded border-primary"}>
         <Row className={"pt-3 ms-1"} style={{display: "flex", justifyContent: "left"}}>
@@ -104,6 +119,10 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
                 </Col> : <></>}
             </Row>
         </HasRole>
+        <Col>
+            <Button onClick={async () => await seeDetailsProduct()}>Product Detail</Button>
+        </Col>
+    <ModalProduct show={show} setShow={setShow} product={product}/>
     </Container>
 }
 
