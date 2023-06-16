@@ -11,7 +11,7 @@ import IsAuthenticated from "../components/authentication/IsAuthenticated";
 import Profile from "../components/homepage/Profile";
 import Welcome from "../components/homepage/Welcome";
 import TicketForm from "../components/ticket/TicketForm";
-import Stats from "../components/stats/Stats";
+import Stats from "../components/homepage/Stats";
 import WarrantyForm from "../components/warranty/WarrantyForm";
 import VendorForm from "../components/vendor/VendorForm";
 import StaffForm from "../components/staff/StaffForm";

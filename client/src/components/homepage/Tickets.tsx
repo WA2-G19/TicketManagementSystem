@@ -2,7 +2,6 @@ import TicketAPI from "../../API/Ticketing/tickets";
 import {TicketOut} from "../../classes/Ticket";
 import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
-import {Typography} from "@mui/material";
 import {useAuthentication} from "../../contexts/Authentication";
 import TicketCard from "../ticket/TicketCard";
 import StaffAPI from "../../API/Profile/staff";
@@ -16,11 +15,11 @@ function Tickets() {
     const [tickets, setTickets] = useState(Array<TicketOut>)
     const [selectedTicket, setSelectedTicket] = useState<TicketOut | null>(null)
     const [experts, setExperts] = useState(Array<Staff>)
-    const { user} = useAuthentication()
+    const {user} = useAuthentication()
     const alert = useAlert()
     const token = user!.token
     const isManager = user!.role.includes("Manager")
-    const [loading,setLoading]= useState(true)
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         async function getTickets() {
             const tmp = await TicketAPI.getTickets(token)
@@ -35,6 +34,7 @@ function Tickets() {
             }
             setLoading(false)
         }
+
         getTickets()
             .catch(err => {
                 alert.getBuilder()
@@ -88,17 +88,18 @@ function Tickets() {
                 {
                     !loading && tickets.length > 0 && tickets.map(ticket =>
                         <Col xs={12} className={"pt-3"} key={ticket.id}>
-                            <TicketCard ticket={ticket} setSelected={isManager ? () => setSelectedTicket(ticket) : undefined}/>
+                            <TicketCard ticket={ticket}
+                                        setSelected={isManager ? () => setSelectedTicket(ticket) : undefined}/>
                         </Col>
                     )
                 }
-                {
-                    !loading && tickets.length === 0 &&
-                    <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
-                        <strong>No tickets found</strong>
-                    </Typography>
-                }
             </Row>
+            {
+                !loading && tickets.length === 0 &&
+                <h1 color="primary" className={"position-absolute top-50 start-50"}>
+                    <strong>No tickets found</strong>
+                </h1>
+            }
             <ModalDialog
                 title={"Assign ticket"}
                 show={selectedTicket !== null}

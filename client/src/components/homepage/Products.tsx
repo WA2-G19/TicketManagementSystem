@@ -1,12 +1,11 @@
 import {useAuthentication} from "../../contexts/Authentication";
 import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
-import {Typography} from "@mui/material";
 import ProductAPI from "../../API/Products/products";
 import Product from "../../classes/Product";
 import ProductCard from "../product/ProductCard";
 import {Loading} from "../Loading";
-import { useAlert } from "../../contexts/Alert";
+import {useAlert} from "../../contexts/Alert";
 import {BsPlus} from "react-icons/bs";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
@@ -51,7 +50,7 @@ function Products(): JSX.Element {
                 </Col>
                 <HasRole role={"Manager"}>
                     <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                        <BsPlus size={"2em"} onClick={() => navigate("/products/add")} role={"button"} />
+                        <BsPlus size={"2em"} onClick={() => navigate("/products/add")} role={"button"}/>
                     </Col>
                 </HasRole>
             </Row>
@@ -59,19 +58,18 @@ function Products(): JSX.Element {
             <Row>
                 {
                     !loading && products.length !== 0 && products.map(product =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={product.ean}>
-                            <ProductCard product={product} />
+                        <Col xs={12} sm={6} md={4} className={"pt-3 h-100"} key={product.ean}>
+                            <ProductCard product={product}/>
                         </Col>
                     )
                 }
-                {
-                    !loading && products.length === 0 &&
-                    <Typography variant="h5" component="div" color="primary"
-                                className={"position-absolute top-50 start-50"}>
-                        <strong>No product found</strong>
-                    </Typography>
-                }
             </Row>
+            {
+                !loading && products.length === 0 &&
+                <h1 color="primary" className={"position-absolute top-50 start-50"}>
+                    <strong>No product found</strong>
+                </h1>
+            }
         </Container>)
 }
 

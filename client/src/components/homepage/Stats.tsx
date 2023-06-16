@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Col, Container, Row} from "react-bootstrap";
-import {StatCard} from "./StatCard";
-import {useAuthentication} from "../../contexts/Authentication";
+import {StatCard} from "../stats/StatCard";
 
 function Stats() {
 

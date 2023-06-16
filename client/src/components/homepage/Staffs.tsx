@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
-import {Typography} from "@mui/material";
 import {Staff} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
 import {useAuthentication} from "../../contexts/Authentication";
@@ -13,7 +12,7 @@ import {useNavigate} from "react-router-dom";
 
 function Staffs() {
     const navigate = useNavigate()
-    const { user } = useAuthentication()
+    const {user} = useAuthentication()
     const alert = useAlert()
     const [staffs, setStaffs] = useState(Array<Staff>)
     const [loading, setLoading] = useState(true)
@@ -51,7 +50,7 @@ function Staffs() {
                 </Col>
                 <HasRole role={"Manager"}>
                     <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                        <BsPlus size={"2em"} onClick={() => navigate("/staffs/add")} role={"button"} />
+                        <BsPlus size={"2em"} onClick={() => navigate("/staffs/add")} role={"button"}/>
                     </Col>
                 </HasRole>
             </Row>
@@ -60,17 +59,17 @@ function Staffs() {
                 {
                     !loading && staffs.length !== 0 && staffs.map(staff =>
                         <Col xs={12} sm={6} md={4} className={"pt-3"} key={staff.email}>
-                            <StaffCard staff={staff} />
+                            <StaffCard staff={staff}/>
                         </Col>
                     )
                 }
-                {
-                    !loading && staffs.length === 0 &&
-                    <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
-                        <strong>No staff found</strong>
-                    </Typography>
-                }
             </Row>
+            {
+                !loading && staffs.length === 0 &&
+                <h1 color="primary" className={"position-absolute top-50 start-50"}>
+                    <strong>No staff found</strong>
+                </h1>
+            }
         </Container>
     )
 }

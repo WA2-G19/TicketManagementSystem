@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
-import {Typography} from "@mui/material";
 import {useAuthentication} from "../../contexts/Authentication";
 import {Loading} from "../Loading";
 import {useAlert} from "../../contexts/Alert";
@@ -12,7 +11,7 @@ import SkillCard from "../skill/SkillCard";
 
 function Skills() {
     const navigate = useNavigate()
-    const { user } = useAuthentication()
+    const {user} = useAuthentication()
     const alert = useAlert()
     const [skills, setSkills] = useState(Array<Skill>)
     const [loading, setLoading] = useState(true)
@@ -54,7 +53,7 @@ function Skills() {
                     <h1>Skills</h1>
                 </Col>
                 <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                    <BsPlus size={"2em"} onClick={() => navigate("/skills/add")} role={"button"} />
+                    <BsPlus size={"2em"} onClick={() => navigate("/skills/add")} role={"button"}/>
                 </Col>
             </Row>
             {loading && <Loading/>}
@@ -62,17 +61,17 @@ function Skills() {
                 {
                     !loading && skills.length !== 0 && skills.map(skill =>
                         <Col xs={12} sm={6} md={4} className={"pt-3"} key={skill.name}>
-                            <SkillCard skill={skill} forceReload={() => setDirty(true)} />
+                            <SkillCard skill={skill} forceReload={() => setDirty(true)}/>
                         </Col>
                     )
                 }
-                {
-                    !loading && skills.length === 0 &&
-                    <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
-                        <strong>No skill found</strong>
-                    </Typography>
-                }
             </Row>
+            {
+                !loading && skills.length === 0 &&
+                <h1 color="primary" className={"position-absolute top-50 start-50"}>
+                    <strong>No skill found</strong>
+                </h1>
+            }
         </Container>
     )
 }

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
-import {Typography} from "@mui/material";
 import {Vendor} from "../../classes/Profile";
 import VendorAPI from "../../API/Profile/vendor";
 import {useAuthentication} from "../../contexts/Authentication";
@@ -13,7 +12,7 @@ import {useNavigate} from "react-router-dom";
 
 function Vendors() {
     const navigate = useNavigate()
-    const { user } = useAuthentication()
+    const {user} = useAuthentication()
     const alert = useAlert()
     const [vendors, setVendors] = useState(Array<Vendor>)
     const [loading, setLoading] = useState(true)
@@ -51,7 +50,7 @@ function Vendors() {
                 </Col>
                 <HasRole role={"Manager"}>
                     <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                        <BsPlus size={"2em"} onClick={() => navigate("/vendors/add")} role={"button"} />
+                        <BsPlus size={"2em"} onClick={() => navigate("/vendors/add")} role={"button"}/>
                     </Col>
                 </HasRole>
             </Row>
@@ -64,13 +63,13 @@ function Vendors() {
                         </Col>
                     )
                 }
-                {
-                    !loading && vendors.length === 0 &&
-                    <Typography variant="h5" component="div" color="primary" className={"position-absolute top-50 start-50"}>
-                        <strong>No vendors found</strong>
-                    </Typography>
-                }
             </Row>
+            {
+                !loading && vendors.length === 0 &&
+                <h1 color="primary" className={"position-absolute top-50 start-50"}>
+                    <strong>No vendors found</strong>
+                </h1>
+            }
         </Container>
     )
 }
