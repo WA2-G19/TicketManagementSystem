@@ -6,12 +6,14 @@ import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {BsArrowLeft} from "react-icons/bs";
 import {CredentialStaff, Staff, StaffType} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
+import SkillAPI from "../../API/Skill/skill";
+import {Skill} from "../../classes/Skill";
 
 function StaffForm(): JSX.Element {
     const navigate = useNavigate()
     const { user } = useAuthentication()
     const alert = useAlert()
-    const [skills, setSkills] = useState(Array<string>)
+    const [skills, setSkills] = useState(Array<Skill>)
     const token = user!.token
 
     const emailRef = useRef<HTMLInputElement>(null)
@@ -24,7 +26,10 @@ function StaffForm(): JSX.Element {
 
     useEffect(() => {
         async function getSkills() {
-            //TODO: Get skills API
+            const tmp = await SkillAPI.getAll(token)
+            if (tmp) {
+                setSkills(tmp)
+            }
         }
 
         getSkills()
@@ -35,12 +40,13 @@ function StaffForm(): JSX.Element {
                     .setButtonsOk()
                     .show()
             })
-    })
+    }, [token])
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
         if (emailRef.current && nameRef.current && surnameRef.current && typeRef.current && skillsRef.current && passwordRef.current && confirmPasswordRef.current) {
             try {
+                debugger
                 const skills = Array<string>()
                 for (let i = 0; i < skillsRef.current.selectedOptions.length;i++) {
                     skills.push(skillsRef.current.selectedOptions[i].value)
@@ -117,10 +123,10 @@ function StaffForm(): JSX.Element {
                             label={"Skills"}
                             className={"mb-3"}
                         >
-                            <Form.Select required={false} ref={skillsRef} multiple={true}>
+                            <Form.Select required={false} ref={skillsRef} multiple={true} style={{height: "10em"}}>
                                 {
                                     skills.map(s =>
-                                        <option key={s} value={s}>{s}</option>
+                                        <option key={s.name} value={s.name}>{s.name}</option>
                                     )
                                 }
                             </Form.Select>
@@ -147,7 +153,7 @@ function StaffForm(): JSX.Element {
                             }} />
                         </Form.FloatingLabel>
                         <Button type={"submit"}>
-                            Create vendor
+                            Create staff member
                         </Button>
                     </Form>
                 </Col>

@@ -76,7 +76,7 @@ export class Staff extends APIObject {
             name: this.name,
             surname: this.surname,
             type: this.type,
-            skills: JSON.stringify(this.skills)
+            skills: this.skills
         })
     }
 }

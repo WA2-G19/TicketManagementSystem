@@ -3,7 +3,9 @@ package it.polito.wa2.g19.server.profiles.staff
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
+import it.polito.wa2.g19.server.repositories.jpa.SkillRepository
 import it.polito.wa2.g19.server.repositories.jpa.StaffRepository
+import it.polito.wa2.g19.server.skills.SkillNotFoundException
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
@@ -12,6 +14,7 @@ import org.keycloak.representations.idm.CredentialRepresentation
 import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,7 +23,8 @@ import java.util.*
 @Service
 @Transactional("transactionManager")
 class StaffServiceImpl(
-    private val staffRepository: StaffRepository
+    private val staffRepository: StaffRepository,
+    private val skillRepository: SkillRepository
 ) : StaffService {
 
     @Autowired
@@ -115,6 +119,9 @@ class StaffServiceImpl(
                 email = profile.email.trim()
                 name = profile.name
                 surname = profile.surname
+                skills = profile.skills.map {
+                    skillRepository.findByIdOrNull(it) ?: throw SkillNotFoundException()
+                }.toMutableSet()
             }
             staffRepository.save(p)
         } catch (e: Exception){

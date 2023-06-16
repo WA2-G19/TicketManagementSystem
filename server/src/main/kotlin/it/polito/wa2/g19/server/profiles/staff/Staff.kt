@@ -1,6 +1,7 @@
 package it.polito.wa2.g19.server.profiles.staff
 
 import it.polito.wa2.g19.server.profiles.Profile
+import it.polito.wa2.g19.server.skills.Skill
 import jakarta.persistence.*
 
 @Entity

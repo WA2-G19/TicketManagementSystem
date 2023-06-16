@@ -88,6 +88,11 @@ class ResourceServerConfig {
             .requestMatchers(HttpMethod.GET, "/API/warranty/*")
                 .hasAnyRole("Client", "Vendor", "Manager")
             // ================================== //
+            // Skill API
+            // ================================== //
+            .requestMatchers("/API/skill")
+                .hasRole("Manager")
+            // ================================== //
             // Login/Sign up API
             // ================================== //
             .requestMatchers("/API/login")

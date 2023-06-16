@@ -15,6 +15,8 @@ import Stats from "../components/stats/Stats";
 import WarrantyForm from "../components/warranty/WarrantyForm";
 import VendorForm from "../components/vendor/VendorForm";
 import StaffForm from "../components/staff/StaffForm";
+import Skills from "../components/homepage/Skills";
+import SkillForm from "../components/skill/SkillForm";
 
 function HomePage() {
     return (
@@ -23,7 +25,7 @@ function HomePage() {
                 <SidebarLayout.Main>
                     <HasRole role={"Manager"} key={"manager"}>
                         <Routes>
-                            <Route path={"/stats"} element={<p><Stats/></p>} />
+                            <Route path={"/stats"} element={<Stats/>} />
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/staffs"} element={<Staffs />} />
                             <Route path={"/staffs/add"} element={<StaffForm />} />
@@ -31,6 +33,8 @@ function HomePage() {
                             <Route path={"/vendors/add"} element={<VendorForm />} />
                             <Route path={"/products"} element={<Products />} />
                             <Route path={"/warranties"} element={<Warranties />} />
+                            <Route path={"/skills"} element={<Skills />} />
+                            <Route path={"/skills/add"} element={<SkillForm />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Client"} key={"client"}>

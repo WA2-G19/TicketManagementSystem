@@ -19,6 +19,7 @@ interface User {
     name: string
     role: string[]
     token: string
+    exp: number
 }
 
 const AuthenticationContext = createContext<Authentication | null>(null)
@@ -32,9 +33,14 @@ function AuthenticationContextProvider({ children }: {
             return null
         try {
             const user = jwt_decode<User>(token)
+            if (Date.now() >= user.exp * 1000) {
+                localStorage.removeItem("jwt")
+                return null
+            }
             user.token = token
             return user
         } catch (e) {
+            localStorage.removeItem("jwt")
             console.error(e)
             return null
         }

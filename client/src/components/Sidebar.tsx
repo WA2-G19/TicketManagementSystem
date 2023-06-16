@@ -36,6 +36,9 @@ const managerSideBar: Array<SidebarLink> = [{
     path: "/warranties",
     display: "Warranties"
 }, {
+    path: "/skills",
+    display: "Skills"
+}, {
     path: "/profile",
     display: "Profile"
 }]

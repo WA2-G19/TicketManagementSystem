@@ -1,5 +1,6 @@
-package it.polito.wa2.g19.server.profiles.staff
+package it.polito.wa2.g19.server.skills
 
+import it.polito.wa2.g19.server.profiles.staff.Staff
 import jakarta.persistence.*
 
 @Table(name = "skill")
