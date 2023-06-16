@@ -1,13 +1,21 @@
 import {TicketOut} from "../../classes/Ticket";
-import React from "react";
+import React, {useState} from "react";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import HasAnyRole from "../authentication/HasAnyRole";
+import ModalDialog from "../modals/ModalDialog";
+import {ChatWindow} from "../chat /ChatWindow";
+import {ModalChat} from "../modals/ModalChat";
 
 function TicketCard({ticket, setSelected}: {
     ticket: TicketOut,
     setSelected?: (() => void)
 }): JSX.Element {
+
+    const [show, setShow] = useState(false)
+
+
+
     return <Container className={"border border-3 rounded border-primary p-3"}>
         <Row className={"ps-3"}>
             <Typography variant="h5" component="div" color="primary">
@@ -68,7 +76,7 @@ function TicketCard({ticket, setSelected}: {
             </Col>
         </Row>
         <Row className={"pt-3"}>
-            <Col md={2}><Button>Open chat</Button></Col>
+            <Col md={2}><Button onClick ={ () => setShow(true)}>Open chat</Button></Col>
             {
                 setSelected !== undefined &&
                 <Col>
@@ -76,6 +84,7 @@ function TicketCard({ticket, setSelected}: {
                 </Col>
             }
         </Row>
+        <ModalChat show={show} setShow={setShow}/>
     </Container>
 }
 
