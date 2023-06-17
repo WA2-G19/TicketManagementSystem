@@ -76,7 +76,7 @@ function TicketCard({ticket, setSelected}: {
             </Col>
         </Row>
         <Row className={"pt-3"}>
-            <Col md={2}><Button onClick ={ () => setShow(true)}>Open chat</Button></Col>
+            <Col md={2}><Button onClick ={() => setShow(true)}>Open chat</Button></Col>
             {
                 setSelected !== undefined &&
                 <Col>
@@ -84,7 +84,7 @@ function TicketCard({ticket, setSelected}: {
                 </Col>
             }
         </Row>
-        <ModalChat show={show} setShow={setShow}/>
+        <ModalChat show={show} setShow={setShow} ticket={ticket.id}/>
     </Container>
 }
 

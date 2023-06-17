@@ -4,17 +4,18 @@ import {Divider} from "@mui/material";
 
 
 interface ChatReceiverItemProps {
-
+    message: string,
+    sender: string
 }
 
 export function ChatReceiverItem(props: ChatReceiverItemProps): JSX.Element {
-    return <Row className={"p-3 border border-3"}>
-        <Col xs={10}>
-            Hello from Receiver
-        </Col>
-        <Col xs = {2} className={"border border-3"}>
-            Expert
-        </Col>
+    return <Row className={"p-3 border border-3 flex-row text-center"}>
+        <Row style={{textAlign: "center", background: "darkred"}}>
+            {props.sender}
+        </Row>
+        <Row className={"pt-2"}>
+            {props.message}
+        </Row>
 
     </Row>
 }
