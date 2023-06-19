@@ -10,8 +10,8 @@ import it.polito.wa2.g19.server.ticketing.tickets.Ticket
 import it.polito.wa2.g19.server.ticketing.tickets.TicketDTO
 import it.polito.wa2.g19.server.warranty.Warranty
 import java.sql.Timestamp
-import java.time.Duration
 import java.time.LocalDateTime
+import java.time.Period
 import java.util.*
 
 class Util {
@@ -143,7 +143,7 @@ class Util {
                 it.product = product
                 it.creationTimestamp = LocalDateTime.now().minusDays(3)
                 it.activationTimestamp = LocalDateTime.now()
-                it.duration = Duration.ofDays(4)
+                it.duration = Period.ofDays(4)
                 it
             }
         }
@@ -155,7 +155,7 @@ class Util {
                 it.product = product
                 it.creationTimestamp = LocalDateTime.now().minusDays(3)
                 it.activationTimestamp = LocalDateTime.now()
-                it.duration = Duration.ofDays(1)
+                it.duration = Period.ofDays(1)
                 it
             }
         }
@@ -166,7 +166,7 @@ class Util {
                 it.vendor = vendor
                 it.product = product
                 it.creationTimestamp = LocalDateTime.now().minusDays(3)
-                it.duration = Duration.ofDays(4)
+                it.duration = Period.ofDays(4)
                 it
             }
         }

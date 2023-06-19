@@ -37,7 +37,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.time.Duration
+import java.time.Period
 import java.util.*
 
 @Testcontainers
@@ -228,7 +228,7 @@ class WarrantyTest {
     fun `create a new warranty is successful`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(vendorToken)
-        val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
+        val warrantyInDTO = WarrantyInDTO(product.ean, Period.ofDays(1))
         val response = restTemplate.exchange(
             "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
@@ -257,7 +257,7 @@ class WarrantyTest {
         for (token in listOf(customerToken, managerToken, expertToken)) {
             val headers = HttpHeaders()
             headers.setBearerAuth(token)
-            val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
+            val warrantyInDTO = WarrantyInDTO(product.ean, Period.ofDays(1))
             val response = restTemplate.exchange(
                 "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
                 WarrantyOutDTO::class.java
@@ -268,7 +268,7 @@ class WarrantyTest {
 
         val headers = HttpHeaders()
 
-        val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
+        val warrantyInDTO = WarrantyInDTO(product.ean, Period.ofDays(1))
         val response = restTemplate.exchange(
             "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
@@ -281,7 +281,7 @@ class WarrantyTest {
     fun `activate a existing warranty is successful`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(vendorToken)
-        val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
+        val warrantyInDTO = WarrantyInDTO(product.ean, Period.ofDays(1))
         val response = restTemplate.exchange(
             "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
@@ -301,7 +301,7 @@ class WarrantyTest {
     fun `not customer cannot activate an existing warranty`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(vendorToken)
-        val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
+        val warrantyInDTO = WarrantyInDTO(product.ean, Period.ofDays(1))
         val response = restTemplate.exchange(
             "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
@@ -343,7 +343,7 @@ class WarrantyTest {
     fun `activate an activated warranty is unsuccessful`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(vendorToken)
-        val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(1))
+        val warrantyInDTO = WarrantyInDTO(product.ean, Period.ofDays(1))
         val response = restTemplate.exchange(
             "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
@@ -371,7 +371,7 @@ class WarrantyTest {
     fun `activate an expired warranty is unsuccessful`() {
         val headers = HttpHeaders()
         headers.setBearerAuth(vendorToken)
-        val warrantyInDTO = WarrantyInDTO(product.ean, Duration.ofDays(-1))
+        val warrantyInDTO = WarrantyInDTO(product.ean, Period.ofDays(-1))
         val response = restTemplate.exchange(
             "$prefixEndPoint", HttpMethod.POST, HttpEntity(warrantyInDTO, headers),
             WarrantyOutDTO::class.java
