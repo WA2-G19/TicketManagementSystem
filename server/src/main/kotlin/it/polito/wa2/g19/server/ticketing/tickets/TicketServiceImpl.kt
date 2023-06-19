@@ -132,7 +132,7 @@ class TicketServiceImpl(
         val ticket: Ticket = ticketRepository.findTicketByIdAndCustomerEmail(ticketId, client.name) ?: throw TicketNotFoundException()
         if (ticket.status == TicketStatusEnum.Closed || ticket.status == TicketStatusEnum.Resolved) {
             ticket.status = TicketStatusEnum.Reopened
-            ticket.statusHistory.add(ReopenedTicketStatus().apply {
+            ticketStatusRepository.save(ReopenedTicketStatus().apply {
                 this.ticket = ticket
                 timestamp = LocalDateTime.now()
             })
@@ -157,7 +157,7 @@ class TicketServiceImpl(
             ticket.expert = expert
             ticket.status = TicketStatusEnum.InProgress
             ticket.priorityLevel = priorityLevelRepository.findByIdOrNull(ticketStatus.priorityLevel!!.name)
-            ticket.statusHistory.add(InProgressTicketStatus().apply {
+            ticketStatusRepository.save(InProgressTicketStatus().apply {
                 this.ticket = ticket
                 this.expert = expert
                 by = manager
@@ -188,7 +188,7 @@ class TicketServiceImpl(
         val resolver = staffRepository.findByEmailIgnoreCase(resolverEmail) ?: throw ProfileNotFoundException()
         if (ticket.status == TicketStatusEnum.Open || ticket.status == TicketStatusEnum.Reopened || ticket.status == TicketStatusEnum.InProgress){
             ticket.status = TicketStatusEnum.Resolved
-            ticket.statusHistory.add(ResolvedTicketStatus().apply {
+            ticketStatusRepository.save(ResolvedTicketStatus().apply {
                 this.ticket = ticket
                 by = resolver
                 timestamp = LocalDateTime.now()
@@ -215,7 +215,7 @@ class TicketServiceImpl(
             ticket.status = TicketStatusEnum.Closed
             ticket.expert = null
             ticket.priorityLevel = null
-            ticket.statusHistory.add(ClosedTicketStatus().apply {
+            ticketStatusRepository.save(ClosedTicketStatus().apply {
                 this.ticket = ticket
                 by = closer
             })

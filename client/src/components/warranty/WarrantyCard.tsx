@@ -1,4 +1,4 @@
-import {Badge, Button, Col, Container, Modal, Row} from "react-bootstrap";
+import {Badge, Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import React, {useState} from "react";
 import {WarrantyOut, Duration} from "../../classes/Warranty";
@@ -6,8 +6,6 @@ import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
 import ProductAPI from "../../API/Products/products";
 import {useAuthentication} from "../../contexts/Authentication";
-import ModalDialog from "../modals/ModalDialog";
-import ProductCard from "../product/ProductCard";
 import Product from "../../classes/Product";
 import {ModalProduct} from "../modals/ModalProduct";
 

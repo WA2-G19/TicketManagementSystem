@@ -46,7 +46,6 @@ function StaffForm(): JSX.Element {
         e.preventDefault()
         if (emailRef.current && nameRef.current && surnameRef.current && typeRef.current && skillsRef.current && passwordRef.current && confirmPasswordRef.current) {
             try {
-                debugger
                 const skills = Array<string>()
                 for (let i = 0; i < skillsRef.current.selectedOptions.length;i++) {
                     skills.push(skillsRef.current.selectedOptions[i].value)

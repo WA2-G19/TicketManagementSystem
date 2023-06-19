@@ -36,11 +36,13 @@ abstract class TicketStatus : EntityBase<Int>(), Comparable<TicketStatus> {
 }
 
 @Entity
+@DiscriminatorValue("Open")
 class OpenTicketStatus : TicketStatus() {
     override fun toDTO() = TicketStatusDTO(ticket.getId()!!, TicketStatusEnum.Open, null, null, null, timestamp)
 }
 
 @Entity
+@DiscriminatorValue("Resolved")
 class ResolvedTicketStatus : TicketStatus() {
     @ManyToOne
     lateinit var by: Staff
@@ -49,6 +51,7 @@ class ResolvedTicketStatus : TicketStatus() {
 }
 
 @Entity
+@DiscriminatorValue("Closed")
 class ClosedTicketStatus : TicketStatus() {
     @ManyToOne
     lateinit var by: Staff
@@ -57,6 +60,7 @@ class ClosedTicketStatus : TicketStatus() {
 }
 
 @Entity
+@DiscriminatorValue("InProgress")
 class InProgressTicketStatus : TicketStatus() {
 
     @ManyToOne
@@ -70,6 +74,7 @@ class InProgressTicketStatus : TicketStatus() {
 }
 
 @Entity
+@DiscriminatorValue("Reopened")
 class ReopenedTicketStatus : TicketStatus() {
 
     override fun toDTO() = TicketStatusDTO(ticket.getId()!!, TicketStatusEnum.Reopened, null, null, null, timestamp)

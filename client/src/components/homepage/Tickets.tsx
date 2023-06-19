@@ -1,20 +1,16 @@
 import TicketAPI from "../../API/Ticketing/tickets";
-import {TicketOut} from "../../classes/Ticket";
+import {TicketOut, TicketStatusEnum} from "../../classes/Ticket";
 import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
 import {useAuthentication} from "../../contexts/Authentication";
 import TicketCard from "../ticket/TicketCard";
-import StaffAPI from "../../API/Profile/staff";
-import {Staff} from "../../classes/Profile";
-import StaffCard from "../staff/StaffCard";
-import ModalDialog from "../modals/ModalDialog";
 import {Loading} from "../Loading";
 import {useAlert} from "../../contexts/Alert";
+import ModalAssignTicket from "../modals/ModalAssignTicket";
 
 function Tickets() {
     const [tickets, setTickets] = useState(Array<TicketOut>)
-    const [selectedTicket, setSelectedTicket] = useState<TicketOut | null>(null)
-    const [experts, setExperts] = useState(Array<Staff>)
+    const [selectedTicket, setSelectedTicket] = useState<TicketOut | undefined>(undefined)
     const {user} = useAuthentication()
     const alert = useAlert()
     const token = user!.token
@@ -45,36 +41,6 @@ function Tickets() {
             })
     }, [token])
 
-    useEffect(() => {
-        if (isManager) {
-            StaffAPI.getProfilesWithStatistics(token)
-                .then(experts => {
-                    if (experts) {
-                        setExperts(experts)
-                    } else {
-                        alert.getBuilder()
-                            .setTitle("Error")
-                            .setMessage("Error loading experts. Try again later.")
-                            .setButtonsOk()
-                            .show()
-                    }
-                })
-                .catch(err => {
-                    alert.getBuilder()
-                        .setTitle("Error")
-                        .setMessage("Error loading experts. Details: " + err)
-                        .setButtonsOk()
-                        .show()
-                })
-        }
-    }, [token, isManager])
-
-    async function onAssigned(profile: Staff | undefined) {
-        //TODO: Assign ticket
-        console.log("Assigning ticket to ")
-        console.log(profile)
-    }
-
     return (
         <Container fluid>
             <Row className={"mt-3"}>
@@ -89,7 +55,7 @@ function Tickets() {
                     !loading && tickets.length > 0 && tickets.map(ticket =>
                         <Col xs={12} className={"pt-3"} key={ticket.id}>
                             <TicketCard ticket={ticket}
-                                        setSelected={isManager ? () => setSelectedTicket(ticket) : undefined}/>
+                                        setSelected={isManager && (ticket.status === TicketStatusEnum.Open || ticket.status === TicketStatusEnum.Reopened) ? () => setSelectedTicket(ticket) : undefined}/>
                         </Col>
                     )
                 }
@@ -100,15 +66,14 @@ function Tickets() {
                     <strong>No tickets found</strong>
                 </h1>
             }
-            <ModalDialog
-                title={"Assign ticket"}
-                show={selectedTicket !== null}
-                hide={() => setSelectedTicket(null)}
-                elements={experts}
-                onComplete={onAssigned}
-                keySelector={(e) => e.email}
-                render={(e) => <StaffCard staff={e}/>}
-            />
+            {
+                isManager &&
+                <ModalAssignTicket
+                    ticket={selectedTicket}
+                    hide={() => setSelectedTicket(undefined)}
+                />
+            }
+
         </Container>
     )
 }

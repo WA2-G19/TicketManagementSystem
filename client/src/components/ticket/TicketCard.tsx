@@ -3,8 +3,6 @@ import React, {useState} from "react";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import HasAnyRole from "../authentication/HasAnyRole";
-import ModalDialog from "../modals/ModalDialog";
-import {ChatWindow} from "../chat /ChatWindow";
 import {ModalChat} from "../modals/ModalChat";
 
 function TicketCard({ticket, setSelected}: {
