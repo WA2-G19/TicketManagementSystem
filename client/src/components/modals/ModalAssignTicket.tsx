@@ -7,7 +7,6 @@ import {useAlert} from "../../contexts/Alert";
 import {useAuthentication} from "../../contexts/Authentication";
 import StaffCard from "../staff/StaffCard";
 import TicketAPI from "../../API/Ticketing/tickets";
-import {useNavigate} from "react-router-dom";
 
 interface ModalAssignTicketProps {
     ticket?: TicketOut,
@@ -15,7 +14,6 @@ interface ModalAssignTicketProps {
 }
 
 function ModalAssignTicket({ ticket, hide }: ModalAssignTicketProps) {
-    const navigate = useNavigate()
     const alert = useAlert()
     const { user } = useAuthentication()
     const [experts, setExperts] = useState(Array<Staff>)
@@ -55,7 +53,7 @@ function ModalAssignTicket({ ticket, hide }: ModalAssignTicketProps) {
                 alert.getBuilder()
                     .setTitle("Assigned ticket")
                     .setMessage("Ticket assigned correctly!")
-                    .setButtonsOk(() => navigate(-1))
+                    .setButtonsOk(hide)
                     .show()
             } else {
                 alert.getBuilder()

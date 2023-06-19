@@ -19,7 +19,6 @@ function StaffForm(): JSX.Element {
     const emailRef = useRef<HTMLInputElement>(null)
     const nameRef = useRef<HTMLInputElement>(null)
     const surnameRef = useRef<HTMLInputElement>(null)
-    const typeRef = useRef<HTMLSelectElement>(null)
     const skillsRef = useRef<HTMLSelectElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
     const confirmPasswordRef = useRef<HTMLInputElement>(null)
@@ -44,14 +43,14 @@ function StaffForm(): JSX.Element {
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
-        if (emailRef.current && nameRef.current && surnameRef.current && typeRef.current && skillsRef.current && passwordRef.current && confirmPasswordRef.current) {
+        if (emailRef.current && nameRef.current && surnameRef.current && skillsRef.current && passwordRef.current && confirmPasswordRef.current) {
             try {
                 const skills = Array<string>()
                 for (let i = 0; i < skillsRef.current.selectedOptions.length;i++) {
                     skills.push(skillsRef.current.selectedOptions[i].value)
                 }
                 const response = await StaffAPI.createExpert(token, new CredentialStaff(
-                    new Staff(emailRef.current.value, nameRef.current.value, surnameRef.current.value, parseInt(typeRef.current.value), skills),
+                    new Staff(emailRef.current.value, nameRef.current.value, surnameRef.current.value, StaffType.Expert, skills),
                     passwordRef.current.value
                 ))
                 if (response) {
@@ -108,15 +107,6 @@ function StaffForm(): JSX.Element {
                             className={"mb-3"}
                         >
                             <Form.Control required={true} ref={surnameRef} />
-                        </Form.FloatingLabel>
-                        <Form.FloatingLabel
-                            label={"Type"}
-                            className={"mb-3"}
-                        >
-                            <Form.Select required={true} ref={typeRef}>
-                                <option value={StaffType.Expert}>Expert</option>
-                                <option value={StaffType.Manager}>Manager</option>
-                            </Form.Select>
                         </Form.FloatingLabel>
                         <Form.FloatingLabel
                             label={"Skills"}
