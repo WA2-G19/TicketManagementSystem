@@ -1,6 +1,5 @@
 package it.polito.wa2.g19.server.products
 
-import it.polito.wa2.g19.server.repositories.jpa.ProductRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

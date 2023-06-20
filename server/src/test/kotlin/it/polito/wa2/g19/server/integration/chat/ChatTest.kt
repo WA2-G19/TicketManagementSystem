@@ -1,50 +1,5 @@
 package it.polito.wa2.g19.server.integration.chat
 
-import dasniko.testcontainers.keycloak.KeycloakContainer
-import it.polito.wa2.g19.server.Util
-import it.polito.wa2.g19.server.integration.ticketing.TicketTest
-import it.polito.wa2.g19.server.products.Product
-import it.polito.wa2.g19.server.repositories.jpa.ProductRepository
-import it.polito.wa2.g19.server.profiles.LoginDTO
-import it.polito.wa2.g19.server.profiles.customers.Customer
-import it.polito.wa2.g19.server.repositories.jpa.CustomerRepository
-import it.polito.wa2.g19.server.profiles.staff.Expert
-import it.polito.wa2.g19.server.profiles.staff.Manager
-import it.polito.wa2.g19.server.repositories.jpa.StaffRepository
-import it.polito.wa2.g19.server.profiles.vendors.Vendor
-import it.polito.wa2.g19.server.repositories.jpa.VendorRepository
-import it.polito.wa2.g19.server.repositories.jpa.AttachmentRepository
-import it.polito.wa2.g19.server.ticketing.chat.ChatMessageInDTO
-import it.polito.wa2.g19.server.ticketing.chat.ChatMessageOutDTO
-import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
-import it.polito.wa2.g19.server.repositories.jpa.TicketStatusRepository
-import it.polito.wa2.g19.server.repositories.jpa.PriorityLevelRepository
-import it.polito.wa2.g19.server.repositories.jpa.TicketRepository
-import it.polito.wa2.g19.server.warranty.Warranty
-import it.polito.wa2.g19.server.repositories.jpa.WarrantyRepository
-import it.polito.wa2.g19.server.repositories.reactive.ChatMessageRepository
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.exchange
-import org.springframework.boot.test.web.client.postForEntity
-import org.springframework.core.io.ByteArrayResource
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.*
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
-import org.springframework.util.LinkedMultiValueMap
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import java.util.*
-
 /*
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

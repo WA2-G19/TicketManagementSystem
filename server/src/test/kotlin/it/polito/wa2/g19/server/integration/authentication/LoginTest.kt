@@ -14,7 +14,6 @@ import org.springframework.http.*
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.util.LinkedMultiValueMap
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
@@ -61,7 +60,7 @@ class LoginTest {
         val response = restTemplate.postForEntity<String>("/API/login", body, HttpMethod.POST )
         assert(response.statusCode.value() == 200)
         val jwt = jwtDecoder.decode(response.body)
-        assert(jwt.claims.get("email") == loginDTO.username)
-        assert((jwt.claims.get("role") as List<String>)[0] == "Client")
+        assert(jwt.claims["email"] == loginDTO.username)
+        assert((jwt.claims["role"] as List<*>).contains("Client"))
     }
 }

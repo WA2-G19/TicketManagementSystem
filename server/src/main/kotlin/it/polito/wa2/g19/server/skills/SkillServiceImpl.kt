@@ -1,6 +1,5 @@
 package it.polito.wa2.g19.server.skills
 
-import it.polito.wa2.g19.server.repositories.jpa.SkillRepository
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 

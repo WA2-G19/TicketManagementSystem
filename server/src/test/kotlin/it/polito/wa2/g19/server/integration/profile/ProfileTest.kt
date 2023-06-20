@@ -7,9 +7,9 @@ import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.LoginDTO
 import it.polito.wa2.g19.server.profiles.customers.CredentialCustomerDTO
 import it.polito.wa2.g19.server.profiles.customers.CustomerDTO
-import it.polito.wa2.g19.server.repositories.jpa.CustomerRepository
+import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.*
-import it.polito.wa2.g19.server.repositories.jpa.StaffRepository
+import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -39,8 +39,6 @@ import java.util.*
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace=AutoConfigureTestDatabase.Replace.NONE)
 class ProfileTest {
-
-    private val prefixEndPoint = "/API/profiles"
 
     @Autowired
     private lateinit var keycloak: Keycloak

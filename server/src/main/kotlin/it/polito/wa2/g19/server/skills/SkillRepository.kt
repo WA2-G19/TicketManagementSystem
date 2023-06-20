@@ -1,6 +1,5 @@
-package it.polito.wa2.g19.server.repositories.jpa
+package it.polito.wa2.g19.server.skills
 
-import it.polito.wa2.g19.server.skills.Skill
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

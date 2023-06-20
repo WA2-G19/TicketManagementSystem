@@ -3,8 +3,7 @@ package it.polito.wa2.g19.server.profiles.staff
 import it.polito.wa2.g19.server.profiles.DuplicateEmailException
 import it.polito.wa2.g19.server.profiles.KeycloakException
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.repositories.jpa.SkillRepository
-import it.polito.wa2.g19.server.repositories.jpa.StaffRepository
+import it.polito.wa2.g19.server.skills.SkillRepository
 import it.polito.wa2.g19.server.skills.SkillNotFoundException
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.apache.http.HttpStatus

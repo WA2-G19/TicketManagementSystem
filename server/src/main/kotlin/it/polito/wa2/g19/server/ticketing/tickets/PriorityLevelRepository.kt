@@ -1,4 +1,4 @@
-package it.polito.wa2.g19.server.repositories.jpa
+package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevel
 import org.springframework.data.jpa.repository.JpaRepository

@@ -2,11 +2,10 @@ package it.polito.wa2.g19.server.warranty
 
 import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.products.ProductNotFoundException
-import it.polito.wa2.g19.server.repositories.jpa.ProductRepository
+import it.polito.wa2.g19.server.products.ProductRepository
 import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
-import it.polito.wa2.g19.server.repositories.jpa.CustomerRepository
-import it.polito.wa2.g19.server.repositories.jpa.VendorRepository
-import it.polito.wa2.g19.server.repositories.jpa.WarrantyRepository
+import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
+import it.polito.wa2.g19.server.profiles.vendors.VendorRepository
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.access.prepost.PreAuthorize
