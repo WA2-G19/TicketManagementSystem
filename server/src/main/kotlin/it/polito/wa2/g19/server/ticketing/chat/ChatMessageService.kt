@@ -5,6 +5,8 @@ import org.springframework.web.multipart.MultipartFile
 
 interface ChatMessageService {
 
+    fun getUnreadMessages(ticketId: Int): Int
+
     fun getChatMessage(ticketId: Int,chatMessageId: Int): ChatMessageOutDTO
 
     fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO>

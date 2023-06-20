@@ -5,6 +5,7 @@
 // /{ticketId}/chat-messages/{chatMessageId}/attachments/{attachmentId} get */
 
 import {ChatMessageIn, ChatMessageOut, StubAttachmentDTO} from "../../classes/Chat";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 const { REACT_APP_SERVER_URL } = process.env;
 
@@ -111,6 +112,32 @@ async function getAttachmentByChatMessageId(token: string | undefined, ticketId:
 
 }
 
-const ChatAPI = { getChatMessage, getChatMessages, postChatMessages, getAttachmentByChatMessageId }
+async function getUnreadMessages(token: string, ticketId: number) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages/unread", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    if (response.ok) {
+        return parseInt(await response.text())
+    }
+    throw await response.json() as ProblemDetail
+}
+
+async function getAllUnreadMessages(token: string) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/chat-messages/unread", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    if (response.ok) {
+        return await response.json() as { [k: string]: number}
+    }
+    throw await response.json() as ProblemDetail
+}
+
+const ChatAPI = { getChatMessage, getChatMessages, postChatMessages, getAttachmentByChatMessageId, getUnreadMessages, getAllUnreadMessages }
 export default ChatAPI
 

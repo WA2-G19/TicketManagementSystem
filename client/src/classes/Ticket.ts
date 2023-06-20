@@ -47,7 +47,9 @@ export class TicketOut extends APIObject {
 
     warrantyUUID : string
 
-    constructor(id: number, customerEmail: string, productEan: string, description: string, status: TicketStatusEnum, priorityLevel: PriorityLevelEnum | undefined, expertEmail: string | undefined, warrantyUUID: string) {
+    unreadMessages?: number
+
+    constructor(id: number, customerEmail: string, productEan: string, description: string, status: TicketStatusEnum, priorityLevel: PriorityLevelEnum | undefined, expertEmail: string | undefined, warrantyUUID: string, unreadMessages?: number) {
         super()
         this.id = id
         this.customerEmail = customerEmail
@@ -57,6 +59,7 @@ export class TicketOut extends APIObject {
         this.expertEmail = expertEmail
         this.priorityLevel = priorityLevel
         this.warrantyUUID = warrantyUUID
+        this.unreadMessages = unreadMessages
     }
 
     toJSONObject(): string {

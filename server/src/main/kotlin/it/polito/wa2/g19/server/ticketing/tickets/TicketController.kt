@@ -42,7 +42,6 @@ class TicketController(
         @RequestParam(required = false) priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
         val principal = SecurityContextHolder.getContext().authentication
-        println(principal)
         val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
 

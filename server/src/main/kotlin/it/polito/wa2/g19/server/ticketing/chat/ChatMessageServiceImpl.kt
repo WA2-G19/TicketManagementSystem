@@ -1,5 +1,6 @@
 package it.polito.wa2.g19.server.ticketing.chat
 
+import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.ticketing.attachments.Attachment
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentRepository
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
@@ -34,6 +35,17 @@ class ChatMessageServiceImpl(
 ) : ChatMessageService {
 
     @PreAuthorize("isAuthenticated()")
+    override fun getUnreadMessages(ticketId: Int): Int {
+        val principal = SecurityContextHolder.getContext().authentication
+        val userEmail = principal.name
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        ticketService.getTicket(ticketId)
+        return chatMessageRepository.findByTicketId(ticketId)?.filter {
+            role != Role.ROLE_Manager && userEmail != it.getAuthor().email && !it.read
+        }?.size ?: 0
+    }
+
+    @PreAuthorize("isAuthenticated()")
     override fun getChatMessage(ticketId: Int, chatMessageId: Int): ChatMessageOutDTO {
         ticketService.getTicket(ticketId)
         val message = chatMessageRepository.findByTicketIdAndId(ticketId, chatMessageId) ?: throw MessageNotFoundException()
@@ -43,9 +55,16 @@ class ChatMessageServiceImpl(
 
     @PreAuthorize("isAuthenticated()")
     override fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO> {
+        val principal = SecurityContextHolder.getContext().authentication
+        val userEmail = principal.name
+        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         ticketService.getTicket(ticketId)
         return chatMessageRepository.findByTicketId(ticketId)!!
             .map {
+                if (role != Role.ROLE_Manager && userEmail != it.getAuthor().email) {
+                    it.read = true
+                    chatMessageRepository.save(it)
+                }
                 it.toOutDTO(attachmentRepository.findByMessage(it))
             }.toSet()
     }

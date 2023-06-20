@@ -1,3 +1,3 @@
-dtype,id,body,timestamp,ticket_id,customer_author_id,staff_author_id
-CustomerChatMessage,0,ciao,2023-06-14 17:40:08.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,
-CustomerChatMessage,1,mondo,2023-06-14 17:40:40.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,
+dtype,id,body,read,timestamp,ticket_id,customer_author_id,staff_author_id
+CustomerChatMessage,0,ciao,false,2023-06-14 17:40:08.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,
+CustomerChatMessage,1,mondo,false,2023-06-14 17:40:40.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,

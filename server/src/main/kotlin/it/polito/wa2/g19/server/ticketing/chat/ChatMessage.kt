@@ -51,6 +51,8 @@ abstract class ChatMessage : EntityBase<Int>() {
     open lateinit var attachments: Set<Attachment>
     @Column(nullable = false)
     open var body: String = ""
+    @Column(nullable = false)
+    open var read: Boolean = false
     @CreationTimestamp
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

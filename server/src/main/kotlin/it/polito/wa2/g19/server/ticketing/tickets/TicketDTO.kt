@@ -6,22 +6,23 @@ import jakarta.validation.constraints.NotBlank
 import java.util.UUID
 
 open class TicketDTO(
-    var id: Int? = null,
+    val id: Int? = null,
 
-    var warrantyUUID: UUID,
+    val warrantyUUID: UUID,
     @field:NotBlank(message = "description cannot be blank")
-    var description: String
+    val description: String
 )
 
 class TicketOutDTO(id: Int?,
                    warrantyUUID: UUID,
                    description: String,
 
-                   var customerEmail: String,
-                   var productEan: String,
-                   var priorityLevel: PriorityLevelEnum?,
-                   var expertEmail: String?,
-                   var status: TicketStatusEnum = TicketStatusEnum.Open
+                   val customerEmail: String,
+                   val productEan: String,
+                   val priorityLevel: PriorityLevelEnum?,
+                   val expertEmail: String?,
+                   val status: TicketStatusEnum = TicketStatusEnum.Open
+
 )
     : TicketDTO(id, warrantyUUID, description){
 }

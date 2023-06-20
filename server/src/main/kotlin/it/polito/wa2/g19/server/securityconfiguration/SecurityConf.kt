@@ -67,7 +67,9 @@ class ResourceServerConfig {
             // Tickets API
             // ================================== //
             .requestMatchers("/API/tickets/*/chat-messages/**")
-            .authenticated()
+                .authenticated()
+            .requestMatchers("/API/tickets/chat-messages/unread")
+                .hasAnyRole("Manager", "Expert", "Client")
             .requestMatchers("/API/stats/**")
                 .hasRole("Manager")
             .requestMatchers("/API/tickets/*")

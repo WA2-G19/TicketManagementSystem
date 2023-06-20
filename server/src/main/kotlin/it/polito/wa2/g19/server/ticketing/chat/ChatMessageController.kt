@@ -1,7 +1,10 @@
 package it.polito.wa2.g19.server.ticketing.chat
 
 import io.micrometer.observation.annotation.Observed
+import it.polito.wa2.g19.server.common.Role
 import it.polito.wa2.g19.server.common.Util
+import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
+import it.polito.wa2.g19.server.ticketing.tickets.TicketService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -10,6 +13,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -24,10 +28,39 @@ import java.net.URI
 @RequestMapping("/API/tickets")
 @Observed
 class ChatMessageController(
+    private val ticketService: TicketService,
     private val chatMessageService: ChatMessageService,
     @Autowired
     @Qualifier("requestMappingHandlerMapping") private val handlerMapping: RequestMappingHandlerMapping,
 ) {
+
+    @GetMapping("/chat-messages/unread")
+    @ResponseStatus(HttpStatus.OK)
+    fun getAllUnreadMessages(): Map<Int, Int> {
+        val principal = SecurityContextHolder.getContext().authentication
+        val email = principal.name
+
+        val tickets = when (Role.valueOf(principal.authorities.stream().findFirst().get().authority)) {
+            /*If the customer param is specified ignores it*/
+            Role.ROLE_Client -> ticketService.getTickets(email)
+            /*If the expert param is specified ignores it*/
+            Role.ROLE_Expert -> ticketService.getTickets(null, email,)
+
+            Role.ROLE_Manager -> ticketService.getTickets()
+
+            Role.ROLE_Vendor -> throw ForbiddenException()
+        }
+
+        return tickets.associate {
+            it.id!! to chatMessageService.getUnreadMessages(it.id)
+        }
+    }
+
+    @GetMapping("/{ticketId}/chat-messages/unread")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUnreadMessagesForTicket(@PathVariable ticketId: Int): Int {
+        return chatMessageService.getUnreadMessages(ticketId)
+    }
 
     @GetMapping("/{ticketId}/chat-messages/{chatMessageId}")
     @ResponseStatus(HttpStatus.OK)

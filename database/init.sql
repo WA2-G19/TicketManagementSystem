@@ -121,6 +121,7 @@ create table public.chat_message
     dtype              varchar(31)  not null,
     id                 integer      not null default nextval('public.chat_message_seq'),
     body               varchar(255) not null,
+    read               bit          not null,
     timestamp          timestamp(6) not null,
     ticket_id          integer      not null,
     customer_author_id uuid,
@@ -226,6 +227,6 @@ COPY public.ticket_status("dtype", "id", "timestamp", "ticket_id", "by_id", "exp
     FROM '/docker-entrypoint-initdb.d/ticket_status.csv'
     WITH DELIMITER ',' CSV HEADER;
 
-COPY public.chat_message("dtype", "id", "body", "timestamp","ticket_id", "customer_author_id", "staff_author_id")
+COPY public.chat_message("dtype", "id", "body", "read", "timestamp","ticket_id", "customer_author_id", "staff_author_id")
     FROM '/docker-entrypoint-initdb.d/chat_message.csv'
     WITH DELIMITER ',' CSV HEADER;

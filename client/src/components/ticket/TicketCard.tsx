@@ -1,6 +1,6 @@
 import {TicketOut} from "../../classes/Ticket";
 import React, {useState} from "react";
-import {Button, Col, Container, Row} from "react-bootstrap";
+import {Badge, Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import HasAnyRole from "../authentication/HasAnyRole";
 import {ModalChat} from "../modals/ModalChat";
@@ -14,7 +14,13 @@ function TicketCard({ticket, setSelected}: {
 
 
 
-    return <Container className={"border border-3 rounded border-primary p-3"}>
+    return <Container className={"border border-3 rounded border-primary p-3 position-relative"}>
+        {
+            ticket.unreadMessages !== undefined && ticket.unreadMessages !== 0 &&
+            <Badge className={"position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"}>
+                {ticket.unreadMessages}
+            </Badge>
+        }
         <Row className={"ps-3"}>
             <Typography variant="h5" component="div" color="primary">
                 ID {ticket.id}

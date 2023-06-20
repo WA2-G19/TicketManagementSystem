@@ -1,15 +1,13 @@
 package it.polito.wa2.g19.server.ticketing.tickets
 
 import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
-import it.polito.wa2.g19.server.ticketing.statuses.TicketStatus
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusDTO
 import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
-import org.springframework.security.access.prepost.PreAuthorize
 
 interface TicketService {
     fun getTicket(id: Int): TicketOutDTO
 
-    fun getTickets(customerEmail: String?, expertEmail: String?, statusEnum: TicketStatusEnum?, priorityLevel: PriorityLevelEnum?): List<TicketOutDTO>
+    fun getTickets(customerEmail: String? = null, expertEmail: String? = null, statusEnum: TicketStatusEnum? = null, priorityLevel: PriorityLevelEnum? = null): List<TicketOutDTO>
 
     fun createTicket(ticket: TicketDTO) : Int
 

@@ -7,6 +7,7 @@ import TicketCard from "../ticket/TicketCard";
 import {Loading} from "../Loading";
 import {useAlert} from "../../contexts/Alert";
 import ModalAssignTicket from "../modals/ModalAssignTicket";
+import ChatAPI from "../../API/Ticketing/chat";
 
 function Tickets() {
     const [tickets, setTickets] = useState(Array<TicketOut>)
@@ -18,9 +19,12 @@ function Tickets() {
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         async function getTickets() {
-            const tmp = await TicketAPI.getTickets(token)
-            if (tmp) {
-                setTickets(tmp)
+            const [tickets, messages] = await Promise.all([TicketAPI.getTickets(token), ChatAPI.getAllUnreadMessages(token)])
+            if (tickets) {
+                setTickets(tickets.map(t => {
+                    t.unreadMessages = messages[`${t.id}`]
+                    return t
+                }))
             } else {
                 alert.getBuilder()
                     .setTitle("Error")
