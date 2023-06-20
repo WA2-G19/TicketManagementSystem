@@ -59,7 +59,8 @@ export class Staff extends APIObject {
     type: StaffType
     skills: Array<string>
     avgTime: number | undefined
-    ticketClosed: number | undefined
+    ticketsClosed: number | undefined
+    ticketsInProgress: number | undefined
 
     constructor(email: string, name: string, surname: string, type: StaffType, skills: Array<string>) {
         super()

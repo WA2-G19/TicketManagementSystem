@@ -1,4 +1,4 @@
-class ProblemDetail {
+class ProblemDetail extends Error {
     type: string
     title: string
     status: number
@@ -6,6 +6,7 @@ class ProblemDetail {
     instance: string
 
     constructor(type: string, title: string, status: number, detail: string, instance: string) {
+        super(`${instance} [${status}] (${title}) ${detail}`)
         this.type = type;
         this.title = title;
         this.status = status;

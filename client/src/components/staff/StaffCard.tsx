@@ -33,13 +33,13 @@ function StaffCard({ staff }: {
                 </Col>
             </Row>
             {
-                staff.ticketClosed !== undefined &&
+                staff.ticketsClosed !== undefined &&
                 <Row className={"pt-2"}>
                     <Col>
                         <Typography display={"inline"} variant="body1" color="primary">
                             <strong>Ticket Closed:</strong>
                         </Typography>
-                        {" " + staff.ticketClosed}
+                        {" " + staff.ticketsClosed}
                     </Col>
                 </Row>
             }

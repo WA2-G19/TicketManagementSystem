@@ -17,7 +17,6 @@ interface TicketStatusRepository: JpaRepository<TicketStatus, Int> {
 
     @Query(value = "select ts from TicketStatus ts join fetch ts.ticket where (ts.id IN (SELECT ots.id from InProgressTicketStatus ots where ots.expert.email = ?1) or (ts.id IN (SELECT cts.id from ClosedTicketStatus cts where cts.by.email = ?1))) order by ts.ticket.id, ts.timestamp asc")
     fun getTicketStatusByExpert(expertEmail: String): List<TicketStatus>
-
 }
 
 
