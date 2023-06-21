@@ -21,9 +21,10 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
     const auth = useAuthentication()
     const [show, setShow] = useState(false)
     const [product, setProduct] = useState<Product | undefined>(undefined)
+    const token = auth.user!.token
 
     const seeDetailsProduct = async() => {
-        const productInfo = await ProductAPI.getProductByEAN(auth.user?.token, warranty.productEan)
+        const productInfo = await ProductAPI.getProductByEAN(token, warranty.productEan)
         setProduct(productInfo)
         setShow(true)
     }

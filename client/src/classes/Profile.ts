@@ -1,14 +1,10 @@
-import APIObject from "./APIObject"
-
-
-export class Profile extends APIObject {
+export class Profile {
     name: string
     surname: string
     email: string
     address: string
 
     constructor(email: string, name: string, surname: string, address: string) {
-        super()
         this.name = name
         this.surname = surname
         this.email = email
@@ -24,22 +20,18 @@ export class Profile extends APIObject {
             address: this.address
         })
     }
-
 }
 
-export class CredentialCustomer extends APIObject {
-
+export class CredentialCustomer {
     profile: Profile
     password: string
 
     constructor(profile: Profile, password: string) {
-        super()
         this.profile = profile
         this.password = password
     }
 
     toJsonObject(): string {
-
         return JSON.stringify({
             customerDTO: this.profile,
             password: this.password
@@ -52,101 +44,77 @@ export enum StaffType {
     Expert
 }
 
-export class Staff extends APIObject {
+export class Staff {
     name: string
     surname: string
     email: string
     type: StaffType
     skills: Array<string>
-    avgTime: number | undefined
-    ticketsClosed: number | undefined
-    ticketsInProgress: number | undefined
+    avgTime?: number
+    ticketsClosed?: number
+    ticketsInProgress?: number
 
-    constructor(email: string, name: string, surname: string, type: StaffType, skills: Array<string>) {
-        super()
+    constructor(email: string, name: string, surname: string, type: StaffType, skills: Array<string>, avgTime?: number, ticketsClosed?: number, ticketsInProgress?: number) {
         this.name = name
         this.surname = surname
         this.email = email
         this.type = type
         this.skills = skills
-    }
-
-    toJsonObject(): string {
-        return JSON.stringify({
-            email: this.email,
-            name: this.name,
-            surname: this.surname,
-            type: this.type,
-            skills: this.skills
-        })
+        this.avgTime = avgTime
+        this.ticketsClosed = ticketsClosed
+        this.ticketsInProgress = ticketsInProgress
     }
 }
 
-export class CredentialStaff extends APIObject {
-
+export class CredentialStaff {
     staff: Staff
     password: string
 
-
     constructor(staff: Staff, password: string) {
-        super()
         this.staff = staff
         this.password = password
     }
 
     toJsonObject(): string {
-
         return JSON.stringify({
-            staffDTO: this.staff,
+            staffDTO: {
+                ...this.staff,
+                avgTime: undefined,
+                ticketsClosed: undefined,
+                ticketsInProgress: undefined
+            },
             password: this.password
         })
     }
-
 }
 
-export class Vendor extends APIObject {
-
+export class Vendor {
     email: string
     businessName: string
     phoneNumber: string
     address: string
 
     constructor(email: string, businessName: string, phoneNumber: string, address: string) {
-        super()
         this.email = email
         this.businessName = businessName
         this.phoneNumber = phoneNumber
         this.address = address
     }
-
-    toJsonObject(): string {
-        return JSON.stringify({
-            email: this.email,
-            businessName: this.businessName,
-            phoneNumber: this.phoneNumber,
-            address: this.address,
-        })
-    }
 }
 
-export class CredentialVendor extends APIObject {
-
+export class CredentialVendor {
     vendor: Vendor
     password: string
 
-
     constructor(vendor: Vendor, password: string) {
-        super()
         this.vendor = vendor
         this.password = password
     }
 
     toJsonObject(): string {
-
         return JSON.stringify({
             profile: this.vendor,
             password: this.password
         })
     }
-
 }

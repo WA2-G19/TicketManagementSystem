@@ -1,64 +1,48 @@
-import {CredentialStaff, CredentialVendor, Staff, Vendor} from "../../classes/Profile";
+import {CredentialVendor, Vendor} from "../../classes/Profile";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 const {REACT_APP_SERVER_URL} = process.env;
 
-async function getVendors(token: string | undefined) {
-    try {
-
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/profiles", {
-            headers: {
-                "Authorization": "Bearer " + token,
-                "Accept": "Application/Json"
-            }
-        })
-        if (response.ok) {
-            return await response.json() as Array<Vendor>
-        } else {
-            return undefined
+async function getVendors(token: string) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/profiles", {
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Accept": "Application/Json"
         }
-
-    } catch (e) {
-        throw e
+    })
+    if (response.ok) {
+        return await response.json() as Array<Vendor>
     }
+    throw await response.json() as ProblemDetail
 }
 
 async function getVendor(token: string, email: string) {
-    try {
-
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/" + email, {
-            headers: {
-                "Authorization": "Bearer " + token,
-                "Accept": "Application/Json"
-            }
-        })
-        if (response.ok) {
-            return await response.json() as Vendor
-        } else {
-            return undefined
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/" + email, {
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Accept": "Application/Json"
         }
-
-    } catch (e) {
-        throw e
+    })
+    if (response.ok) {
+        return await response.json() as Vendor
     }
+    throw await response.json() as ProblemDetail
 }
 
 async function createVendor(token: string, credentials: CredentialVendor) {
-    try {
-
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/", {
-            method: "POST",
-            headers: {
-                "Authorization": "Bearer " + token,
-                "Accept": "Application/Json",
-                "Content": "Application/Json"
-            },
-            body: credentials.toJsonObject()
-        })
-        return response.ok
-
-    } catch (e) {
-        throw e
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Accept": "Application/Json",
+            "Content": "Application/Json"
+        },
+        body: credentials.toJsonObject()
+    })
+    if (!response.ok) {
+        throw await response.json() as ProblemDetail
     }
+    return true
 }
 
 const VendorAPI = {getVendors, getVendor, createVendor}

@@ -1,27 +1,22 @@
-import APIObject from "./APIObject";
-
-export class WarrantyIn extends APIObject{
+export class WarrantyIn {
     productEan: string
     duration: string
 
     constructor(productEan: string, duration: string) {
-        super()
         this.productEan = productEan
         this.duration = duration
         Duration.fromString(duration)
     }
 
     toJSONObject(): string {
-        const warrantyMap = {
+        return JSON.stringify({
             "productEan": this.productEan,
             "duration": this.duration
-        }
-
-        return JSON.stringify(warrantyMap)
+        })
     }
 }
 
-export class WarrantyOut extends APIObject {
+export class WarrantyOut {
     id: number
     productEan: string
     vendorEmail: string
@@ -31,7 +26,6 @@ export class WarrantyOut extends APIObject {
     duration: string
 
     constructor(id: number, productEan: string, vendorEmail: string, customerEmail: string, creationTimestamp: string, activationTimestamp: string, duration: string) {
-        super()
         this.id = id
         this.productEan = productEan
         this.vendorEmail = vendorEmail
@@ -39,21 +33,6 @@ export class WarrantyOut extends APIObject {
         this.creationTimestamp = creationTimestamp
         this.activationTimestamp = activationTimestamp
         this.duration = duration
-    }
-
-    toJSONObject(): string {
-
-        const warrantyMap = {
-            "id": this.id,
-            "productEan": this.productEan,
-            "vendorEmail": this.vendorEmail,
-            "customerEmail": this.customerEmail,
-            "creationTimestamp": this.creationTimestamp,
-            "activationTimestamp": this.activationTimestamp,
-            "duration": this.duration
-        }
-
-        return JSON.stringify(warrantyMap)
     }
 }
 

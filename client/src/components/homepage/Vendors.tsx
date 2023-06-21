@@ -19,16 +19,7 @@ function Vendors() {
     const token = user!.token
     useEffect(() => {
         async function getVendors() {
-            const tmp = await VendorAPI.getVendors(token) as Array<Vendor>
-            if (tmp) {
-                setVendors(tmp)
-            } else {
-                alert.getBuilder()
-                    .setTitle("Error")
-                    .setMessage("Error loading vendors. Try again later.")
-                    .setButtonsOk()
-                    .show()
-            }
+            setVendors(await VendorAPI.getVendors(token))
             setLoading(false)
         }
 

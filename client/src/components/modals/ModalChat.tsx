@@ -1,9 +1,6 @@
 import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
-import ProductCard from "../product/ProductCard";
 import React, {Dispatch, useEffect, useState} from "react";
-import Product from "../../classes/Product";
 import {ChatWindow} from "../chat /ChatWindow";
-import {FormControl} from "@mui/material";
 import {ChatMessageIn, ChatMessageOut, StubAttachmentDTO} from "../../classes/Chat";
 import ChatAPI from "../../API/Ticketing/chat";
 import {useAuthentication} from "../../contexts/Authentication";
@@ -21,19 +18,20 @@ export function ModalChat(props: ModalChatProps) {
     const [messages, setMessages] = useState<Array<ChatMessageOut>>([])
     const [ref, setRef] = useState(undefined)
     const auth = useAuthentication()
+    const token = auth.user!.token
 
     useEffect(() => {
         async function settingUpMessages() {
-            const messages = await ChatAPI.getChatMessages(auth.user?.token, props.ticket)
+            const messages = await ChatAPI.getChatMessages(token, props.ticket)
             setMessages(messages)
         }
         settingUpMessages()
-    }, [])
+    }, [token])
 
     const onSendMessage = async () => {
         console.log(currentText)
         setCurrentText("")
-        const response = await ChatAPI.postChatMessages(auth.user?.token, props.ticket,
+        const response = await ChatAPI.postChatMessages(token, props.ticket,
             new ChatMessageIn(currentText))
         if(response) {
             setMessages((e) => [...e, new ChatMessageOut(currentText, 0, auth.user?.email!!, "", new Set<StubAttachmentDTO>())])

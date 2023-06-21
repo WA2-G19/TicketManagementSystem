@@ -1,11 +1,8 @@
-import APIObject from "./APIObject";
-
-export class ChatMessageIn extends APIObject {
+export class ChatMessageIn {
 
     body: string
 
     constructor(body: string){
-        super()
         this.body = body
     }
 
@@ -17,7 +14,7 @@ export class ChatMessageIn extends APIObject {
     }
 }
 
-export class ChatMessageOut extends APIObject {
+export class ChatMessageOut {
 
     id: number
     body: string
@@ -26,7 +23,6 @@ export class ChatMessageOut extends APIObject {
     timestamp: string
 
     constructor(body: string, id: number, authorEmail: string, timestamp: string, stubAttachments: Set<StubAttachmentDTO>){
-        super()
         this.body = body
         this.id = id
         this.timestamp = timestamp
@@ -36,20 +32,19 @@ export class ChatMessageOut extends APIObject {
 
 }
 
-export class StubAttachmentDTO extends APIObject {
+export class StubAttachmentDTO {
 
     name: string
     contentType: string
-    lenght: number
+    length: number
     url: string
     timestamp: string
 
     constructor(name: string, contentType: string, length: number, timestamp: string, url: string){
-        super()
         this.name = name
         this.contentType = contentType
         this.timestamp = timestamp
-        this.lenght = length
+        this.length = length
         this.url = url
     }
 

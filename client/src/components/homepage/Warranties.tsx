@@ -31,16 +31,7 @@ function Warranties(): JSX.Element {
 
     useEffect(() => {
         async function getWarranties() {
-            const tmp = await WarrantyAPI.getAllWarranty(token)
-            if (tmp) {
-                setWarranties(tmp)
-            } else {
-                alert.getBuilder()
-                    .setTitle("Error")
-                    .setMessage("Error loading warranties. Try again later.")
-                    .setButtonsOk()
-                    .show()
-            }
+            setWarranties(await WarrantyAPI.getAllWarranty(token))
             setLoading(false)
         }
 

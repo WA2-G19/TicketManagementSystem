@@ -53,9 +53,10 @@ async function createExpert(token: string, credentials: CredentialStaff) {
         },
         body: credentials.toJsonObject()
     })
-    if (response.ok)
-        return true
-    throw await response.json() as ProblemDetail
+    if (!response.ok) {
+        throw await response.json() as ProblemDetail
+    }
+    return true
 }
 
 const StaffAPI = {getProfile, createExpert, getProfiles, getProfilesWithStatistics}

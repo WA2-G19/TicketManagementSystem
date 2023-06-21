@@ -19,16 +19,7 @@ function Skills() {
     const token = user!.token
     useEffect(() => {
         async function getSkills() {
-            const tmp = await SkillAPI.getAll(token)
-            if (tmp) {
-                setSkills(tmp)
-            } else {
-                alert.getBuilder()
-                    .setTitle("Error")
-                    .setMessage("Error loading skills. Try again later.")
-                    .setButtonsOk()
-                    .show()
-            }
+            setSkills(await SkillAPI.getAll(token))
             setLoading(false)
         }
 

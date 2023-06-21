@@ -1,5 +1,3 @@
-import APIObject from "./APIObject"
-
 export class Ticket {
     warrantyUUID: string
     description: string
@@ -10,15 +8,11 @@ export class Ticket {
     }
 
     toJSONObject(): string {
-
-        const ticketMap = {
+        return JSON.stringify({
             "warrantyUUID": this.warrantyUUID,
             "description": this.description
-        }
-
-        return JSON.stringify(ticketMap)
+        })
     }
-
 }
 
 export enum PriorityLevelEnum {
@@ -33,48 +27,26 @@ export enum TicketStatusEnum {
     Reopened
 }
 
-export class TicketOut extends APIObject {
+export class TicketOut {
     id: number
     customerEmail: string
     productEan: string
     description: string
-
-    expertEmail: string | undefined
-
-    priorityLevel: PriorityLevelEnum | undefined
-
     status: TicketStatusEnum
-
     warrantyUUID : string
-
+    expertEmail?: string
+    priorityLevel?: PriorityLevelEnum
     unreadMessages?: number
 
-    constructor(id: number, customerEmail: string, productEan: string, description: string, status: TicketStatusEnum, priorityLevel: PriorityLevelEnum | undefined, expertEmail: string | undefined, warrantyUUID: string, unreadMessages?: number) {
-        super()
+    constructor(id: number, customerEmail: string, productEan: string, description: string, status: TicketStatusEnum, warrantyUUID: string, priorityLevel?: PriorityLevelEnum, expertEmail?: string, unreadMessages?: number) {
         this.id = id
         this.customerEmail = customerEmail
         this.productEan = productEan
+        this.warrantyUUID = warrantyUUID
         this.description = description
         this.status = status
         this.expertEmail = expertEmail
         this.priorityLevel = priorityLevel
-        this.warrantyUUID = warrantyUUID
         this.unreadMessages = unreadMessages
     }
-
-    toJSONObject(): string {
-
-        const ticketOutMap = {
-            "id": this.id,
-            "customerEmail": this.customerEmail,
-            "productEan": this.productEan,
-            "description": this.description,
-            "status": this.status.valueOf(),
-            "expertEmail": this.expertEmail,
-            "priorityLevel": this.priorityLevel
-        }
-
-        return JSON.stringify(ticketOutMap)
-    }
-
 }

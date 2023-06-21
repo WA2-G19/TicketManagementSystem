@@ -1,11 +1,8 @@
-import APIObject from "./APIObject";
-
-export class Login extends APIObject {
+export class Login {
     username: string
     password: string
 
     constructor(username: string, password: string){
-        super()
         this.username = username
         this.password = password
     }

@@ -12,6 +12,8 @@ class ProblemDetail extends Error {
         this.status = status;
         this.detail = detail;
         this.instance = instance;
+
+        Object.setPrototypeOf(this, ProblemDetail.prototype)
     }
 
     toString(): string {

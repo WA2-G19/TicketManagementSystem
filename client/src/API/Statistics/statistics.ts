@@ -12,9 +12,8 @@ async function getAllStatistics(token: string) {
             }
         }
     )
-    if(response.ok) {
+    if(response.ok)
         return await response.json() as { [expertEmail: string]: Statistics }
-    }
     throw await response.json() as ProblemDetail
 }
 
@@ -27,9 +26,8 @@ async function getAllStatisticsByExpert(token: string, expertEmail: string) {
             }
         }
     )
-    if(response.ok) {
+    if(response.ok)
         return await response.json() as Statistics
-    }
     throw await response.json() as ProblemDetail
 }
 
@@ -42,9 +40,8 @@ async function getTicketsClosedByExpert(token: string, expertEmail: string) {
             }
         }
     )
-    if(response.ok) {
+    if(response.ok)
         return parseInt(await response.text())
-    }
     throw await response.json() as ProblemDetail
 }
 
@@ -57,9 +54,8 @@ async function getTicketsInProgressByExpert(token: string, expertEmail: string) 
             }
         }
     )
-    if(response.ok) {
+    if(response.ok)
         return parseInt(await response.text())
-    }
     throw await response.json() as ProblemDetail
 }
 
@@ -72,9 +68,8 @@ async function getAverageTimedByExpert(token: string, expertEmail: string) {
             }
         }
     )
-    if(response.ok) {
+    if(response.ok)
         return parseFloat(await response.text())
-    }
     throw await response.json() as ProblemDetail
 }
 

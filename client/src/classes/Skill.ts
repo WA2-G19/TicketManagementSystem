@@ -6,7 +6,6 @@ export class Skill {
     }
 
     toJsonObject(): string {
-
         return JSON.stringify({
             name: this.name
         })

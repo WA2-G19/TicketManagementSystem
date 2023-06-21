@@ -19,16 +19,7 @@ function Staffs() {
     const token = user!.token
     useEffect(() => {
         async function getStaffs() {
-            const tmp = await StaffAPI.getProfilesWithStatistics(token)
-            if (tmp) {
-                setStaffs(tmp)
-            } else {
-                alert.getBuilder()
-                    .setTitle("Error")
-                    .setMessage("Error loading staff members. Try again later.")
-                    .setButtonsOk()
-                    .show()
-            }
+            setStaffs(await StaffAPI.getProfilesWithStatistics(token))
             setLoading(false)
         }
 

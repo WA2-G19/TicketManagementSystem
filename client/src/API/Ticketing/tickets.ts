@@ -1,71 +1,58 @@
 import {Ticket, TicketOut} from "../../classes/Ticket";
-
+import ProblemDetail from "../../classes/ProblemDetail";
+import ChatAPI from "./chat";
 
 const {REACT_APP_SERVER_URL} = process.env;
 
-
-async function getTickets(token: string | undefined) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token,
-                "accept": "application/json"
-            }
-        })
-        if(response.ok) {
-            return await response.json() as Array<TicketOut>
-        } else {
-            return undefined
+async function getTickets(token: string) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "accept": "application/json"
         }
-    } catch (e) {
-        console.log(e)
-        throw e
+    })
+    if(response.ok) {
+        return await response.json() as Array<TicketOut>
     }
-
+    throw await response.json() as ProblemDetail
 }
 
-
-async function getTicketById(token: string | undefined, ticketId: number) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId, {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token,
-                "accept": "application/json"
-            }
-        })
-        if(response.ok) {
-            return await response.json() as TicketOut
-        } else {
-            return undefined
-        }
-    } catch (e) {
-        throw e
-    }
-
+async function getTicketsWithUnreadMessages(token: string) {
+    const [tickets, messages] = await Promise.all([getTickets(token), ChatAPI.getAllUnreadMessages(token)])
+    return tickets.map(t => {
+        t.unreadMessages = messages[`${t.id}`]
+        return t
+    })
 }
 
-
+async function getTicketById(token: string, ticketId: number) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId, {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "accept": "application/json"
+        }
+    })
+    if(response.ok) {
+        return await response.json() as TicketOut
+    }
+    throw await response.json() as ProblemDetail
+}
 
 async function postTicket(token: string, ticket: Ticket) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets", {
-            method: "POST",
-            headers: {
-                "Authorization": "Bearer " + token,
-                'Content-Type': 'application/json'
-            },
-            body: ticket.toJSONObject()
-        })
-        return response.ok
-    } catch (e) {
-        throw e
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets", {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token,
+            'Content-Type': 'application/json'
+        },
+        body: ticket.toJSONObject()
+    })
+    if (!response.ok) {
+        throw await response.json() as ProblemDetail
     }
-
+    return true
 }
 
 async function startProgressTicket(token: string, ticketId: number, expertEmail: string, managerEmail: string, priorityLevel: number) {
@@ -84,7 +71,10 @@ async function startProgressTicket(token: string, ticketId: number, expertEmail:
             timestamp: new Date(Date.now()).toISOString()
         })
     })
-    return response.ok
+    if (!response.ok) {
+        throw await response.json() as ProblemDetail
+    }
+    return true
 }
 
 async function closeTicket(token: string, ticketId: number, managerEmail: string) {
@@ -101,7 +91,10 @@ async function closeTicket(token: string, ticketId: number, managerEmail: string
             timestamp: new Date(Date.now()).toISOString()
         })
     })
-    return response.ok
+    if (!response.ok) {
+        throw await response.json() as ProblemDetail
+    }
+    return true
 }
 
 async function resolveTicket(token: string, ticketId: number, managerEmail: string) {
@@ -118,7 +111,10 @@ async function resolveTicket(token: string, ticketId: number, managerEmail: stri
             timestamp: new Date(Date.now()).toISOString()
         })
     })
-    return response.ok
+    if (!response.ok) {
+        throw await response.json() as ProblemDetail
+    }
+    return true
 }
 
 async function reopenTicket(token: string, ticketId: number) {
@@ -134,8 +130,11 @@ async function reopenTicket(token: string, ticketId: number) {
             timestamp: new Date(Date.now()).toISOString()
         })
     })
-    return response.ok
+    if (!response.ok) {
+        throw await response.json() as ProblemDetail
+    }
+    return true
 }
 
-const TicketAPI = {getTickets, getTicketById, postTicket, startProgressTicket, closeTicket, resolveTicket, reopenTicket}
+const TicketAPI = {getTickets, getTicketsWithUnreadMessages, getTicketById, postTicket, startProgressTicket, closeTicket, resolveTicket, reopenTicket}
 export default TicketAPI

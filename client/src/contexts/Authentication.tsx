@@ -1,6 +1,6 @@
 import {createContext, useContext, useState} from "react"
 import jwt_decode from 'jwt-decode';
-import API from "../API/api";
+import ProfileAPI from '../API/Profile/profile'
 
 interface Credentials {
     username: string
@@ -49,7 +49,10 @@ function AuthenticationContextProvider({ children }: {
     async function login(credentials: Credentials): Promise<void> {
         if (user !== null)
             throw new Error("you are already logged in as another user, please log out first")
-        const token = await API.login(credentials.username, credentials.password)
+        const token = await ProfileAPI.login({
+            username: credentials.username,
+            password: credentials.password
+        })
         try {
             const user = jwt_decode<User>(token)
             user.token = token

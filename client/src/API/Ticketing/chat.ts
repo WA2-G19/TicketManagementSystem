@@ -9,7 +9,7 @@ import ProblemDetail from "../../classes/ProblemDetail";
 
 const { REACT_APP_SERVER_URL } = process.env;
 
-async function getChatMessage(token: string | undefined, ticketId: number, chatMessageId: number) {
+async function getChatMessage(token: string, ticketId: number, chatMessageId: number) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL + "/Api/tickets/"+ ticketId +"/chat-messages/" + chatMessageId,
@@ -32,7 +32,7 @@ async function getChatMessage(token: string | undefined, ticketId: number, chatM
 
 }
 
-async function getChatMessages(token: string | undefined, ticketId: number) {
+async function getChatMessages(token: string, ticketId: number) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL  + "/Api/tickets/"+ ticketId +"/chat-messages",
@@ -70,7 +70,7 @@ async function getChatMessages(token: string | undefined, ticketId: number) {
     })
 }
 
-async function postChatMessages(token: string | undefined, ticketId: number, message: ChatMessageIn) {
+async function postChatMessages(token: string, ticketId: number, message: ChatMessageIn) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL + "/Api/tickets/" + ticketId + "/chat-messages",
@@ -90,7 +90,7 @@ async function postChatMessages(token: string | undefined, ticketId: number, mes
 
 }
 
-async function getAttachmentByChatMessageId(token: string | undefined, ticketId: number, chatMessageId: number, attachmentId: number) {
+async function getAttachmentByChatMessageId(token: string, ticketId: number, chatMessageId: number, attachmentId: number) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL + "/Api/tickets/" + ticketId + "/chat-messages/" + chatMessageId +"/attachments/" + attachmentId,

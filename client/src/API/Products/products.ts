@@ -1,43 +1,30 @@
 import Product from "../../classes/Product";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 const { REACT_APP_SERVER_URL } = process.env;
 
-async function getAllProducts(token: string | undefined) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/products", {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-        if(response.ok) {
-            return await response.json() as Array<Product>
-        } else {
-           return undefined
+async function getAllProducts(token: string) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/products", {
+        headers: {
+            "Authorization": "Bearer " + token
         }
-    } catch (e) {
-        throw e
+    })
+    if(response.ok) {
+        return await response.json() as Array<Product>
     }
-
+    throw await response.json() as ProblemDetail
 }
 
-async function getProductByEAN(token: string | undefined, ean: string) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/products/" + ean, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-        if(response.ok) {
-            return await response.json() as Product
-        } else {
-            return undefined
+async function getProductByEAN(token: string, ean: string) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/products/" + ean, {
+        headers: {
+            "Authorization": "Bearer " + token
         }
-    } catch (e) {
-        throw e
+    })
+    if(response.ok) {
+        return await response.json() as Product
     }
-
+    throw await response.json() as ProblemDetail
 }
 
 const ProductAPI = {getAllProducts, getProductByEAN}

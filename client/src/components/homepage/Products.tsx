@@ -19,16 +19,7 @@ function Products(): JSX.Element {
     const token = user!.token
     useEffect(() => {
         async function getWarranties() {
-            const tmp = await ProductAPI.getAllProducts(token)
-            if (tmp) {
-                setProducts(tmp)
-            } else {
-                alert.getBuilder()
-                    .setTitle("Error")
-                    .setMessage("Error loading tickets. Try again later.")
-                    .setButtonsOk()
-                    .show()
-            }
+            setProducts(await ProductAPI.getAllProducts(token))
             setLoading(false)
         }
 

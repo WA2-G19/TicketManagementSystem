@@ -1,4 +1,5 @@
 import {Skill} from "../../classes/Skill";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 const { REACT_APP_SERVER_URL } = process.env;
 async function getAll(token: string) {
@@ -11,6 +12,7 @@ async function getAll(token: string) {
     if (response.ok) {
         return await response.json() as Array<Skill>
     }
+    throw await response.json() as ProblemDetail
 }
 
 async function insertSkill(token: string, skill: Skill) {
@@ -26,6 +28,7 @@ async function insertSkill(token: string, skill: Skill) {
     if (response.ok) {
         return await response.json() as Skill
     }
+    throw await response.json() as ProblemDetail
 }
 
 async function deleteSkill(token: string, skill: Skill) {
@@ -41,6 +44,7 @@ async function deleteSkill(token: string, skill: Skill) {
     if (response.ok) {
         return await response.json() as Skill
     }
+    throw await response.json() as ProblemDetail
 }
 
 const SkillAPI = { getAll, insertSkill, deleteSkill }

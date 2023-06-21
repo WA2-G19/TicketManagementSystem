@@ -1,43 +1,30 @@
 import {WarrantyOut, WarrantyIn} from "../../classes/Warranty";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 const {REACT_APP_SERVER_URL} = process.env;
 
 async function getAllWarranty(token: string) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/warranty", {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-        if (response.ok) {
-            return await response.json() as Array<WarrantyOut>
-        } else {
-            return undefined
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/warranty", {
+        headers: {
+            "Authorization": "Bearer " + token
         }
-    } catch (e) {
-        throw e
+    })
+    if (response.ok) {
+        return await response.json() as Array<WarrantyOut>
     }
-
+    throw await response.json() as ProblemDetail
 }
 
 async function getWarrantyByID(token: string, id: string) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/warranty/" + id, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-        if (response.ok) {
-            return await response.json() as WarrantyOut
-        } else {
-            return undefined
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/warranty/" + id, {
+        headers: {
+            "Authorization": "Bearer " + token
         }
-    } catch (e) {
-        throw e
+    })
+    if (response.ok) {
+        return await response.json() as WarrantyOut
     }
-
+    throw await response.json() as ProblemDetail
 }
 
 async function postWarranty(token: string, warranty: WarrantyIn) {
@@ -52,6 +39,7 @@ async function postWarranty(token: string, warranty: WarrantyIn) {
     if (response.ok) {
         return await response.json() as WarrantyOut
     }
+    throw await response.json() as ProblemDetail
 }
 
 async function activateWarranty(token: string, warrantyId: string) {
@@ -64,6 +52,7 @@ async function activateWarranty(token: string, warrantyId: string) {
     if (response.ok) {
         return await response.json() as WarrantyOut
     }
+    throw await response.json() as ProblemDetail
 }
 
 const WarrantyAPI = {getAllWarranty, getWarrantyByID, postWarranty, activateWarranty}
