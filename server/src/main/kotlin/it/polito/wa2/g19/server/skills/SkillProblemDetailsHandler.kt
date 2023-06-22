@@ -11,4 +11,8 @@ class SkillProblemDetailsHandler {
     @ExceptionHandler(SkillNotFoundException::class)
     fun handleSkillNotFoundException(e: SkillNotFoundException): ProblemDetail = ProblemDetail
         .forStatusAndDetail(HttpStatus.NOT_FOUND, e.message!!)
+
+    @ExceptionHandler(DuplicateSkillException::class)
+    fun handleDuplicateSkillException(e: DuplicateSkillException): ProblemDetail = ProblemDetail
+            .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
 }

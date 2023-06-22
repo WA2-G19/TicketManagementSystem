@@ -218,8 +218,6 @@ class TicketTest {
         val location = responsePost.headers.location
         val responseGet = restTemplate.exchange(location, HttpMethod.GET, HttpEntity(null, headers),TicketOutDTO::class.java  )
         val createdTicket = responseGet.body!!
-        newTicket.id = createdTicket.id
-        assert(newTicket.id == createdTicket.id)
         assert(newTicket.description == createdTicket.description)
 
         assert(newTicket.warrantyUUID == createdTicket.warrantyUUID)

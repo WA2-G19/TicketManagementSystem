@@ -17,6 +17,8 @@ class SkillServiceImpl(
 
     @PreAuthorize("hasRole('Manager')")
     override fun insertSkill(skill: SkillDTO) {
+        if (skillRepository.existsById(skill.name))
+            throw DuplicateSkillException()
         val s = Skill().apply {
             name = skill.name
         }
@@ -25,6 +27,8 @@ class SkillServiceImpl(
 
     @PreAuthorize("hasRole('Manager')")
     override fun deleteSkill(skill: SkillDTO) {
+        if (!skillRepository.existsById(skill.name))
+            throw SkillNotFoundException()
         skillRepository.deleteById(skill.name)
     }
 }
