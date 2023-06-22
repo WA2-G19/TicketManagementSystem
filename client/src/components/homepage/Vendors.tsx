@@ -3,7 +3,7 @@ import {Col, Container, Row} from "react-bootstrap";
 import {Vendor} from "../../classes/Profile";
 import VendorAPI from "../../API/Profile/vendor";
 import {useAuthentication} from "../../contexts/Authentication";
-import {Loading} from "../Loading";
+import Loading from "../Loading";
 import {useAlert} from "../../contexts/Alert";
 import VendorCard from "../vendor/VendorCard";
 import {BsPlus} from "react-icons/bs";

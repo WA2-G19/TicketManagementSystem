@@ -18,29 +18,20 @@ function VendorForm(): JSX.Element {
     const phoneNumberRef = useRef<HTMLInputElement>(null)
     const addressRef = useRef<HTMLInputElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
-    const confirmPasswordRef = useRef<HTMLInputElement>(null)
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
-        if (emailRef.current && businessNameRef.current && phoneNumberRef.current && phoneNumberRef.current && addressRef.current && passwordRef.current && confirmPasswordRef.current) {
+        if (emailRef.current && businessNameRef.current && phoneNumberRef.current && phoneNumberRef.current && addressRef.current && passwordRef.current) {
             try {
-                const response = await VendorAPI.createVendor(token, new CredentialVendor(
+                await VendorAPI.createVendor(token, new CredentialVendor(
                     new Vendor(emailRef.current.value, businessNameRef.current.value, phoneNumberRef.current.value, addressRef.current.value),
                     passwordRef.current.value
                 ))
-                if (response) {
-                    alert.getBuilder()
-                        .setTitle("Vendor created")
-                        .setMessage("Vendor created successfully!")
-                        .setButtonsOk(() => navigate("/vendors"))
-                        .show()
-                } else {
-                    alert.getBuilder()
-                        .setTitle("Error")
-                        .setMessage("Vendor creation failed. Try again later.")
-                        .setButtonsOk()
-                        .show()
-                }
+                alert.getBuilder()
+                    .setTitle("Vendor created")
+                    .setMessage("Vendor created successfully!")
+                    .setButtonsOk(() => navigate("/vendors"))
+                    .show()
             } catch (e) {
                 console.error(e)
                 alert.getBuilder()
@@ -99,13 +90,12 @@ function VendorForm(): JSX.Element {
                             label={"Confirm password"}
                             className={"mb-3"}
                         >
-                            <Form.Control type={"password"} required={true} ref={confirmPasswordRef} onInput={() => {
-                                if (passwordRef.current && confirmPasswordRef.current) {
-                                    if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-                                        console.log(passwordRef.current.value, confirmPasswordRef.current.value)
-                                        confirmPasswordRef.current.setCustomValidity("The two passwords are not matching")
+                            <Form.Control type={"password"} required={true} onInput={(e) => {
+                                if (passwordRef.current) {
+                                    if (passwordRef.current.value !== e.currentTarget.value) {
+                                        e.currentTarget.setCustomValidity("The two passwords are not matching")
                                     } else {
-                                        confirmPasswordRef.current.setCustomValidity("")
+                                        e.currentTarget.setCustomValidity("")
                                     }
                                 }
                             }} />

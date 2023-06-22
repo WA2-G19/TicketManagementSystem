@@ -24,20 +24,12 @@ function TicketForm(): JSX.Element {
         e.preventDefault()
         if (descriptionRef.current) {
             try {
-                const response = await TicketAPI.postTicket(user!.token, new Ticket(state.warranty.id, descriptionRef.current.value))
-                if (response) {
-                    alert.getBuilder()
-                        .setTitle("Ticket created")
-                        .setMessage("Ticket created successfully!")
-                        .setButtonsOk(() => navigate("/tickets"))
-                        .show()
-                } else {
-                    alert.getBuilder()
-                        .setTitle("Error")
-                        .setMessage("Ticket creation failed. Try again later.")
-                        .setButtonsOk()
-                        .show()
-                }
+                await TicketAPI.postTicket(user!.token, new Ticket(state.warranty.id, descriptionRef.current.value))
+                alert.getBuilder()
+                    .setTitle("Ticket created")
+                    .setMessage("Ticket created successfully!")
+                    .setButtonsOk(() => navigate("/tickets"))
+                    .show()
             } catch (e) {
                 console.error(e)
                 alert.getBuilder()

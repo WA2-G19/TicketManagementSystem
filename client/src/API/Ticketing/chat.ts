@@ -122,7 +122,7 @@ async function getUnreadMessages(token: string, ticketId: number) {
     if (response.ok) {
         return parseInt(await response.text())
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getAllUnreadMessages(token: string) {
@@ -135,7 +135,7 @@ async function getAllUnreadMessages(token: string) {
     if (response.ok) {
         return await response.json() as { [k: string]: number}
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 const ChatAPI = { getChatMessage, getChatMessages, postChatMessages, getAttachmentByChatMessageId, getUnreadMessages, getAllUnreadMessages }

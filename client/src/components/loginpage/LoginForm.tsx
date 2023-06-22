@@ -1,5 +1,5 @@
 import {Container, Form, Card, Button, Row, Col} from 'react-bootstrap';
-import React, {useState} from 'react';
+import React, {useRef} from 'react';
 import {Link, useNavigate} from "react-router-dom";
 import {useAlert} from "../../contexts/Alert";
 import {useAuthentication} from "../../contexts/Authentication";
@@ -7,26 +7,35 @@ import {useAuthentication} from "../../contexts/Authentication";
 function LoginForm() {
     const alert = useAlert()
     const auth = useAuthentication()
-    const [email, setEmail] = useState("client@test.it")
-    const [pwd, setPwd] = useState("password")
+    const emailRef = useRef<HTMLInputElement>(null)
+    const passwordRef = useRef<HTMLInputElement>(null)
     const navigate = useNavigate();
-    const validator = require("validator")
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        try {
-            if (!validator.isEmail(email)) {
-                alert.getBuilder().setTitle("Error in email").setMessage("Email format is incorrect").show()
-                return
+        if (emailRef.current && passwordRef.current) {
+            try {
+                if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(emailRef.current.value)) {
+                    alert.getBuilder()
+                        .setTitle("Error in email")
+                        .setMessage("Email format is incorrect")
+                        .setButtonsOk()
+                        .show()
+                    return
+                }
+                await auth.login({username: emailRef.current.value, password: passwordRef.current.value})
+                navigate("/")
+            } catch (e) {
+                alert.getBuilder()
+                    .setTitle("Error in login")
+                    .setMessage("Email or password incorrect")
+                    .setButtonsOk()
+                    .show()
             }
-            await auth.login({username: email, password: pwd})
-            navigate("/")
-        } catch (e) {
-            alert.getBuilder().setTitle("Error in login").setMessage("Email or password incorrect").show()
         }
     }
 
     return (
-        <><Container fluid className='p-4'>
+        <Container fluid className='p-4'>
             <Row>
                 <Col md='6' className='text-center text-md-start d-flex flex-column justify-content-center'>
 
@@ -49,18 +58,29 @@ function LoginForm() {
                     <Card className='my-5'>
                         <Card.Body className='p-5'>
                             <Row>
-                                <Form onSubmit={(e: React.FormEvent) => onSubmit(e)}>
-                                    <Form.Group className="mb-2" controlId="formGroupEmail">
-                                        <Form.Label>Email address</Form.Label>
-                                        <Form.Control type="email" placeholder="email@address.dom" value={email}
-                                                      required={true}
-                                                      onChange={(e) => setEmail(e.target.value)}/>
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="formGroupPassword">
-                                        <Form.Label>Password</Form.Label>
-                                        <Form.Control type="password" placeholder="Password" value={pwd} required={true}
-                                                      onChange={(e) => setPwd(e.target.value)}/>
-                                    </Form.Group>
+                                <Form onSubmit={onSubmit}>
+                                    <Form.FloatingLabel
+                                        label={"Email"}
+                                        className={"mb-3"}
+                                    >
+                                        <Form.Control
+                                            type={"email"}
+                                            placeholder={"email@address.dom"}
+                                            ref={emailRef}
+                                            defaultValue={"client@test.it"}
+                                            required={true} />
+                                    </Form.FloatingLabel>
+                                    <Form.FloatingLabel
+                                        label={"Password"}
+                                        className={"mb-3"}
+                                    >
+                                        <Form.Control
+                                            type={"password"}
+                                            placeholder={"password"}
+                                            ref={passwordRef}
+                                            defaultValue={"password"}
+                                            required={true} />
+                                    </Form.FloatingLabel>
                                     <Row>
                                         <Col>
                                             <Button variant="primary" type="submit">
@@ -68,9 +88,14 @@ function LoginForm() {
                                             </Button>
                                         </Col>
                                         <Col className="d-flex align-items-center justify-content-center" md={8}>
-                                            <p className="small">Don't have an account yet? <Link to={"/signup"}><span
-                                                className={"text-primary"} style={{textDecoration: 'underline'}}
-                                            >Sign Up</span></Link></p>
+                                            <p className="small">
+                                                Don't have an account yet?
+                                                <Link to={"/signup"}>
+                                                    <span className={"text-primary"} style={{textDecoration: 'underline'}}>
+                                                        Sign Up
+                                                    </span>
+                                                </Link>
+                                            </p>
                                         </Col>
                                     </Row>
                                 </Form>
@@ -82,7 +107,6 @@ function LoginForm() {
 
             </Row>
         </Container>
-        </>
     )
 }
 

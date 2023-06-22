@@ -12,9 +12,10 @@ async function getAllStatistics(token: string) {
             }
         }
     )
-    if(response.ok)
+    if(response.ok) {
         return await response.json() as { [expertEmail: string]: Statistics }
-    throw await response.json() as ProblemDetail
+    }
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getAllStatisticsByExpert(token: string, expertEmail: string) {
@@ -26,9 +27,10 @@ async function getAllStatisticsByExpert(token: string, expertEmail: string) {
             }
         }
     )
-    if(response.ok)
+    if(response.ok) {
         return await response.json() as Statistics
-    throw await response.json() as ProblemDetail
+    }
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getTicketsClosedByExpert(token: string, expertEmail: string) {
@@ -40,9 +42,10 @@ async function getTicketsClosedByExpert(token: string, expertEmail: string) {
             }
         }
     )
-    if(response.ok)
+    if(response.ok) {
         return parseInt(await response.text())
-    throw await response.json() as ProblemDetail
+    }
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getTicketsInProgressByExpert(token: string, expertEmail: string) {
@@ -54,9 +57,10 @@ async function getTicketsInProgressByExpert(token: string, expertEmail: string) 
             }
         }
     )
-    if(response.ok)
+    if(response.ok) {
         return parseInt(await response.text())
-    throw await response.json() as ProblemDetail
+    }
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getAverageTimedByExpert(token: string, expertEmail: string) {
@@ -68,9 +72,10 @@ async function getAverageTimedByExpert(token: string, expertEmail: string) {
             }
         }
     )
-    if(response.ok)
+    if(response.ok) {
         return parseFloat(await response.text())
-    throw await response.json() as ProblemDetail
+    }
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 const StatsAPI = { getAllStatistics, getAllStatisticsByExpert, getTicketsClosedByExpert, getTicketsInProgressByExpert, getAverageTimedByExpert }

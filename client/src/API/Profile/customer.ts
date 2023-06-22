@@ -13,7 +13,7 @@ async function getProfileByEmail(token: string, email: string) {
     if (response.ok) {
         return await response.json() as Profile
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 
@@ -27,7 +27,7 @@ async function getProfiles(token: string) {
     if (response.ok) {
         return await response.json() as Array<Profile>
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 
@@ -42,9 +42,8 @@ async function postProfile(token: string, profile: Profile) {
         body: profile.toJsonObject()
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 async function putProfile(token: string, profile: Profile) {
@@ -58,9 +57,8 @@ async function putProfile(token: string, profile: Profile) {
         body: profile.toJsonObject()
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 async function signup(credentials: CredentialCustomer) {
@@ -68,11 +66,13 @@ async function signup(credentials: CredentialCustomer) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json, application/problem+json'
         },
         body: credentials.toJsonObject()
     })
-    return response.status
+    if (!response.ok) {
+        throw ProblemDetail.fromJSON(await response.json())
+    }
 }
 
 const CustomerAPI = {getProfileByEmail, postProfile, putProfile, getProfiles, signup}

@@ -21,7 +21,6 @@ function StaffForm(): JSX.Element {
     const surnameRef = useRef<HTMLInputElement>(null)
     const skillsRef = useRef<HTMLSelectElement>(null)
     const passwordRef = useRef<HTMLInputElement>(null)
-    const confirmPasswordRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         async function getSkills() {
@@ -43,29 +42,21 @@ function StaffForm(): JSX.Element {
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
-        if (emailRef.current && nameRef.current && surnameRef.current && skillsRef.current && passwordRef.current && confirmPasswordRef.current) {
+        if (emailRef.current && nameRef.current && surnameRef.current && skillsRef.current && passwordRef.current) {
             try {
                 const skills = Array<string>()
                 for (let i = 0; i < skillsRef.current.selectedOptions.length;i++) {
                     skills.push(skillsRef.current.selectedOptions[i].value)
                 }
-                const response = await StaffAPI.createExpert(token, new CredentialStaff(
+                await StaffAPI.createExpert(token, new CredentialStaff(
                     new Staff(emailRef.current.value, nameRef.current.value, surnameRef.current.value, StaffType.Expert, skills),
                     passwordRef.current.value
                 ))
-                if (response) {
-                    alert.getBuilder()
-                        .setTitle("Staff member created")
-                        .setMessage("Staff member created successfully!")
-                        .setButtonsOk(() => navigate("/staffs"))
-                        .show()
-                } else {
-                    alert.getBuilder()
-                        .setTitle("Error")
-                        .setMessage("Staff member creation failed. Try again later.")
-                        .setButtonsOk()
-                        .show()
-                }
+                alert.getBuilder()
+                    .setTitle("Staff member created")
+                    .setMessage("Staff member created successfully!")
+                    .setButtonsOk(() => navigate("/staffs"))
+                    .show()
             } catch (e) {
                 console.error(e)
                 alert.getBuilder()
@@ -130,13 +121,12 @@ function StaffForm(): JSX.Element {
                             label={"Confirm password"}
                             className={"mb-3"}
                         >
-                            <Form.Control type={"password"} required={true} ref={confirmPasswordRef} onInput={() => {
-                                if (passwordRef.current && confirmPasswordRef.current) {
-                                    if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-                                        console.log(passwordRef.current.value, confirmPasswordRef.current.value)
-                                        confirmPasswordRef.current.setCustomValidity("The two passwords are not matching")
+                            <Form.Control type={"password"} required={true} onInput={(e) => {
+                                if (passwordRef.current) {
+                                    if (passwordRef.current.value !== e.currentTarget.value) {
+                                        e.currentTarget.setCustomValidity("The two passwords are not matching")
                                     } else {
-                                        confirmPasswordRef.current.setCustomValidity("")
+                                        e.currentTarget.setCustomValidity("")
                                     }
                                 }
                             }} />

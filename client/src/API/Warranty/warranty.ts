@@ -12,7 +12,7 @@ async function getAllWarranty(token: string) {
     if (response.ok) {
         return await response.json() as Array<WarrantyOut>
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getWarrantyByID(token: string, id: string) {
@@ -24,7 +24,7 @@ async function getWarrantyByID(token: string, id: string) {
     if (response.ok) {
         return await response.json() as WarrantyOut
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function postWarranty(token: string, warranty: WarrantyIn) {
@@ -39,7 +39,7 @@ async function postWarranty(token: string, warranty: WarrantyIn) {
     if (response.ok) {
         return await response.json() as WarrantyOut
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function activateWarranty(token: string, warrantyId: string) {
@@ -52,7 +52,7 @@ async function activateWarranty(token: string, warrantyId: string) {
     if (response.ok) {
         return await response.json() as WarrantyOut
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 const WarrantyAPI = {getAllWarranty, getWarrantyByID, postWarranty, activateWarranty}

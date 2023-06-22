@@ -13,7 +13,7 @@ async function getVendors(token: string) {
     if (response.ok) {
         return await response.json() as Array<Vendor>
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getVendor(token: string, email: string) {
@@ -26,7 +26,7 @@ async function getVendor(token: string, email: string) {
     if (response.ok) {
         return await response.json() as Vendor
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function createVendor(token: string, credentials: CredentialVendor) {
@@ -40,9 +40,8 @@ async function createVendor(token: string, credentials: CredentialVendor) {
         body: credentials.toJsonObject()
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 const VendorAPI = {getVendors, getVendor, createVendor}

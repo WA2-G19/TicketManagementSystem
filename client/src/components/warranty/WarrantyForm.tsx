@@ -64,22 +64,14 @@ function WarrantyForm(): JSX.Element {
                         parseInt(daysRef.current.value)
                     ).toString()
                 ))
-                if (response) {
-                    alert.getBuilder()
-                        .setTitle("Warranty created")
-                        .setMessage(<>
-                            <p>Warranty created successfully! The code is shown below.</p>
-                            <h3>{response.id}</h3>
-                        </>)
-                        .setButtonsOk()
-                        .show()
-                } else {
-                    alert.getBuilder()
-                        .setTitle("Error")
-                        .setMessage("Error creating warranty. Try again later.")
-                        .setButtonsOk()
-                        .show()
-                }
+                alert.getBuilder()
+                    .setTitle("Warranty created")
+                    .setMessage(<>
+                        <p>Warranty created successfully! The code is shown below.</p>
+                        <h3>{response.id}</h3>
+                    </>)
+                    .setButtonsOk()
+                    .show()
             } catch (e) {
                 alert.getBuilder()
                     .setTitle("Error")
@@ -89,20 +81,12 @@ function WarrantyForm(): JSX.Element {
             }
         } else if (isClient && warrantyIdRef.current) {
             try {
-                const response = await WarrantyAPI.activateWarranty(token, warrantyIdRef.current.value)
-                if (response) {
-                    alert.getBuilder()
-                        .setTitle("Warranty activated")
-                        .setMessage("Warranty activated successfully! You can see it in the list of warranties.")
-                        .setButtonsOk(() => navigate("/warranties"))
-                        .show()
-                } else {
-                    alert.getBuilder()
-                        .setTitle("Error")
-                        .setMessage("Error activating warranty. Try again later.")
-                        .setButtonsOk()
-                        .show()
-                }
+                await WarrantyAPI.activateWarranty(token, warrantyIdRef.current.value)
+                alert.getBuilder()
+                    .setTitle("Warranty activated")
+                    .setMessage("Warranty activated successfully! You can see it in the list of warranties.")
+                    .setButtonsOk(() => navigate("/warranties"))
+                    .show()
             } catch (e) {
                 alert.getBuilder()
                     .setTitle("Error")

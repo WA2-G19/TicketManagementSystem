@@ -19,20 +19,12 @@ function SkillForm(): JSX.Element {
         e.preventDefault()
         if (nameRef.current) {
             try {
-                const response = await SkillAPI.insertSkill(token, new Skill(nameRef.current.value))
-                if (response) {
-                    alert.getBuilder()
-                        .setTitle("Skill created")
-                        .setMessage("Skill created successfully!")
-                        .setButtonsOk(() => navigate("/skills"))
-                        .show()
-                } else {
-                    alert.getBuilder()
-                        .setTitle("Error")
-                        .setMessage("Skill creation failed. Try again later.")
-                        .setButtonsOk()
-                        .show()
-                }
+                await SkillAPI.insertSkill(token, new Skill(nameRef.current.value))
+                alert.getBuilder()
+                    .setTitle("Skill created")
+                    .setMessage("Skill created successfully!")
+                    .setButtonsOk(() => navigate("/skills"))
+                    .show()
             } catch (e) {
                 console.error(e)
                 alert.getBuilder()

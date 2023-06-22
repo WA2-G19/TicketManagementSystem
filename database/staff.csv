@@ -1,3 +1,3 @@
 id,email,name,surname,dtype
-44afd9d1-d74e-4f4c-8ee2-3ce4978d4411,expert@test.it,Jacopo,"De Cristofaro",Expert
-69401713-2310-4eff-aa90-bc2ccb231ba8,manager@test.it,Jacopo,"De Cristofaro",Manager
+44afd9d1-d74e-4f4c-8ee2-3ce4978d4411,expert@test.it,Expert,Test,Expert
+69401713-2310-4eff-aa90-bc2ccb231ba8,manager@test.it,Manager,Test,Manager

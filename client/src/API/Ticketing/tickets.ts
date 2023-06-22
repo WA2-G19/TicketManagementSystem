@@ -15,7 +15,7 @@ async function getTickets(token: string) {
     if(response.ok) {
         return await response.json() as Array<TicketOut>
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getTicketsWithUnreadMessages(token: string) {
@@ -37,7 +37,7 @@ async function getTicketById(token: string, ticketId: number) {
     if(response.ok) {
         return await response.json() as TicketOut
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function postTicket(token: string, ticket: Ticket) {
@@ -50,9 +50,8 @@ async function postTicket(token: string, ticket: Ticket) {
         body: ticket.toJSONObject()
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 async function startProgressTicket(token: string, ticketId: number, expertEmail: string, managerEmail: string, priorityLevel: number) {
@@ -72,9 +71,8 @@ async function startProgressTicket(token: string, ticketId: number, expertEmail:
         })
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 async function closeTicket(token: string, ticketId: number, managerEmail: string) {
@@ -92,9 +90,8 @@ async function closeTicket(token: string, ticketId: number, managerEmail: string
         })
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 async function resolveTicket(token: string, ticketId: number, managerEmail: string) {
@@ -112,9 +109,8 @@ async function resolveTicket(token: string, ticketId: number, managerEmail: stri
         })
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 async function reopenTicket(token: string, ticketId: number) {
@@ -131,9 +127,8 @@ async function reopenTicket(token: string, ticketId: number) {
         })
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 const TicketAPI = {getTickets, getTicketsWithUnreadMessages, getTicketById, postTicket, startProgressTicket, closeTicket, resolveTicket, reopenTicket}

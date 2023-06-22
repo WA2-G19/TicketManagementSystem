@@ -4,7 +4,7 @@ import {Staff} from "../../classes/Profile";
 import StaffAPI from "../../API/Profile/staff";
 import {useAuthentication} from "../../contexts/Authentication";
 import StaffCard from "../staff/StaffCard";
-import {Loading} from "../Loading";
+import Loading from "../Loading";
 import {useAlert} from "../../contexts/Alert";
 import {BsPlus} from "react-icons/bs";
 import HasRole from "../authentication/HasRole";

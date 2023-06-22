@@ -17,6 +17,8 @@ interface Authentication {
 interface User {
     email: string
     name: string
+    given_name: string
+    family_name: string
     role: string[]
     token: string
     exp: number

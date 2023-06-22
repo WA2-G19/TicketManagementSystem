@@ -4,7 +4,7 @@ import {Col, Container, Row} from "react-bootstrap";
 import {WarrantyOut} from "../../classes/Warranty";
 import WarrantyAPI from "../../API/Warranty/warranty";
 import WarrantyCard from "../warranty/WarrantyCard";
-import {Loading} from "../Loading";
+import Loading from "../Loading";
 import {BsPlus} from "react-icons/bs";
 import {useNavigate} from "react-router-dom";
 import HasAnyRole from "../authentication/HasAnyRole";

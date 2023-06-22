@@ -12,7 +12,7 @@ async function getAllProducts(token: string) {
     if(response.ok) {
         return await response.json() as Array<Product>
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getProductByEAN(token: string, ean: string) {
@@ -24,7 +24,7 @@ async function getProductByEAN(token: string, ean: string) {
     if(response.ok) {
         return await response.json() as Product
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 const ProductAPI = {getAllProducts, getProductByEAN}

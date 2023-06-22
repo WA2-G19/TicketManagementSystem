@@ -4,7 +4,7 @@ import {Col, Container, Row} from "react-bootstrap";
 import ProductAPI from "../../API/Products/products";
 import Product from "../../classes/Product";
 import ProductCard from "../product/ProductCard";
-import {Loading} from "../Loading";
+import Loading from "../Loading";
 import {useAlert} from "../../contexts/Alert";
 import {BsPlus} from "react-icons/bs";
 import HasRole from "../authentication/HasRole";

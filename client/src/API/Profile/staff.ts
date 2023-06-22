@@ -14,7 +14,7 @@ async function getProfiles(token: string) {
     if (response.ok) {
         return await response.json() as Array<Staff>
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getProfilesWithStatistics(token: string) {
@@ -40,7 +40,7 @@ async function getProfile(token: string, email: string) {
     if (response.ok) {
         return await response.json() as Staff
     }
-    throw await response.json() as ProblemDetail
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function createExpert(token: string, credentials: CredentialStaff) {
@@ -54,9 +54,8 @@ async function createExpert(token: string, credentials: CredentialStaff) {
         body: credentials.toJsonObject()
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
-    return true
 }
 
 const StaffAPI = {getProfile, createExpert, getProfiles, getProfilesWithStatistics}

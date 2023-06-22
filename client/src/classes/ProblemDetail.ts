@@ -16,6 +16,18 @@ class ProblemDetail extends Error {
         Object.setPrototypeOf(this, ProblemDetail.prototype)
     }
 
+    static fromJSON(json: { [key: string]: any}) {
+        if (
+            "type" in json && typeof(json.type) === "string" &&
+            "title" in json && typeof(json.title) === "string" &&
+            "status" in json && typeof(json.status) === "number" &&
+            "detail" in json && typeof(json.detail) === "string" &&
+            "instance" in json && typeof(json.instance) === "string") {
+            return new ProblemDetail(json.type, json.title, json.status, json.detail, json.instance)
+        }
+        throw new Error("Can't extract ProblemDetail")
+    }
+
     toString(): string {
         return `${this.instance} [${this.status}] (${this.title}) ${this.detail}`
     }

@@ -12,7 +12,7 @@ async function login(loginDTO: Login) {
         body: JSON.stringify(loginDTO)
     })
     if (!response.ok) {
-        throw await response.json() as ProblemDetail
+        throw ProblemDetail.fromJSON(await response.json())
     }
     return await response.text()
 }

@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
 import {useAuthentication} from "../../contexts/Authentication";
 import TicketCard from "../ticket/TicketCard";
-import {Loading} from "../Loading";
+import Loading from "../Loading";
 import {useAlert} from "../../contexts/Alert";
 import ModalAssignTicket from "../modals/ModalAssignTicket";
 

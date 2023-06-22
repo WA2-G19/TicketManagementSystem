@@ -462,7 +462,7 @@
     "totp" : false,
     "emailVerified" : true,
     "firstName" : "Client",
-    "lastName" : "",
+    "lastName" : "Test",
     "email" : "client@test.it",
     "credentials" : [ {
       "id" : "4344e5f7-ba3a-406a-9b26-e7ee2bc38244",
@@ -485,7 +485,7 @@
     "totp" : false,
     "emailVerified" : true,
     "firstName" : "Expert",
-    "lastName" : "",
+    "lastName" : "Test",
     "email" : "expert@test.it",
     "credentials" : [ {
       "id" : "c7339cd7-d76c-421c-9c8e-49ddfa720cb3",
@@ -508,7 +508,7 @@
     "totp" : false,
     "emailVerified" : true,
     "firstName" : "Manager",
-    "lastName" : "",
+    "lastName" : "Test",
     "email" : "manager@test.it",
     "credentials" : [ {
       "id" : "b8a412d1-2e52-4820-9dc6-f3e357565769",

@@ -48,20 +48,12 @@ function ModalAssignTicket({ ticket, hide }: ModalAssignTicketProps) {
     async function handleSubmit(e: FormEvent) {
         e.preventDefault()
         if (selected !== undefined && priorityLevelRef.current) {
-            const response = await TicketAPI.startProgressTicket(token, ticket!.id!, selected, user!.email, parseInt(priorityLevelRef.current.value))
-            if (response) {
-                alert.getBuilder()
-                    .setTitle("Assigned ticket")
-                    .setMessage("Ticket assigned correctly!")
-                    .setButtonsOk(hide)
-                    .show()
-            } else {
-                alert.getBuilder()
-                    .setTitle("Error")
-                    .setMessage("Error assigning ticket. Try again later.")
-                    .setButtonsOk()
-                    .show()
-            }
+            await TicketAPI.startProgressTicket(token, ticket!.id!, selected, user!.email, parseInt(priorityLevelRef.current.value))
+            alert.getBuilder()
+                .setTitle("Assigned ticket")
+                .setMessage("Ticket assigned correctly!")
+                .setButtonsOk(hide)
+                .show()
         }
     }
 
