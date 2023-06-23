@@ -6,7 +6,6 @@ import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.skills.SkillRepository
 import it.polito.wa2.g19.server.skills.SkillNotFoundException
 import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
-import org.apache.http.HttpStatus
 import org.keycloak.admin.client.CreatedResponseUtil
 import org.keycloak.admin.client.Keycloak
 import org.keycloak.representations.idm.CredentialRepresentation
@@ -14,6 +13,7 @@ import org.keycloak.representations.idm.UserRepresentation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -102,8 +102,8 @@ class StaffServiceImpl(
 
         // Check if the user already exists
         val response = userResource.create(user)
-        if (response.status == HttpStatus.SC_CONFLICT) throw DuplicateEmailException()
-        if (response.status != 201 ) throw KeycloakException()
+        if (response.status == HttpStatus.CONFLICT.value()) throw DuplicateEmailException()
+        if (response.status != HttpStatus.CREATED.value() ) throw KeycloakException()
         // Assign the role to client
         val role = keycloak.realm(realmName).roles().get("Expert").toRepresentation()
         val userId = CreatedResponseUtil.getCreatedId(response)

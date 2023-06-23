@@ -10,6 +10,8 @@ import it.polito.wa2.g19.server.profiles.customers.CustomerDTO
 import it.polito.wa2.g19.server.profiles.customers.CustomerRepository
 import it.polito.wa2.g19.server.profiles.staff.*
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
+import it.polito.wa2.g19.server.skills.Skill
+import it.polito.wa2.g19.server.skills.SkillRepository
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -89,6 +91,9 @@ class ProfileTest {
     lateinit var customerRepository: CustomerRepository
 
     @Autowired
+    lateinit var skillRepository: SkillRepository
+
+    @Autowired
     lateinit var staffRepository: StaffRepository
 
 
@@ -100,6 +105,10 @@ class ProfileTest {
         manager = Util.mockMainManager()
         manager.id = UUID.randomUUID()
         staffRepository.save(manager)
+
+        skillRepository.save(Skill().apply {
+            name = "Hardware"
+        })
 
         println("---------------------------------")
     }
@@ -120,6 +129,7 @@ class ProfileTest {
 
         customerRepository.deleteAll()
         staffRepository.deleteAll()
+        skillRepository.deleteAll()
         println("---------------------------------")
     }
 
@@ -239,7 +249,7 @@ class ProfileTest {
         val headers = HttpHeaders()
         headers.setBearerAuth(managerToken)
         val request = HttpEntity(newExpert, headers)
-        val response = restTemplate.postForEntity<Unit>("/API/staff/createExpert", request, HttpMethod.POST)
+        val response: ResponseEntity<Unit> = restTemplate.exchange("/API/staff/createExpert", HttpMethod.POST, request)
         assert(response.statusCode == HttpStatus.CREATED)
         keycloak.realm("ticket_")
         val loginResponse: ResponseEntity<String> = restTemplate.exchange("/API/login", HttpMethod.POST, HttpEntity(LoginDTO(newExpert.staffDTO.email, newExpert.password)))
