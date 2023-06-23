@@ -12,7 +12,9 @@ class ProductsProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleProductNotFound(e: ProductNotFoundException) = ProblemDetail
         .forStatusAndDetail( HttpStatus.NOT_FOUND, e.message!! )
 
-
+    @ExceptionHandler(DuplicatedProductException::class)
+    fun handleDuplicatedProduct(e: DuplicatedProductException) = ProblemDetail
+        .forStatusAndDetail( HttpStatus.CONFLICT, e.message!! )
 }
 
 

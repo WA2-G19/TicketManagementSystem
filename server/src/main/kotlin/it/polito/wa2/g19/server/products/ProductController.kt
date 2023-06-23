@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j
 import org.hibernate.validator.constraints.EAN
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
@@ -37,4 +38,14 @@ class ProductController(
         return productService.getProduct(ean)
     }
 
+    @PostMapping("/products")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun postProduct(
+        @Valid
+        @RequestBody
+        product: ProductDTO
+    ) {
+        log.info("Inserting product with EAN {}", product.ean)
+        productService.insertProduct(product)
+    }
 }

@@ -45,7 +45,7 @@ function RegistrationForm() {
                     } else if (e.status === HttpStatusCode.CONFLICT) {
                         alert.getBuilder()
                             .setTitle("Conflict")
-                            .setMessage(e.detail)
+                            .setMessage(JSON.stringify(e.detail))
                             .setButtonsOk()
                             .show()
                     } else {

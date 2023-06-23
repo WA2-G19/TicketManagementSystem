@@ -25,4 +25,10 @@ class ProductServiceImpl(
 
     }
 
+    override fun insertProduct(product: ProductDTO) {
+        if (productRepository.existsById(product.ean)) {
+            throw DuplicatedProductException()
+        }
+        productRepository.save(Product(product.ean, product.name, product.brand))
+    }
 }

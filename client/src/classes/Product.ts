@@ -8,6 +8,14 @@ class Product {
         this.name = name
         this.brand = brand
     }
+
+    toJsonObject(): string {
+        return JSON.stringify({
+            "ean": this.ean,
+            "name": this.name,
+            "brand": this.brand
+        })
+    }
 }
 
 export default Product

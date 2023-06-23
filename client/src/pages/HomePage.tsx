@@ -17,6 +17,7 @@ import VendorForm from "../components/vendor/VendorForm";
 import StaffForm from "../components/staff/StaffForm";
 import Skills from "../components/homepage/Skills";
 import SkillForm from "../components/skill/SkillForm";
+import ProductForm from "../components/product/ProductForm";
 
 function HomePage() {
     return (
@@ -32,6 +33,7 @@ function HomePage() {
                             <Route path={"/vendors"} element={<Vendors />} />
                             <Route path={"/vendors/add"} element={<VendorForm />} />
                             <Route path={"/products"} element={<Products />} />
+                            <Route path={"/products/add"} element={<ProductForm />} />
                             <Route path={"/warranties"} element={<Warranties />} />
                             <Route path={"/skills"} element={<Skills />} />
                             <Route path={"/skills/add"} element={<SkillForm />} />
