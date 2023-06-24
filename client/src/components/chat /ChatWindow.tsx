@@ -10,22 +10,24 @@ interface ChatWindowProps {
     setCurrentText: Dispatch<string>,
     currentText: string,
     messages: Array<ChatMessageOut>,
-    setMessages: Dispatch<Array<ChatMessageOut>>
+    setMessages: Dispatch<Array<ChatMessageOut>>,
+    referenceCard: React.MutableRefObject<HTMLInputElement | null>
 }
 
 export function ChatWindow(props: ChatWindowProps) {
 
     const auth = useAuthentication()
 
+
     return <Container fluid>
         <Row>
-            <Card style={{height: "50vh"}} sx={{overflow: 'auto'}} >
+            <Card style={{height: "50vh"}} sx={{overflow: 'auto'}} ref={props.referenceCard}>
                 {
                     props.messages.map((e, idx) => {
                         if (e.authorEmail == auth.user?.email) {
-                            return <ChatSenderItem message={e.body} sender={e.authorEmail}/>
+                            return <ChatSenderItem key = {idx} message={e.body} sender={e.authorEmail}/>
                         } else {
-                            return <ChatReceiverItem message={e.body} sender={e.authorEmail}/>
+                            return <ChatReceiverItem key = {idx} message={e.body} sender={e.authorEmail}/>
                         }
                     })
                 }

@@ -9,7 +9,7 @@ import ProblemDetail from "../../classes/ProblemDetail";
 
 const { REACT_APP_SERVER_URL } = process.env;
 
-async function getChatMessage(token: string, ticketId: number, chatMessageId: number) {
+async function getChatMessage(token: string | undefined, ticketId: number, chatMessageId: number) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL + "/Api/tickets/"+ ticketId +"/chat-messages/" + chatMessageId,
@@ -32,7 +32,7 @@ async function getChatMessage(token: string, ticketId: number, chatMessageId: nu
 
 }
 
-async function getChatMessages(token: string, ticketId: number) {
+async function getChatMessages(token: string | undefined, ticketId: number) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL  + "/Api/tickets/"+ ticketId +"/chat-messages",
@@ -70,7 +70,7 @@ async function getChatMessages(token: string, ticketId: number) {
     })
 }
 
-async function postChatMessages(token: string, ticketId: number, message: ChatMessageIn) {
+async function postChatMessages(token: string | undefined, ticketId: number, message: ChatMessageIn, files: FileList | undefined) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL + "/Api/tickets/" + ticketId + "/chat-messages",
@@ -90,7 +90,7 @@ async function postChatMessages(token: string, ticketId: number, message: ChatMe
 
 }
 
-async function getAttachmentByChatMessageId(token: string, ticketId: number, chatMessageId: number, attachmentId: number) {
+async function getAttachmentByChatMessageId(token: string | undefined, ticketId: number, chatMessageId: number, attachmentId: number) {
 
     // try {
     //     const response = await fetch(REACT_APP_SERVER_URL + "/Api/tickets/" + ticketId + "/chat-messages/" + chatMessageId +"/attachments/" + attachmentId,
@@ -122,7 +122,7 @@ async function getUnreadMessages(token: string, ticketId: number) {
     if (response.ok) {
         return parseInt(await response.text())
     }
-    throw ProblemDetail.fromJSON(await response.json())
+    throw await response.json() as ProblemDetail
 }
 
 async function getAllUnreadMessages(token: string) {
@@ -135,7 +135,7 @@ async function getAllUnreadMessages(token: string) {
     if (response.ok) {
         return await response.json() as { [k: string]: number}
     }
-    throw ProblemDetail.fromJSON(await response.json())
+    throw await response.json() as ProblemDetail
 }
 
 const ChatAPI = { getChatMessage, getChatMessages, postChatMessages, getAttachmentByChatMessageId, getUnreadMessages, getAllUnreadMessages }

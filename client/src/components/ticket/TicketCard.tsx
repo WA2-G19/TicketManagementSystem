@@ -13,14 +13,7 @@ function TicketCard({ticket, setSelected}: {
     const [show, setShow] = useState(false)
 
 
-
-    return <Container className={"border border-3 rounded border-primary p-3 position-relative"}>
-        {
-            ticket.unreadMessages !== undefined && ticket.unreadMessages !== 0 &&
-            <Badge className={"position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"}>
-                {ticket.unreadMessages}
-            </Badge>
-        }
+    return <Container className={"border border-3 rounded border-primary p-3"}>
         <Row className={"ps-3"}>
             <Typography variant="h5" component="div" color="primary">
                 ID {ticket.id}
@@ -80,7 +73,7 @@ function TicketCard({ticket, setSelected}: {
             </Col>
         </Row>
         <Row className={"pt-3"}>
-            <Col md={2}><Button onClick ={() => setShow(true)}>Open chat</Button></Col>
+            <Col md={2}><Button onClick={() => setShow(true)}>Open chat</Button></Col>
             {
                 setSelected !== undefined &&
                 <Col>
@@ -88,7 +81,9 @@ function TicketCard({ticket, setSelected}: {
                 </Col>
             }
         </Row>
-        <ModalChat show={show} setShow={setShow} ticket={ticket.id}/>
+        <HasAnyRole roles={["Client", "Expert"]}>
+            <ModalChat show={show} setShow={setShow} ticket={ticket.id}/>
+        </HasAnyRole>
     </Container>
 }
 
