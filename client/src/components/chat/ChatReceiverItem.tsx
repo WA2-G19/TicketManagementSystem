@@ -1,7 +1,5 @@
-import {Col, Row} from "react-bootstrap";
+import {Row} from "react-bootstrap";
 import React from "react";
-import {Divider} from "@mui/material";
-
 
 interface ChatReceiverItemProps {
     message: string,
@@ -16,6 +14,5 @@ export function ChatReceiverItem(props: ChatReceiverItemProps): JSX.Element {
         <Row className={"pt-2"}>
             {props.message}
         </Row>
-
     </Row>
 }

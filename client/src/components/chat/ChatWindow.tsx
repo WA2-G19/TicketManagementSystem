@@ -1,6 +1,6 @@
 import {Container, Row} from "react-bootstrap";
-import {Card, CardContent, List, TextField} from "@mui/material";
-import React, {Dispatch, useRef, useState} from "react";
+import {Card, TextField} from "@mui/material";
+import React, {Dispatch} from "react";
 import {ChatReceiverItem} from "./ChatReceiverItem";
 import {ChatSenderItem} from "./ChatSenderItem";
 import {ChatMessageOut} from "../../classes/Chat";
@@ -24,7 +24,7 @@ export function ChatWindow(props: ChatWindowProps) {
             <Card style={{height: "50vh"}} sx={{overflow: 'auto'}} ref={props.referenceCard}>
                 {
                     props.messages.map((e, idx) => {
-                        if (e.authorEmail == auth.user?.email) {
+                        if (e.authorEmail === auth.user?.email) {
                             return <ChatSenderItem key = {idx} message={e.body} sender={e.authorEmail}/>
                         } else {
                             return <ChatReceiverItem key = {idx} message={e.body} sender={e.authorEmail}/>

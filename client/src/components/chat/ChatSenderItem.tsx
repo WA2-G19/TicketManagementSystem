@@ -1,6 +1,5 @@
-import {Col, Row} from "react-bootstrap";
+import {Row} from "react-bootstrap";
 import React from "react";
-
 
 interface ChatSenderItemProps {
     message: string,
@@ -15,6 +14,5 @@ export function ChatSenderItem(props: ChatSenderItemProps): JSX.Element {
         <Row className={"pt-2"}>
             {props.message}
         </Row>
-
     </Row>
 }

@@ -7,7 +7,9 @@ import {useNavigate} from "react-router-dom";
 import ProductAPI from "../../API/Products/products";
 import {useAuthentication} from "../../contexts/Authentication";
 import Product from "../../classes/Product";
-import {ModalProduct} from "../modals/ModalProduct";
+import {BsInfoCircle} from "react-icons/bs";
+import ProductCard from "../product/ProductCard";
+import {useAlert} from "../../contexts/Alert";
 
 function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
     warranty: WarrantyOut,
@@ -19,18 +21,25 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
     const activationTime = new Date(warranty.activationTimestamp)
     const isExpired = duration.addToDate(creationTime) < now
     const auth = useAuthentication()
-    const [show, setShow] = useState(false)
-    const [product, setProduct] = useState<Product | undefined>(undefined)
+    const alert = useAlert()
     const token = auth.user!.token
+    const [productInfo, setProductInfo] = useState<Product | null>(null)
 
-    const seeDetailsProduct = async() => {
-        const productInfo = await ProductAPI.getProductByEAN(token, warranty.productEan)
-        setProduct(productInfo)
-        setShow(true)
+    async function seeDetailsProduct() {
+        const product = productInfo || await ProductAPI.getProductByEAN(token, warranty.productEan)
+        if (productInfo === null)
+            setProductInfo(product)
+        alert.getBuilder()
+            .setTitle("Product details")
+            .setMessage(<Container>
+                <ProductCard product={product} />
+            </Container>)
+            .setButtonsOk()
+            .show()
     }
 
     return <Container className={"border border-3 rounded border-primary"}>
-        <Row className={"pt-3 ms-1"} style={{display: "flex", justifyContent: "left"}}>
+        <Row className={"pt-3 ms-1 d-flex justify-conent-start"}>
             <Col>
                 {
                     isExpired ?
@@ -54,7 +63,9 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
                             <strong>Product EAN</strong>
                         </Typography>
                     </Col>
-                    <Col>{warranty.productEan}</Col>
+                    <Col>
+                        {warranty.productEan}&nbsp;<BsInfoCircle role={"button"} className={"align-top"} size={"0.7em"} onClick={seeDetailsProduct} />
+                    </Col>
                 </Col>
                 <Col>
                     <Col>
@@ -118,10 +129,6 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
                 </Col> : <></>}
             </Row>
         </HasRole>
-        <Col>
-            <Button onClick={async () => await seeDetailsProduct()}>Product Detail</Button>
-        </Col>
-    <ModalProduct show={show} setShow={setShow} product={product}/>
     </Container>
 }
 
