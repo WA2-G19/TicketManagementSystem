@@ -89,6 +89,8 @@ class ResourceServerConfig {
                 .hasRole("Client")
             .requestMatchers(HttpMethod.GET, "/API/warranty/*")
                 .hasAnyRole("Client", "Vendor", "Manager")
+            .requestMatchers(HttpMethod.DELETE, "/API/warranty/*")
+                .hasRole("Vendor")
             // ================================== //
             // Skill API
             // ================================== //

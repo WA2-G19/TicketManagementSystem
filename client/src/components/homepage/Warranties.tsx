@@ -45,6 +45,12 @@ function Warranties(): JSX.Element {
             })
     }, [token])
 
+    const deleteWarranty = (warrantyId: number) => {
+        let ws = warranties
+        ws = ws.filter(w => w.id !== warrantyId)
+        setWarranties(ws)
+    }
+
     return (
         <Container fluid>
             <Row className={"mt-3"}>
@@ -62,7 +68,7 @@ function Warranties(): JSX.Element {
                 {
                     !loading && warranties.length !== 0 && warranties.map(warranty =>
                         <Col xs={12} sm={6} md={4} className={"pt-3"} key={warranty.id}>
-                            <WarrantyCard warranty={warranty} now={now}/>
+                            <WarrantyCard warranty={warranty} now={now} remove = {deleteWarranty}/>
                         </Col>
                     )
                 }

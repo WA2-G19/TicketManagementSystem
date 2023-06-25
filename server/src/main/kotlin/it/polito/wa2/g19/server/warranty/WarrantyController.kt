@@ -49,4 +49,10 @@ class WarrantyController(
     fun activateWarranty(@PathVariable warrantyId: UUID, principal: Authentication): WarrantyOutDTO {
         return warrantyService.activateWarranty(warrantyId, principal.name)
     }
+
+    @DeleteMapping("/{warrantyId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteWarranty(@PathVariable warrantyId: UUID, principal: Authentication){
+        return warrantyService.deleteWarranty(warrantyId)
+    }
 }

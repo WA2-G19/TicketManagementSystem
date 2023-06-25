@@ -11,4 +11,6 @@ interface WarrantyService {
     fun insertWarranty(warranty: WarrantyInDTO): WarrantyOutDTO
 
     fun activateWarranty(warrantyId: UUID, customerEmail: String): WarrantyOutDTO
+
+    fun deleteWarranty(warrantyId: UUID)
 }

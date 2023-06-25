@@ -18,11 +18,12 @@ import StaffForm from "../components/staff/StaffForm";
 import Skills from "../components/homepage/Skills";
 import SkillForm from "../components/skill/SkillForm";
 import ProductForm from "../components/product/ProductForm";
+import LoginPage from "./LoginPage";
 import {ModalChat} from "../components/modals/ModalChat";
 
 function HomePage() {
     return (
-        <IsAuthenticated>
+        <IsAuthenticated alt={<LoginPage/>}>
             <SidebarLayout>
                 <SidebarLayout.Main>
                     <HasRole role={"Manager"} key={"manager"}>
