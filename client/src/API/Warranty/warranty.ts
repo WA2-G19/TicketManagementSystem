@@ -55,5 +55,19 @@ async function activateWarranty(token: string, warrantyId: string) {
     throw ProblemDetail.fromJSON(await response.json())
 }
 
-const WarrantyAPI = {getAllWarranty, getWarrantyByID, postWarranty, activateWarranty}
+
+async function deleteWarranty(token: string, warrantyId: number){
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/warranty/" + encodeURIComponent(warrantyId), {
+        method: "DELETE",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    if (response.ok) {
+        return true
+    }
+    throw ProblemDetail.fromJSON(await response.json())  
+}
+
+const WarrantyAPI = {getAllWarranty, getWarrantyByID, postWarranty, activateWarranty, deleteWarranty}
 export default WarrantyAPI

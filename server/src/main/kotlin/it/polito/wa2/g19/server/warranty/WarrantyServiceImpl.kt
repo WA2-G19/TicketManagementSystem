@@ -78,4 +78,11 @@ class WarrantyServiceImpl(
         }
         return warrantyRepository.save(w).toDTO()
     }
+
+    @PreAuthorize("hasRole('Vendor')")
+    override fun deleteWarranty(warrantyId: UUID){
+        val w = warrantyRepository.findByIdOrNull(warrantyId) ?: throw WarrantyNotFoundException()
+        if (w.customer != null) throw WarrantyAlreadyActivated()
+        warrantyRepository.delete(w)
+    }
 }

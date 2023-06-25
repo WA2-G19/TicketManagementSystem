@@ -10,10 +10,12 @@ import Product from "../../classes/Product";
 import {BsInfoCircle} from "react-icons/bs";
 import ProductCard from "../product/ProductCard";
 import {useAlert} from "../../contexts/Alert";
+import WarrantyAPI from "../../API/Warranty/warranty";
 
-function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
+function WarrantyCard({ warranty, now = new Date(Date.now()), remove }: {
     warranty: WarrantyOut,
-    now?: Date
+    now?: Date,
+    remove: (arg0 : number) => void
 }): JSX.Element {
     const navigate = useNavigate()
     const duration = Duration.fromString(warranty.duration)
@@ -38,6 +40,13 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
             .show()
     }
 
+    async function deleteWarranty(){
+        if( await WarrantyAPI.deleteWarranty(token, warranty.id) === true){
+            remove(warranty.id)
+        }
+    }
+
+
     return <Container className={"border border-3 rounded border-primary"}>
         <Row className={"pt-3 ms-1 d-flex justify-conent-start"}>
             <Col>
@@ -48,6 +57,12 @@ function WarrantyCard({ warranty, now = new Date(Date.now()) }: {
                         <h4><Badge bg={"success"}>Valid</Badge></h4>
                 }
             </Col>
+            { warranty.activationTimestamp === null ?
+                <Col>
+                    <Button variant="danger" onClick={deleteWarranty}>Delete</Button>
+                </Col>: <></>
+            }
+            
         </Row>
         <Row className={"ps-3 mt-3"}>
             <Typography variant="h5" component="div" color="primary">

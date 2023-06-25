@@ -1,10 +1,13 @@
 import {useAuthentication} from "../../contexts/Authentication";
+import LoginPage from "../../pages/LoginPage";
 
 function IsAuthenticated({
-    children
+    children,
+    alt
  }:
      {
-         children: JSX.Element[] | JSX.Element
+         children: JSX.Element[] | JSX.Element,
+         alt?: JSX.Element
      }): JSX.Element {
     const auth = useAuthentication()
     if (auth.isLoggedIn) {
@@ -13,7 +16,11 @@ function IsAuthenticated({
                 {children}
             </>
         )
-    }
+    } 
+    else if(alt !== null){
+        return <>{alt}</>
+    } 
+     
     return <>{false}</>
 }
 
