@@ -10,6 +10,7 @@ import Product from "../../classes/Product";
 import ProductAPI from "../../API/Products/products";
 import ProductCard from "../product/ProductCard";
 import {BsInfoCircle} from "react-icons/bs";
+import {useNavigate} from "react-router-dom";
 
 function TicketCard({ticket, setSelected}: {
     ticket: TicketOut,
@@ -20,6 +21,7 @@ function TicketCard({ticket, setSelected}: {
     const token = auth.user!.token
     const [productInfo, setProductInfo] = useState<Product | null>(null)
     const [show, setShow] = useState(false)
+    const navigate = useNavigate()
 
     async function seeDetailsProduct() {
         const product = productInfo || await ProductAPI.getProductByEAN(token, ticket.productEan)
@@ -28,7 +30,7 @@ function TicketCard({ticket, setSelected}: {
         alert.getBuilder()
             .setTitle("Product details")
             .setMessage(<Container>
-                <ProductCard product={product} />
+                <ProductCard product={product}/>
             </Container>)
             .setButtonsOk()
             .show()
@@ -90,11 +92,17 @@ function TicketCard({ticket, setSelected}: {
                 <Typography variant="body2" color="primary">
                     <strong>EAN</strong>
                 </Typography>
-                {ticket.productEan}&nbsp;<BsInfoCircle role={"button"} className={"align-top"} size={"0.7em"} onClick={seeDetailsProduct} />
+                {ticket.productEan}&nbsp;<BsInfoCircle role={"button"} className={"align-top"} size={"0.7em"}
+                                                       onClick={seeDetailsProduct}/>
             </Col>
         </Row>
         <Row className={"pt-3"}>
-            <Col md={2}><Button onClick={() => setShow(true)}>Open chat</Button></Col>
+            <Col md={2}>
+                <Button onClick={() => navigate("/chat", {
+                    state: {
+                        ticket: ticket.id
+                    }
+                })}>Open chat</Button></Col>
             {
                 setSelected !== undefined &&
                 <Col>
@@ -102,9 +110,9 @@ function TicketCard({ticket, setSelected}: {
                 </Col>
             }
         </Row>
-        <HasAnyRole roles={["Client", "Expert"]}>
-            <ModalChat show={show} setShow={setShow} ticket={ticket.id}/>
-        </HasAnyRole>
+        {/*<HasAnyRole roles={["Client", "Expert"]}>*/}
+        {/*    <ModalChat show={show} setShow={setShow} ticket={ticket.id}/>*/}
+        {/*</HasAnyRole>*/}
     </Container>
 }
 

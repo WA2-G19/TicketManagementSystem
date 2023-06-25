@@ -18,6 +18,7 @@ import StaffForm from "../components/staff/StaffForm";
 import Skills from "../components/homepage/Skills";
 import SkillForm from "../components/skill/SkillForm";
 import ProductForm from "../components/product/ProductForm";
+import {ModalChat} from "../components/modals/ModalChat";
 
 function HomePage() {
     return (
@@ -45,11 +46,13 @@ function HomePage() {
                             <Route path={"/warranties/add"} element={<WarrantyForm />} />
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/tickets/add"} element={<TicketForm />} />
+                            <Route path={"/chat"} element={<ModalChat />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Expert"} key={"expert"}>
                         <Routes>
                             <Route path={"/tickets"} element={<Tickets />} />
+                            <Route path={"/chat"} element={<ModalChat />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Vendor"} key={"vendor"}>
