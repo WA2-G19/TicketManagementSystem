@@ -121,7 +121,7 @@ create table public.chat_message
     dtype              varchar(31)  not null,
     id                 integer      not null default nextval('public.chat_message_seq'),
     body               varchar(255) not null,
-    read               bit          not null,
+    read               boolean          not null,
     timestamp          timestamp(6) not null,
     ticket_id          integer      not null,
     customer_author_id uuid,

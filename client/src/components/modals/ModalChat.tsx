@@ -22,14 +22,19 @@ export function ModalChat({ show, setShow, ticket}: ModalChatProps) {
 
     useEffect(() => {
         async function settingUpMessages() {
-            const messages = await ChatAPI.getChatMessages(token, ticket)
-            setMessages(messages)
+            const messages = await ChatAPI.getChatMessages(token, ticket) as Array<ChatMessageOut>
+            setMessages(messages.sort((n1,n2) => {
+                if (n1.id > n2.id) return 1;
+                else if (n1.id < n2.id) return -1;
+                else return 0;
+            }))
         }
         settingUpMessages()
     }, [token, ticket])
 
     const onSendMessage = async () => {
         setCurrentText("")
+
         const response = await ChatAPI.postChatMessages(token, ticket,
             new ChatMessageIn(currentText), files)
         if(response) {
