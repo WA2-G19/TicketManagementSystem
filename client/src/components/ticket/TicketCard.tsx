@@ -72,7 +72,7 @@ function TicketCard({ticket, setSelected, chatopen}: {
                 </Typography>
                 {ticket.status}
             </Col>}
-            {!chatopen && <ChangeStatus ticket={ticket}/>}
+            {!chatopen && <ChangeStatus ticketTMP={ticket}/>}
         </Row>
         <Row className={"pt-3"}>
             <Col>
