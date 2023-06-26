@@ -3,7 +3,6 @@ import React, {useState} from "react";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import HasAnyRole from "../authentication/HasAnyRole";
-import {ModalChat} from "../modals/ModalChat";
 import {useAuthentication} from "../../contexts/Authentication";
 import {useAlert} from "../../contexts/Alert";
 import Product from "../../classes/Product";
@@ -11,16 +10,17 @@ import ProductAPI from "../../API/Products/products";
 import ProductCard from "../product/ProductCard";
 import {BsInfoCircle} from "react-icons/bs";
 import {useNavigate} from "react-router-dom";
+import {ChangeStatus} from "../chat/ChangeStatus";
 
-function TicketCard({ticket, setSelected}: {
+function TicketCard({ticket, setSelected, chatopen}: {
     ticket: TicketOut,
-    setSelected?: (() => void)
+    setSelected?: (() => void),
+    chatopen: boolean
 }): JSX.Element {
     const auth = useAuthentication()
     const alert = useAlert()
     const token = auth.user!.token
     const [productInfo, setProductInfo] = useState<Product | null>(null)
-    const [show, setShow] = useState(false)
     const navigate = useNavigate()
 
     async function seeDetailsProduct() {
@@ -66,12 +66,13 @@ function TicketCard({ticket, setSelected}: {
                 </Typography>
                 {ticket.description}
             </Col>
-            <Col>
+            {chatopen && <Col>
                 <Typography variant="body2" color="primary">
                     <strong>Status</strong>
                 </Typography>
                 {ticket.status}
-            </Col>
+            </Col>}
+            {!chatopen && <ChangeStatus ticket={ticket}/>}
         </Row>
         <Row className={"pt-3"}>
             <Col>
@@ -97,12 +98,13 @@ function TicketCard({ticket, setSelected}: {
             </Col>
         </Row>
         <Row className={"pt-3"}>
-            <Col md={2}>
+            {chatopen && <Col md={2}>
                 <Button onClick={() => navigate("/chat", {
                     state: {
-                        ticket: ticket.id
+                        ticket: ticket
                     }
-                })}>Open chat</Button></Col>
+                })}>Open chat</Button>
+            </Col>}
             {
                 setSelected !== undefined &&
                 <Col>
@@ -110,9 +112,6 @@ function TicketCard({ticket, setSelected}: {
                 </Col>
             }
         </Row>
-        {/*<HasAnyRole roles={["Client", "Expert"]}>*/}
-        {/*    <ModalChat show={show} setShow={setShow} ticket={ticket.id}/>*/}
-        {/*</HasAnyRole>*/}
     </Container>
 }
 

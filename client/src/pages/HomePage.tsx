@@ -39,6 +39,7 @@ function HomePage() {
                             <Route path={"/warranties"} element={<Warranties />} />
                             <Route path={"/skills"} element={<Skills />} />
                             <Route path={"/skills/add"} element={<SkillForm />} />
+                            <Route path={"/chat"} element={<ModalChat />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Client"} key={"client"}>
