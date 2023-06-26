@@ -11,6 +11,7 @@ import {BsInfoCircle} from "react-icons/bs";
 import ProductCard from "../product/ProductCard";
 import {useAlert} from "../../contexts/Alert";
 import WarrantyAPI from "../../API/Warranty/warranty";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 function WarrantyCard({ warranty, now = new Date(Date.now()), remove }: {
     warranty: WarrantyOut,
@@ -41,110 +42,122 @@ function WarrantyCard({ warranty, now = new Date(Date.now()), remove }: {
     }
 
     async function deleteWarranty(){
-        if( await WarrantyAPI.deleteWarranty(token, warranty.id) === true){
+        try {
+            await WarrantyAPI.deleteWarranty(token, warranty.id)
             remove(warranty.id)
+        } catch (e) {
+            const builder = alert.getBuilder()
+                .setTitle("Error")
+                .setButtonsOk()
+            if (e instanceof ProblemDetail) {
+                builder.setMessage("Error deleting warranty. Details: " + e.getDetails("<br/>"))
+            } else {
+                builder.setMessage("Error deleting warranty. Details: " + e)
+            }
+            builder.show()
         }
     }
 
-
-    return <Container className={"border border-3 rounded border-primary"}>
-        <Row className={"pt-3 ms-1 d-flex justify-conent-start"}>
-            <Col>
-                {
-                    isExpired ?
-                        <h4><Badge bg={"danger"}>Expired</Badge></h4>
-                    :
-                        <h4><Badge bg={"success"}>Valid</Badge></h4>
-                }
-            </Col>
-            { warranty.activationTimestamp === null ?
+    return (
+        <Container className={"border border-3 rounded border-primary"}>
+            <Row className={"pt-3 ms-1 d-flex justify-content-start"}>
                 <Col>
-                    <Button variant="danger" onClick={deleteWarranty}>Delete</Button>
-                </Col>: <></>
-            }
-            
-        </Row>
-        <Row className={"ps-3 mt-3"}>
-            <Typography variant="h5" component="div" color="primary">
-                <strong>ID</strong>
-            </Typography>
-            <Col>{warranty.id}</Col>
-        </Row>
-        <Row className={"p-3"}>
-            <Row>
-                <Col>
-                    <Col>
-                        <Typography variant="body2" color="primary">
-                            <strong>Product EAN</strong>
-                        </Typography>
-                    </Col>
-                    <Col>
-                        {warranty.productEan}&nbsp;<BsInfoCircle role={"button"} className={"align-top"} size={"0.7em"} onClick={seeDetailsProduct} />
-                    </Col>
-                </Col>
-                <Col>
-                    <Col>
-                        <Typography variant="body2" color="primary">
-                            <strong>Vendor Email</strong>
-                        </Typography>
-                    </Col>
-                    <Col>{warranty.vendorEmail}</Col>
-                </Col>
-                <Col>
-                    <Col>
-                        <Typography variant="body2" color="primary">
-                            <strong>Customer Email</strong>
-                        </Typography>
-                    </Col>
-                    <Col>{warranty.customerEmail}</Col>
-                </Col>
-            </Row>
-        </Row>
-        <Row className={"p-3"}>
-            <Row>
-                <Col>
-                    <Col>
-                        <Typography variant="body2" color="primary">
-                            <strong>Creation time</strong>
-                        </Typography>
-                    </Col>
-                    <Col>{creationTime.toLocaleDateString()}</Col>
-                </Col>
-                <Col>
-                    <Col>
-                        <Typography variant="body2" color="primary">
-                            <strong>Activation time</strong>
-                        </Typography>
-                    </Col>
                     {
-                        warranty.activationTimestamp !== null &&
-                            <Col>{activationTime.toLocaleDateString()}</Col>
+                        isExpired ?
+                            <h4><Badge bg={"danger"}>Expired</Badge></h4>
+                        :
+                            <h4><Badge bg={"success"}>Valid</Badge></h4>
                     }
                 </Col>
-                <Col>
+                { warranty.activationTimestamp === null ?
                     <Col>
-                        <Typography variant="body2" color="primary">
-                            <strong>Duration</strong>
-                        </Typography>
-                    </Col>
-                    <Col>{duration.toFormattedString()}</Col>
-                </Col>
+                        <Button variant="danger" onClick={deleteWarranty}>Delete</Button>
+                    </Col>: <></>
+                }
+
             </Row>
-        </Row>
-        <HasRole role={"Client"}>
+            <Row className={"ps-3 mt-3"}>
+                <Typography variant="h5" component="div" color="primary">
+                    <strong>ID</strong>
+                </Typography>
+                <Col>{warranty.id}</Col>
+            </Row>
             <Row className={"p-3"}>
-                {!isExpired ? <Col>
-                    <Button variant={"primary"} onClick={() => navigate("/tickets/add", {
-                        state: {
-                            warranty: warranty
-                        }
-                    })}>
-                        Open ticket
-                    </Button>
-                </Col> : <></>}
+                <Row>
+                    <Col>
+                        <Col>
+                            <Typography variant="body2" color="primary">
+                                <strong>Product EAN</strong>
+                            </Typography>
+                        </Col>
+                        <Col>
+                            {warranty.productEan}&nbsp;<BsInfoCircle role={"button"} className={"align-top"} size={"0.7em"} onClick={seeDetailsProduct} />
+                        </Col>
+                    </Col>
+                    <Col>
+                        <Col>
+                            <Typography variant="body2" color="primary">
+                                <strong>Vendor Email</strong>
+                            </Typography>
+                        </Col>
+                        <Col>{warranty.vendorEmail}</Col>
+                    </Col>
+                    <Col>
+                        <Col>
+                            <Typography variant="body2" color="primary">
+                                <strong>Customer Email</strong>
+                            </Typography>
+                        </Col>
+                        <Col>{warranty.customerEmail}</Col>
+                    </Col>
+                </Row>
             </Row>
-        </HasRole>
-    </Container>
+            <Row className={"p-3"}>
+                <Row>
+                    <Col>
+                        <Col>
+                            <Typography variant="body2" color="primary">
+                                <strong>Creation time</strong>
+                            </Typography>
+                        </Col>
+                        <Col>{creationTime.toLocaleDateString()}</Col>
+                    </Col>
+                    <Col>
+                        <Col>
+                            <Typography variant="body2" color="primary">
+                                <strong>Activation time</strong>
+                            </Typography>
+                        </Col>
+                        {
+                            warranty.activationTimestamp !== null &&
+                                <Col>{activationTime.toLocaleDateString()}</Col>
+                        }
+                    </Col>
+                    <Col>
+                        <Col>
+                            <Typography variant="body2" color="primary">
+                                <strong>Duration</strong>
+                            </Typography>
+                        </Col>
+                        <Col>{duration.toFormattedString()}</Col>
+                    </Col>
+                </Row>
+            </Row>
+            <HasRole role={"Client"}>
+                <Row className={"p-3"}>
+                    {!isExpired ? <Col>
+                        <Button variant={"primary"} onClick={() => navigate("/tickets/add", {
+                            state: {
+                                warranty: warranty
+                            }
+                        })}>
+                            Open ticket
+                        </Button>
+                    </Col> : <></>}
+                </Row>
+            </HasRole>
+        </Container>
+    )
 }
 
 export default WarrantyCard

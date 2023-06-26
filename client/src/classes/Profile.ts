@@ -40,8 +40,8 @@ export class CredentialCustomer {
 }
 
 export enum StaffType {
-    Manager,
-    Expert
+    Manager = "Manager",
+    Expert = "Expert"
 }
 
 export class Staff {
@@ -63,6 +63,17 @@ export class Staff {
         this.avgTime = avgTime
         this.ticketsClosed = ticketsClosed
         this.ticketsInProgress = ticketsInProgress
+    }
+
+    toJsonObject(): string {
+
+        return JSON.stringify({
+            email: this.email,
+            name: this.name,
+            surname: this.surname,
+            type: this.type,
+            skills: this.skills
+        })
     }
 }
 

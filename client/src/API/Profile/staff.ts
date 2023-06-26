@@ -38,9 +38,25 @@ async function getProfile(token: string, email: string) {
         }
     })
     if (response.ok) {
-        return await response.json() as Staff
+        const { email, name, type, surname, skills } = await response.json()
+        return new Staff(email, name, surname, type, skills)
     }
     throw ProblemDetail.fromJSON(await response.json())
+}
+
+async function putProfile(token: string, staff: Staff) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/staff/" + staff.email, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            "Authorization": "Bearer " + token
+        },
+        body: staff.toJsonObject()
+    })
+    if (!response.ok) {
+        throw ProblemDetail.fromJSON(await response.json())
+    }
 }
 
 async function createExpert(token: string, credentials: CredentialStaff) {
@@ -58,5 +74,5 @@ async function createExpert(token: string, credentials: CredentialStaff) {
     }
 }
 
-const StaffAPI = {getProfile, createExpert, getProfiles, getProfilesWithStatistics}
+const StaffAPI = {getProfile, createExpert, getProfiles, putProfile, getProfilesWithStatistics}
 export default StaffAPI

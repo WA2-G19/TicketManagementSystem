@@ -34,7 +34,7 @@ class CustomerServiceImpl(
         return customerRepository.findAll().map { it.toDTO() }
     }
 
-    @PreAuthorize("isAuthenticated() and (hasRole('Manager') or #email == principal.username)")
+    @PreAuthorize("isAuthenticated() and (hasRole('Manager') or #email == principal.claims['email'])")
     override fun getProfile(email: String): CustomerDTO {
 
         val profile = customerRepository.findByEmailIgnoreCase(email.trim().lowercase())
@@ -60,17 +60,11 @@ class CustomerServiceImpl(
         }
     }
 
-    @PreAuthorize("isAuthenticated() and ((#email == #principal.username and hasRole('Client')) or hasRole('Manager'))")
+    @PreAuthorize("isAuthenticated() and ((#email == principal.claims['email'] and hasRole('Client')) or hasRole('Manager'))")
     override fun updateProfile(email: String, profile: CustomerDTO) {
-        val p = customerRepository.findByEmailIgnoreCase(email.trim().lowercase())
-
-        if (p != null) {
-            p.name = profile.name
-            p.surname = profile.surname
-            customerRepository.save(p)
-        } else {
-            throw ProfileNotFoundException()
-        }
+        val p = customerRepository.findByEmailIgnoreCase(email.trim().lowercase()) ?: throw ProfileNotFoundException()
+        p.address = profile.address
+        customerRepository.save(p)
     }
 
     override fun signup(credentials: CredentialCustomerDTO) {

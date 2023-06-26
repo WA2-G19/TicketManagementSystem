@@ -63,9 +63,6 @@ async function deleteWarranty(token: string, warrantyId: number){
             "Authorization": "Bearer " + token
         }
     })
-    if (response.ok) {
-        return true
-    }
     throw ProblemDetail.fromJSON(await response.json())  
 }
 

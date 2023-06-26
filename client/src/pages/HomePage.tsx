@@ -6,7 +6,7 @@ import Staffs from "../components/homepage/Staffs";
 import Vendors from "../components/homepage/Vendors";
 import Products from "../components/homepage/Products";
 import Warranties from "../components/homepage/Warranties";
-import {Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import IsAuthenticated from "../components/authentication/IsAuthenticated";
 import Profile from "../components/homepage/Profile";
 import Welcome from "../components/homepage/Welcome";
@@ -18,12 +18,12 @@ import StaffForm from "../components/staff/StaffForm";
 import Skills from "../components/homepage/Skills";
 import SkillForm from "../components/skill/SkillForm";
 import ProductForm from "../components/product/ProductForm";
-import LoginPage from "./LoginPage";
 import {ModalChat} from "../components/modals/ModalChat";
+import ProfileEditForm from "../components/profile/ProfileEditForm";
 
 function HomePage() {
     return (
-        <IsAuthenticated alt={<LoginPage/>}>
+        <IsAuthenticated alt={<Navigate to={"/login"} />}>
             <SidebarLayout>
                 <SidebarLayout.Main>
                     <HasRole role={"Manager"} key={"manager"}>
@@ -31,6 +31,7 @@ function HomePage() {
                             <Route path={"/stats"} element={<Stats/>} />
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/staffs"} element={<Staffs />} />
+                            <Route path={"/staffs/edit/:expertEmail"} element={<ProfileEditForm />} />
                             <Route path={"/staffs/add"} element={<StaffForm />} />
                             <Route path={"/vendors"} element={<Vendors />} />
                             <Route path={"/vendors/add"} element={<VendorForm />} />
@@ -49,6 +50,7 @@ function HomePage() {
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/tickets/add"} element={<TicketForm />} />
                             <Route path={"/chat"} element={<ModalChat />} />
+                            <Route path={"/profile/edit"} element={<ProfileEditForm />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Expert"} key={"expert"}>

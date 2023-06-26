@@ -1,7 +1,6 @@
 package it.polito.wa2.g19.server.profiles.staff
 
 import it.polito.wa2.g19.server.profiles.NotMatchStaffTypeException
-import it.polito.wa2.g19.server.profiles.customers.CustomerDTO
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.validation.constraints.Email
@@ -16,7 +15,6 @@ data class StaffDTO(
     val name: String,
     @field:NotBlank(message = "surname cannot be blank")
     val surname: String,
-    @field:NotBlank(message = "type cannot be blank")
     @field:Enumerated(EnumType.STRING)
     val type: StaffType,
     val skills: List<String>

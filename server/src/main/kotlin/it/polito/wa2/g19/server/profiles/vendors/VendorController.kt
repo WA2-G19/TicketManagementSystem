@@ -33,6 +33,7 @@ class VendorController(
         @Email(message = "provide a valid email")
         email: String
     ): VendorDTO {
+        println(email)
         return vendorService.getVendor(email)
     }
 

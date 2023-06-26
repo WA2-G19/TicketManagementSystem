@@ -2,15 +2,24 @@ import {Staff} from "../../classes/Profile";
 import {Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import React from "react";
+import {BsPencilSquare} from "react-icons/bs";
+import {useNavigate} from "react-router-dom";
+import HasRole from "../authentication/HasRole";
 
 function StaffCard({ staff }: {
     staff: Staff
 }): JSX.Element {
+    const navigate = useNavigate()
     return <Container className={"border border-3 rounded border-primary"}>
         <Row className={"ps-3 mt-3"}>
-            <Typography variant="h5" component="div" color="primary">
-                {staff.name + " " + staff.surname}
-            </Typography>
+            <Col className={"d-flex flex-row justify-content-between"}>
+                <Typography variant="h5" component="div" color="primary">
+                    {staff.name + " " + staff.surname}
+                </Typography>
+                <HasRole role={"Manager"}>
+                    <BsPencilSquare role={"button"} onClick={() => navigate("/staffs/edit/" + staff.email)} title={"Edit"} />
+                </HasRole>
+            </Col>
         </Row>
         <Row className={"p-3"}>
             <Row>

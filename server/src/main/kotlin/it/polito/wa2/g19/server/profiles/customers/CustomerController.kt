@@ -31,6 +31,7 @@ class CustomerController(
         @Email(message = "provide a valid email")
         email: String
     ): CustomerDTO? {
+        println(email)
         return profileService.getProfile(email)
     }
 

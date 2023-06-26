@@ -61,7 +61,7 @@ class ResourceServerConfig {
             // ================================== //
             .requestMatchers("/API/vendor/")
                 .hasRole("Manager")
-            .requestMatchers("/API/vendor/profiles")
+            .requestMatchers("/API/vendor/*")
                 .hasAnyRole("Manager", "Vendor")
             // ================================== //
             // Tickets API

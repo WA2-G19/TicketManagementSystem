@@ -37,7 +37,7 @@ class StaffServiceImpl(
         return staffRepository.findAllExpert().map { it.toDTO() }
     }
 
-    @PreAuthorize("isAuthenticated() and ((#email == #principal.username and hasRole('Expert')) or hasRole('Manager'))")
+    @PreAuthorize("isAuthenticated() and ((#email == principal.claims['email'] and hasRole('Expert')) or hasRole('Manager'))")
     override fun getStaff(email: String): StaffDTO {
         val staff = staffRepository.findByEmailIgnoreCase(email.trim())
         if (staff == null) {
@@ -64,17 +64,13 @@ class StaffServiceImpl(
         }
     }
 
-    @PreAuthorize("isAuthenticated() and ((#email == #principal.username and hasRole('Expert')) or hasRole('Manager'))")
+    @PreAuthorize("isAuthenticated() and ((#email == principal.claims['email'] and hasRole('Expert')) or hasRole('Manager'))")
     override fun updateProfile(email: String, profile: StaffDTO) {
-        val p = staffRepository.findByEmailIgnoreCase(email.trim().lowercase())
-
-        if (p != null) {
-            p.name = profile.name
-            p.surname = profile.surname
-            staffRepository.save(p)
-        } else {
-            throw ProfileNotFoundException()
-        }
+        val p = staffRepository.findByEmailIgnoreCase(email.trim().lowercase()) ?: throw ProfileNotFoundException()
+        p.skills = profile.skills.map {
+            skillRepository.findByIdOrNull(it) ?: throw SkillNotFoundException()
+        }.toMutableSet()
+        staffRepository.save(p)
     }
 
     @PreAuthorize("hasRole('Manager')")

@@ -11,7 +11,8 @@ async function getProfileByEmail(token: string, email: string) {
             }
         })
     if (response.ok) {
-        return await response.json() as Profile
+        const { email, name, surname, address } = await response.json()
+        return new Profile(email, name, surname, address)
     }
     throw ProblemDetail.fromJSON(await response.json())
 }
