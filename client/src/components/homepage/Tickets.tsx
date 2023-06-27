@@ -46,7 +46,7 @@ function Tickets() {
                     !loading && tickets.length > 0 && tickets.map(ticket =>
                         <Col xs={12} className={"pt-3"} key={ticket.id}>
                             <TicketCard ticket={ticket}
-                                        setSelected={isManager && (ticket.status === TicketStatusEnum.Open || ticket.status === TicketStatusEnum.Reopened) ? () => setSelectedTicket(ticket) : undefined} chatopen={true}/>
+                                        setSelected={isManager && (ticket.status === TicketStatusEnum.Open || ticket.status === TicketStatusEnum.Reopened) ? () => setSelectedTicket(ticket) : undefined} openDetails={true}/>
                         </Col>
                     )
                 }

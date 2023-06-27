@@ -18,8 +18,8 @@ import StaffForm from "../components/staff/StaffForm";
 import Skills from "../components/homepage/Skills";
 import SkillForm from "../components/skill/SkillForm";
 import ProductForm from "../components/product/ProductForm";
-import {ModalChat} from "../components/modals/ModalChat";
 import ProfileEditForm from "../components/profile/ProfileEditForm";
+import TicketDetail from "../components/ticket/TicketDetail";
 
 function HomePage() {
     return (
@@ -30,6 +30,7 @@ function HomePage() {
                         <Routes>
                             <Route path={"/stats"} element={<Stats/>} />
                             <Route path={"/tickets"} element={<Tickets />} />
+                            <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
                             <Route path={"/staffs"} element={<Staffs />} />
                             <Route path={"/staffs/edit/:expertEmail"} element={<ProfileEditForm />} />
                             <Route path={"/staffs/add"} element={<StaffForm />} />
@@ -40,7 +41,6 @@ function HomePage() {
                             <Route path={"/warranties"} element={<Warranties />} />
                             <Route path={"/skills"} element={<Skills />} />
                             <Route path={"/skills/add"} element={<SkillForm />} />
-                            <Route path={"/chat"} element={<ModalChat />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Client"} key={"client"}>
@@ -49,14 +49,14 @@ function HomePage() {
                             <Route path={"/warranties/add"} element={<WarrantyForm />} />
                             <Route path={"/tickets"} element={<Tickets />} />
                             <Route path={"/tickets/add"} element={<TicketForm />} />
-                            <Route path={"/chat"} element={<ModalChat />} />
+                            <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
                             <Route path={"/profile/edit"} element={<ProfileEditForm />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Expert"} key={"expert"}>
                         <Routes>
                             <Route path={"/tickets"} element={<Tickets />} />
-                            <Route path={"/chat"} element={<ModalChat />} />
+                            <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
                         </Routes>
                     </HasRole>
                     <HasRole role={"Vendor"} key={"vendor"}>

@@ -12,10 +12,10 @@ import {BsInfoCircle} from "react-icons/bs";
 import {useNavigate} from "react-router-dom";
 import {ChangeStatus} from "../chat/ChangeStatus";
 
-function TicketCard({ticket, setSelected, chatopen}: {
+function TicketCard({ticket, setSelected, openDetails}: {
     ticket: TicketOut,
     setSelected?: (() => void),
-    chatopen: boolean
+    openDetails: boolean
 }): JSX.Element {
     const auth = useAuthentication()
     const alert = useAlert()
@@ -66,13 +66,13 @@ function TicketCard({ticket, setSelected, chatopen}: {
                 </Typography>
                 {ticket.description}
             </Col>
-            {chatopen && <Col>
+            {openDetails && <Col>
                 <Typography variant="body2" color="primary">
                     <strong>Status</strong>
                 </Typography>
                 {ticket.status}
             </Col>}
-            {!chatopen && <ChangeStatus ticketTMP={ticket}/>}
+            {!openDetails && <ChangeStatus ticketTMP={ticket}/>}
         </Row>
         <Row className={"pt-3"}>
             <Col>
@@ -98,12 +98,8 @@ function TicketCard({ticket, setSelected, chatopen}: {
             </Col>
         </Row>
         <Row className={"pt-3"}>
-            {chatopen && <Col md={2}>
-                <Button onClick={() => navigate("/chat", {
-                    state: {
-                        ticket: ticket
-                    }
-                })}>Open chat</Button>
+            {openDetails && <Col md={2}>
+                <Button onClick={() => navigate("/tickets/" + ticket.id)}>Details</Button>
             </Col>}
             {
                 setSelected !== undefined &&

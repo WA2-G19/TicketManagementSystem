@@ -1,59 +1,39 @@
-/* /Api/tickets
-// /{ticketId}/chat-messages/{chatMessageId} get
-// /{ticketId}/chat-messages get
-// /{ticketId}/chat-messages post
-// /{ticketId}/chat-messages/{chatMessageId}/attachments/{attachmentId} get */
-
 import {ChatMessageIn, ChatMessageOut} from "../../classes/Chat";
 import ProblemDetail from "../../classes/ProblemDetail";
 
 const {REACT_APP_SERVER_URL} = process.env;
 
-async function getChatMessage(token: string | undefined, ticketId: number, chatMessageId: number) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages/" + chatMessageId,
-            {
-                headers: {
-                    "Authorization": "Bearer " + token,
-                    "accept": "application/json"
-                }
+async function getChatMessage(token: string, ticketId: number, chatMessageId: number) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages/" + chatMessageId,
+        {
+            headers: {
+                "Authorization": "Bearer " + token,
+                "accept": "application/json"
             }
-        )
-        if (response.ok) {
-            return await response.json() as ChatMessageOut
-        } else {
-            return undefined
         }
-    } catch (e) {
-        throw e
+    )
+    if (response.ok) {
+        return await response.json() as ChatMessageOut
     }
-
-
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
 async function getChatMessages(token: string, ticketId: number) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages",
-            {
-                headers: {
-                    "Authorization": "Bearer " + token,
-                    "accept": "application/json"
-                }
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages",
+        {
+            headers: {
+                "Authorization": "Bearer " + token,
+                "accept": "application/json"
             }
-        )
-        if (response.ok) {
-            return response.json()
-        } else {
-            return undefined
         }
-    } catch (e) {
-        throw e
+    )
+    if (response.ok) {
+        return await response.json() as Array<ChatMessageOut>
     }
+    throw ProblemDetail.fromJSON(await response.json())
 }
 
-async function postChatMessages(token: string | undefined, ticketId: number, message: ChatMessageIn, files: FileList | undefined) {
+async function postChatMessages(token: string, ticketId: number, message: ChatMessageIn, files: FileList | null) {
 
     const formData = new FormData();
     formData.append(
@@ -68,44 +48,46 @@ async function postChatMessages(token: string | undefined, ticketId: number, mes
             }
         );
     }
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages",
-            {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                body: formData
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages",
+        {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token
             },
-        )
-        return response.ok
-    } catch (e) {
-        throw e
+            body: formData
+        },
+    )
+    if (!response.ok) {
+        throw ProblemDetail.fromJSON(await response.json())
     }
-
 }
 
-async function getAttachmentByChatMessageId(token: string | undefined, ticketId: number, chatMessageId: number, attachmentId: number) {
-
-    try {
-        const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages/" + chatMessageId +"/attachments/" + attachmentId,
-            {
-                headers: {
-                    "Authorization": "Bearer " + token
-                }
+async function getAttachmentByChatMessageId(token: string, ticketId: number, chatMessageId: number, attachmentId: number) {
+    const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages/" + chatMessageId +"/attachments/" + attachmentId,
+        {
+            headers: {
+                "Authorization": "Bearer " + token
             }
-        )
-        if(response.ok) {
-            await response.blob()
-            return response.ok
-        } else {
-            return undefined
         }
-    } catch (e) {
-        throw e
+    )
+    if (!response.ok) {
+        throw ProblemDetail.fromJSON(await response.json())
     }
+    return await response.blob()
+}
 
+async function getAttachmentByUrl(token: string, url: string) {
+    const response = await fetch(REACT_APP_SERVER_URL + url,
+        {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        }
+    )
+    if (!response.ok) {
+        throw ProblemDetail.fromJSON(await response.json())
+    }
+    return await response.blob()
 }
 
 async function getUnreadMessages(token: string, ticketId: number) {
@@ -139,6 +121,7 @@ const ChatAPI = {
     getChatMessages,
     postChatMessages,
     getAttachmentByChatMessageId,
+    getAttachmentByUrl,
     getUnreadMessages,
     getAllUnreadMessages
 }

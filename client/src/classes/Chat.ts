@@ -19,10 +19,10 @@ export class ChatMessageOut {
     id: number
     body: string
     authorEmail: string
-    stubAttachments: Set<StubAttachmentDTO>
+    stubAttachments: Array<StubAttachmentDTO>
     timestamp: string
 
-    constructor(body: string, id: number, authorEmail: string, timestamp: string, stubAttachments: Set<StubAttachmentDTO>){
+    constructor(body: string, id: number, authorEmail: string, timestamp: string, stubAttachments: Array<StubAttachmentDTO>){
         this.body = body
         this.id = id
         this.timestamp = timestamp
