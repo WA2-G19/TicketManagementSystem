@@ -1,4 +1,4 @@
-import {Button, Col} from "react-bootstrap";
+import {Button, Col, Form} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import {TicketOut, TicketStatusEnum} from "../../classes/Ticket";
 import {
@@ -57,7 +57,7 @@ export function ChangeStatus({ticketTMP}: {
             <Typography variant="body2" color="primary">
                 <strong>Change status (Actual: {ticket.status})</strong>
             </Typography>
-            <select value={selectedStatus} onChange={handleDropdownChange}>
+            <Form.Select value={selectedStatus} onChange={handleDropdownChange}>
                 <option key={"Choose"} value={"Choose"}>Choose</option>
                 <HasRole role={"Client"}><>
                     {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.Resolved] && Object.values(ResolvedClient).map((value) => (
@@ -103,8 +103,8 @@ export function ChangeStatus({ticketTMP}: {
                     ))}
                 </>
                 </HasRole>
-            </select>
-            <Button style={{padding: "6px 8px", fontSize: "10px"}} onClick={handleConfirm}>Confirm</Button>
+            </Form.Select>
+            <Button onClick={handleConfirm}>Confirm</Button>
         </Col>
     </>
 }
