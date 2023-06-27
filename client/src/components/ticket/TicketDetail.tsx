@@ -124,7 +124,7 @@ function TicketDetail() {
                 <Col className={"d-flex flex-column"}>
                     <Container className={"border border-3 h-100 rounded d-flex flex-column"}>
                         {
-                            messages.map(message => <Row key={message.id} className={"border-1 border-bottom w-50 " + (message.authorEmail === auth.user!.email ? "border-start align-self-end" : "border-end")}>
+                            messages.map((message, idx) => <Row key={idx} className={"border-1 border-bottom w-50 " + (message.authorEmail === auth.user!.email ? "border-start align-self-end" : "border-end")}>
                                 <Col>
                                     <Row>
                                         <Col className={message.authorEmail === auth.user!.email ? "text-end text-info" : "text-start text-danger"}>
@@ -138,9 +138,9 @@ function TicketDetail() {
                                     </Row>
                                     {
                                         message.stubAttachments.length > 0 &&
-                                        message.stubAttachments.map(a =>
+                                        message.stubAttachments.map((a, idx) =>
                                             <Row>
-                                                <Col key={a.url} role={"button"} onClick={() => downloadAttachment(a.name, a.url)}>
+                                                <Col key={idx} role={"button"} onClick={() => downloadAttachment(a.name, a.url)}>
                                                     <BsFileArrowDown /> {a.name}
                                                 </Col>
                                             </Row>)
