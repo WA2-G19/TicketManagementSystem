@@ -3,13 +3,11 @@ import {Typography} from "@mui/material";
 import {TicketOut, TicketStatusEnum} from "../../classes/Ticket";
 import {
     ClosedClient,
-    InProgressClient,
     InprogressExpert,
     InProgressManager,
     OpenManager,
-    ReopenedClient,
     ReopenedManager,
-    ResolvedClient
+    ResolvedClient, ResolvedManager
 } from "../../utils/changeStatus";
 import React, {useState} from "react";
 import {useAlert} from "../../contexts/Alert";
@@ -36,57 +34,32 @@ export function ChangeStatus({ticketTMP}: {
         if (selectedStatus === "Choose") {
             alert.getBuilder().setTitle("Error").setMessage("Choose an option").show()
         } else {
-            if (user?.role.includes("Client")) {
-                if (ticket.status.toString() == TicketStatusEnum[TicketStatusEnum.Closed] && selectedStatus == ClosedClient.REOPENED) {
+            try {
+                if (selectedStatus === TicketStatusEnum[TicketStatusEnum.Reopened]) {
                     await TicketAPI.reopenTicket(user?.token, ticket.id)
-                }
-                if ((ticket.status.toString() == TicketStatusEnum[TicketStatusEnum.Resolved]
-                        || ticket.status.toString() == TicketStatusEnum[TicketStatusEnum.Reopened]
-                        || ticket.status.toString() == TicketStatusEnum[TicketStatusEnum.InProgress])
-                    && (selectedStatus == ResolvedClient.CLOSED
-                        || selectedStatus == ReopenedClient.CLOSED
-                        || selectedStatus == InProgressClient.CLOSED)) {
+                } else if (selectedStatus === TicketStatusEnum[TicketStatusEnum.Resolved]) {
+                    await TicketAPI.resolveTicket(user?.token, ticket.id, user?.email)
+                } else if (selectedStatus === TicketStatusEnum[TicketStatusEnum.Closed]) {
                     await TicketAPI.closeTicket(user?.token, ticket.id, user?.email)
                 }
-            }
-            if (user?.role.includes("Expert") && ticket.status.toString() == TicketStatusEnum[TicketStatusEnum.InProgress] && selectedStatus == InprogressExpert.RESOLVED) {
-                await TicketAPI.resolveTicket(user?.token, ticket.id, user?.email)
-            }
-            if (user?.role.includes("Manager")) {
-                if (ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.Open] && selectedStatus === OpenManager.RESOLVED) {
-                    await TicketAPI.resolveTicket(user?.token, ticket.id, user?.email)
-                }
-                if (ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.Reopened] && selectedStatus === ReopenedManager.CLOSED) {
-                    await TicketAPI.closeTicket(user?.token, ticket.id, user?.email)
-                }
-                if (ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.InProgress] && selectedStatus === InProgressManager.RESOLVED) {
-                    await TicketAPI.resolveTicket(user?.token, ticket.id, user?.email)
-                }
+                setSelectedStatus("Choose")
+                const tmp = await TicketAPI.getTicketById(user?.token as string, ticket.id)
+                setTicket(tmp)
+            } catch (e: any) {
+                alert.getBuilder().setTitle("Error").setMessage(e['detail']).show()
             }
         }
-        setSelectedStatus("Choose")
-        const tmp = await TicketAPI.getTicketById(user?.token as string, ticket.id)
-        setTicket(tmp)
     }
+
 
     return <>
         <Col>
             <Typography variant="body2" color="primary">
-                <strong>Change status</strong>
+                <strong>Change status (Actual: {ticket.status})</strong>
             </Typography>
             <select value={selectedStatus} onChange={handleDropdownChange}>
                 <option key={"Choose"} value={"Choose"}>Choose</option>
                 <HasRole role={"Client"}><>
-                    {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.InProgress] && Object.values(InProgressClient).map((value) => (
-                        <option key={value} value={value}>
-                            {value}
-                        </option>
-                    ))}
-                    {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.Reopened] && Object.values(ReopenedClient).map((value) => (
-                        <option key={value} value={value}>
-                            {value}
-                        </option>
-                    ))}
                     {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.Resolved] && Object.values(ResolvedClient).map((value) => (
                         <option key={value} value={value}>
                             {value}
@@ -111,6 +84,11 @@ export function ChangeStatus({ticketTMP}: {
                         </option>
                     ))}
                     {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.InProgress] && Object.values(InProgressManager).map((value) => (
+                        <option key={value} value={value}>
+                            {value}
+                        </option>
+                    ))}
+                    {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.Resolved] && Object.values(ResolvedManager).map((value) => (
                         <option key={value} value={value}>
                             {value}
                         </option>

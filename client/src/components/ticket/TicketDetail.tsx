@@ -116,7 +116,7 @@ function TicketDetail() {
                 ticket &&
                 <Row className={"mb-3"}>
                     <Col>
-                        <TicketCard ticket={ticket} openDetails={false} />
+                        <TicketCard ticket={ticket} openDetails={true} />
                     </Col>
                 </Row>
             }

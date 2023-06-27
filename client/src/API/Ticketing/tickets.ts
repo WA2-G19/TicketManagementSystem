@@ -75,7 +75,7 @@ async function startProgressTicket(token: string, ticketId: number, expertEmail:
     }
 }
 
-async function closeTicket(token: string, ticketId: number, managerEmail: string) {
+async function closeTicket(token: string | undefined, ticketId: number, email: string | undefined) {
     const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId, {
         method: "PUT",
         headers: {
@@ -85,7 +85,7 @@ async function closeTicket(token: string, ticketId: number, managerEmail: string
         body: JSON.stringify({
             ticketId: ticketId,
             status: "Closed",
-            by: managerEmail,
+            by: email,
             timestamp: new Date(Date.now()).toISOString()
         })
     })
@@ -94,7 +94,7 @@ async function closeTicket(token: string, ticketId: number, managerEmail: string
     }
 }
 
-async function resolveTicket(token: string, ticketId: number, managerEmail: string) {
+async function resolveTicket(token: string | undefined, ticketId: number, email: string | undefined) {
     const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId, {
         method: "PUT",
         headers: {
@@ -104,7 +104,7 @@ async function resolveTicket(token: string, ticketId: number, managerEmail: stri
         body: JSON.stringify({
             ticketId: ticketId,
             status: "Resolved",
-            by: managerEmail,
+            by: email,
             timestamp: new Date(Date.now()).toISOString()
         })
     })
@@ -113,7 +113,7 @@ async function resolveTicket(token: string, ticketId: number, managerEmail: stri
     }
 }
 
-async function reopenTicket(token: string, ticketId: number) {
+async function reopenTicket(token: string | undefined, ticketId: number) {
     const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId, {
         method: "PUT",
         headers: {

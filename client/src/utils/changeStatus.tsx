@@ -7,12 +7,12 @@ export enum ReopenedManager {
     CLOSED = 'Closed',
 }
 
-export enum InProgressManager {
-    RESOLVED = "Resolved",
+export enum ResolvedManager {
+    CLOSED = 'Closed',
 }
 
-export enum InProgressClient {
-    CLOSED = "Closed"
+export enum InProgressManager {
+    RESOLVED = "Resolved",
 }
 
 export enum ClosedClient {
@@ -20,13 +20,10 @@ export enum ClosedClient {
 }
 
 export enum ResolvedClient {
-    CLOSED = "Closed"
-}
-
-export enum ReopenedClient {
-    CLOSED = "Closed"
+    REOPENED = "Reopened"
 }
 
 export enum InprogressExpert {
-    RESOLVED = "Resolved"
+    RESOLVED = "Resolved",
+    CLOSED = "Closed"
 }
