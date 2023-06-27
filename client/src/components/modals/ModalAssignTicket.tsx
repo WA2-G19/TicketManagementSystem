@@ -26,6 +26,8 @@ function ModalAssignTicket({ ticket, hide }: ModalAssignTicketProps) {
             const tmp = await StaffAPI.getProfilesWithStatistics(token)
             if (tmp) {
                 setExperts(tmp)
+                if (tmp.length > 0)
+                    setSelected(tmp[0].email)
             } else {
                 alert.getBuilder()
                     .setTitle("Error")

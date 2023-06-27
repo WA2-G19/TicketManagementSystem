@@ -103,7 +103,7 @@ function TicketDetail() {
     }
 
     return (
-        <Container fluid className={"vh-100 d-flex flex-column"}>
+        <Container fluid className={"h-100 d-flex flex-column"}>
             <Row className={"mt-3"}>
                 <Col className={"d-flex flex-row align-items-center"} xs={1}>
                     <BsArrowLeft size={"2em"} onClick={() => navigate(-1)} role={"button"} />
@@ -116,7 +116,7 @@ function TicketDetail() {
                 ticket &&
                 <Row className={"mb-3"}>
                     <Col>
-                        <TicketCard ticket={ticket} openDetails={true} />
+                        <TicketCard ticket={ticket} openDetails={false} />
                     </Col>
                 </Row>
             }
@@ -124,7 +124,7 @@ function TicketDetail() {
                 <Col className={"d-flex flex-column"}>
                     <Container className={"border border-3 h-100 rounded d-flex flex-column"}>
                         {
-                            messages.map(message => <Row key={message.id} className={"border-1 border-bottom w-50 " + (message.authorEmail === auth.user!.email ? "border-start align-self-end" : "border-end")}>
+                            messages.map((message, i) => <Row key={message.id} className={"border-1 border-bottom border w-75 rounded mb-1" + (message.authorEmail === auth.user!.email ? " border-start align-self-end" : " border-end") + (i !== 0 ? " border-top" : "")}>
                                 <Col>
                                     <Row>
                                         <Col className={message.authorEmail === auth.user!.email ? "text-end text-info" : "text-start text-danger"}>
@@ -139,8 +139,8 @@ function TicketDetail() {
                                     {
                                         message.stubAttachments.length > 0 &&
                                         message.stubAttachments.map(a =>
-                                            <Row>
-                                                <Col key={a.url} role={"button"} onClick={() => downloadAttachment(a.name, a.url)}>
+                                            <Row key={a.url} role={"button"} onClick={() => downloadAttachment(a.name, a.url)}>
+                                                <Col>
                                                     <BsFileArrowDown /> {a.name}
                                                 </Col>
                                             </Row>)
