@@ -20,11 +20,11 @@ export enum PriorityLevelEnum {
 }
 
 export enum TicketStatusEnum {
-    Open,
-    InProgress,
-    Closed,
-    Resolved,
-    Reopened
+    Open= "Open",
+    InProgress = "InProgress",
+    Closed = "Closed",
+    Resolved = "Resolved",
+    Reopened = "Reopened"
 }
 
 export class TicketOut {

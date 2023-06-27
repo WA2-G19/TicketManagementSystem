@@ -10,6 +10,7 @@ import ProblemDetail from "../../classes/ProblemDetail";
 import {BsArrowLeft, BsFileArrowDown} from "react-icons/bs";
 import {TicketOut} from "../../classes/Ticket";
 import TicketAPI from "../../API/Ticketing/tickets";
+import "./chat.css"
 
 function TicketDetail() {
     const [messages, setMessages] = useState(Array<ChatMessageOut>)
@@ -98,12 +99,24 @@ function TicketDetail() {
         document.body.removeChild(link)
     }
 
+    function stringToColor(s: string) {
+        let hash = 0;
+        for (let i = 0; i < s.length; i++) {
+            hash = s.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const c =(hash & 0x00FFFFFF)
+            .toString(16)
+            .toUpperCase();
+
+        return "#" + "00000".substring(0, 6 - c.length) + c;
+    }
+
     if (!ticketIdString || isNaN(parseInt(ticketIdString))) {
         return (<Navigate to={"/tickets"} />)
     }
 
     return (
-        <Container fluid className={"vh-100 d-flex flex-column"}>
+        <Container fluid className={"h-100 d-flex flex-column"}>
             <Row className={"mt-3"}>
                 <Col className={"d-flex flex-row align-items-center"} xs={1}>
                     <BsArrowLeft size={"2em"} onClick={() => navigate(-1)} role={"button"} />
@@ -116,21 +129,24 @@ function TicketDetail() {
                 ticket &&
                 <Row className={"mb-3"}>
                     <Col>
-                        <TicketCard ticket={ticket} openDetails={true} />
+                        <TicketCard ticket={ticket} openDetails={false} />
                     </Col>
                 </Row>
             }
             <Row className={"flex-grow-1 mb-3"}>
                 <Col className={"d-flex flex-column"}>
-                    <Container className={"border border-3 h-100 rounded d-flex flex-column"}>
+                    <Container className={"chat"}>
                         {
-                            messages.map((message, idx) => <Row key={idx} className={"border-1 border-bottom w-50 " + (message.authorEmail === auth.user!.email ? "border-start align-self-end" : "border-end")}>
+                            messages.map(message => <Row key={message.id} className={"chat-message " + (message.authorEmail === auth.user!.email ? "from-me" : "from-them")}>
                                 <Col>
-                                    <Row>
-                                        <Col className={message.authorEmail === auth.user!.email ? "text-end text-info" : "text-start text-danger"}>
-                                            {message.authorEmail}
-                                        </Col>
-                                    </Row>
+                                    {
+                                        message.authorEmail !== auth.user!.email &&
+                                        <Row>
+                                            <Col style={{color: stringToColor(message.authorEmail)}}>
+                                                {message.authorEmail}
+                                            </Col>
+                                        </Row>
+                                    }
                                     <Row>
                                         <Col>
                                             {message.body}
@@ -138,9 +154,9 @@ function TicketDetail() {
                                     </Row>
                                     {
                                         message.stubAttachments.length > 0 &&
-                                        message.stubAttachments.map((a, idx) =>
-                                            <Row>
-                                                <Col key={idx} role={"button"} onClick={() => downloadAttachment(a.name, a.url)}>
+                                        message.stubAttachments.map(a =>
+                                            <Row key={a.url} role={"button"} onClick={() => downloadAttachment(a.name, a.url)}>
+                                                <Col>
                                                     <BsFileArrowDown /> {a.name}
                                                 </Col>
                                             </Row>)

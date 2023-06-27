@@ -16,6 +16,7 @@ function Tickets() {
     const token = user!.token
     const isManager = user!.role.includes("Manager")
     const [loading, setLoading] = useState(true)
+
     useEffect(() => {
         async function getTickets() {
             setTickets(await TicketAPI.getTicketsWithUnreadMessages(token))
@@ -46,7 +47,8 @@ function Tickets() {
                     !loading && tickets.length > 0 && tickets.map(ticket =>
                         <Col xs={12} className={"pt-3"} key={ticket.id}>
                             <TicketCard ticket={ticket}
-                                        setSelected={isManager && (ticket.status === TicketStatusEnum.Open || ticket.status === TicketStatusEnum.Reopened) ? () => setSelectedTicket(ticket) : undefined} openDetails={false}/>
+                                        setSelected={isManager && (ticket.status === TicketStatusEnum.Open || ticket.status === TicketStatusEnum.Reopened) ? () => setSelectedTicket(ticket) : undefined}
+                                        openDetails={true}/>
                         </Col>
                     )
                 }

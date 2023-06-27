@@ -10,7 +10,7 @@ import ProductAPI from "../../API/Products/products";
 import ProductCard from "../product/ProductCard";
 import {BsInfoCircle} from "react-icons/bs";
 import {useNavigate} from "react-router-dom";
-import {ChangeStatus} from "../chat/ChangeStatus";
+import {ChangeStatus} from "./ChangeStatus";
 
 function TicketCard({ticket, setSelected, openDetails}: {
     ticket: TicketOut,
@@ -66,13 +66,19 @@ function TicketCard({ticket, setSelected, openDetails}: {
                 </Typography>
                 {ticket.description}
             </Col>
-            {!openDetails && <Col>
-                <Typography variant="body2" color="primary">
-                    <strong>Status</strong>
-                </Typography>
-                {ticket.status}
-            </Col>}
-            {openDetails && <ChangeStatus ticketTMP={ticket}/>}
+            {
+                openDetails &&
+                <Col>
+                    <Typography variant="body2" color="primary">
+                        <strong>Status</strong>
+                    </Typography>
+                    {ticket.status}
+                </Col>
+            }
+            {
+                !openDetails &&
+                <ChangeStatus ticketTMP={ticket}/>
+            }
         </Row>
         <Row className={"pt-3"}>
             <Col>
@@ -98,9 +104,12 @@ function TicketCard({ticket, setSelected, openDetails}: {
             </Col>
         </Row>
         <Row className={"pt-3"}>
-            {!openDetails && <Col md={2}>
-                <Button onClick={() => navigate("/tickets/" + ticket.id)}>Details</Button>
-            </Col>}
+            {
+                openDetails &&
+                <Col xs={"auto"} md={2}>
+                    <Button onClick={() => navigate("/tickets/" + ticket.id)}>Details</Button>
+                </Col>
+            }
             {
                 setSelected !== undefined &&
                 <Col>
