@@ -27,3 +27,7 @@ export enum InprogressExpert {
     RESOLVED = "Resolved",
     CLOSED = "Closed"
 }
+
+export enum ResolvedExpert {
+    CLOSED = "Closed"
+}

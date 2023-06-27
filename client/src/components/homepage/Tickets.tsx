@@ -31,7 +31,7 @@ function Tickets() {
                     .setButtonsOk()
                     .show()
             })
-    }, [token])
+    }, [token, selectedTicket])
 
     return (
         <Container fluid>
