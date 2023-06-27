@@ -4,7 +4,7 @@
 // /{ticketId}/chat-messages post
 // /{ticketId}/chat-messages/{chatMessageId}/attachments/{attachmentId} get */
 
-import {ChatMessageIn, ChatMessageOut, StubAttachmentDTO} from "../../classes/Chat";
+import {ChatMessageIn, ChatMessageOut} from "../../classes/Chat";
 import ProblemDetail from "../../classes/ProblemDetail";
 
 const {REACT_APP_SERVER_URL} = process.env;
@@ -32,7 +32,7 @@ async function getChatMessage(token: string | undefined, ticketId: number, chatM
 
 }
 
-async function getChatMessages(token: string | undefined, ticketId: number) {
+async function getChatMessages(token: string, ticketId: number) {
 
     try {
         const response = await fetch(REACT_APP_SERVER_URL + "/API/tickets/" + ticketId + "/chat-messages",

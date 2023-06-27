@@ -64,6 +64,7 @@ export function ChangeStatus({ticketTMP}: {
                 }
             }
         }
+        setSelectedStatus("Choose")
         const tmp = await TicketAPI.getTicketById(user?.token as string, ticket.id)
         setTicket(tmp)
     }

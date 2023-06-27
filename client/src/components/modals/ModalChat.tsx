@@ -1,18 +1,15 @@
 import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
 import React, {useEffect, useRef, useState} from "react";
 import {ChatWindow} from "../chat/ChatWindow";
-import {ChatMessageIn, ChatMessageOut, StubAttachmentDTO} from "../../classes/Chat";
+import {ChatMessageIn, ChatMessageOut} from "../../classes/Chat";
 import ChatAPI from "../../API/Ticketing/chat";
 import {useAuthentication} from "../../contexts/Authentication";
 import {useLocation, useNavigate} from "react-router-dom";
-import {Ticket} from "../../classes/Ticket";
 import TicketCard from "../ticket/TicketCard";
 
-interface ModalChatProps {
-    ticket?: Ticket,
-}
 
-export function ModalChat({ticket}: ModalChatProps) {
+
+export function ModalChat() {
 
     const [currentText, setCurrentText] = useState("")
     const [files, setFiles] = useState<FileList | undefined>(undefined)
@@ -27,40 +24,33 @@ export function ModalChat({ticket}: ModalChatProps) {
     useEffect(() => {
         async function settingUpMessages() {
             const messages = await ChatAPI.getChatMessages(token, state.ticket.id) as Array<ChatMessageOut>
-            setMessages(messages.sort((n1, n2) => {
-                if (n1.id > n2.id) return 1;
-                else if (n1.id < n2.id) return -1;
-                else return 0;
-            }))
+            setMessages(messages)
         }
 
         settingUpMessages()
-    }, [token, ticket])
+    }, [token, state.ticket])
 
-    const timeout = setTimeout(async () => {
-        const messages = await ChatAPI.getChatMessages(token, state.ticket) as Array<ChatMessageOut>
-        setMessages(messages.sort((n1, n2) => {
-            if (n1.id > n2.id) return 1;
-            else if (n1.id < n2.id) return -1;
-            else return 0;
-        }))
-        console.log("Updated....")
-    }, 5 * 1000)
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const messages = await ChatAPI.getChatMessages(token, state.ticket.id) as Array<ChatMessageOut>
+            setMessages(messages)
+            console.log("Updated....")
+        }, 1000)
+
+        return () => {
+            clearInterval(interval)
+        }
+    }, [])
 
     const goBack = () => {
-        clearTimeout(timeout)
         navigate(-1)
     }
 
 
     const onSendMessage = async () => {
         setCurrentText("")
-        const response = await ChatAPI.postChatMessages(token, state.ticket,
+        const response = await ChatAPI.postChatMessages(token, state.ticket.id,
             new ChatMessageIn(currentText), files)
-        if (response) {
-            setMessages((e) => [...e, new ChatMessageOut(currentText, 0, auth.user!.email, "", new Set<StubAttachmentDTO>())])
-            ref.current?.lastElementChild?.scrollIntoView();
-        }
     }
 
     const onAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
