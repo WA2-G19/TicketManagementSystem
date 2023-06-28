@@ -8,7 +8,6 @@ import {
     OpenManager,
     ReopenedManager,
     ResolvedClient,
-    ResolvedExpert,
     ResolvedManager
 } from "../../utils/changeStatus";
 import React, {useState} from "react";
@@ -114,11 +113,6 @@ export function ChangeStatus({ticketTMP}: {
                         </HasRole>
                         <HasRole role={"Expert"}><>
                             {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.InProgress] && Object.values(InprogressExpert).map((value) => (
-                                <option key={value} value={value}>
-                                    {value}
-                                </option>
-                            ))}
-                            {ticket.status.toString() === TicketStatusEnum[TicketStatusEnum.Resolved] && Object.values(ResolvedExpert).map((value) => (
                                 <option key={value} value={value}>
                                     {value}
                                 </option>
