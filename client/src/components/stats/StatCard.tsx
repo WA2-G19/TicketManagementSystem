@@ -2,9 +2,6 @@ import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
 import {Staff} from "../../classes/Profile";
 import {Typography} from "@mui/material";
-import HasRole from "../authentication/HasRole";
-import {BsPencilSquare} from "react-icons/bs";
-import {useNavigate} from "react-router-dom";
 import {Chart} from "react-google-charts";
 import TicketAPI from "../../API/Ticketing/tickets";
 import {useAuthentication} from "../../contexts/Authentication";
@@ -31,18 +28,17 @@ const optionsInProgressTickets = {
 
 
 export function StatCard(props: StatCardProp) {
-
-    const navigate = useNavigate()
     const [tickets, setTickets] = useState<Array<TicketOut>>()
     const auth = useAuthentication()
+    const token = auth.user!.token
 
     useEffect(() => {
         async function getTickets() {
-            const tickets = await TicketAPI.getTickets(auth.user?.token!)
+            const tickets = await TicketAPI.getTickets(token)
             setTickets(tickets)
         }
         getTickets()
-    }, [])
+    }, [token])
 
     const dataAvgTime = [
         ["Label", "Value"],
@@ -67,9 +63,6 @@ export function StatCard(props: StatCardProp) {
                 <Typography variant="h5" component="div" color="primary">
                     {props.expert.name + " " + props.expert.surname}
                 </Typography>
-                <HasRole role={"Manager"}>
-                    <BsPencilSquare role={"button"} onClick={() => navigate("/staffs/edit/" + props.expert.email)} title={"Edit"} />
-                </HasRole>
             </Col>
         </Row>
         <Row className={"p-3"}>

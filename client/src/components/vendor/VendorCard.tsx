@@ -7,7 +7,7 @@ function VendorCard({ vendor }: {
     vendor: Vendor
 }): JSX.Element {
 
-    return <Container className={"border border-3 rounded border-primary"}>
+    return <Container className={"border border-3 rounded border-primary h-100"}>
         <Row className={"ps-3 mt-3"}>
             <Typography variant="h5" component="div" color="primary">
                 {vendor.businessName}

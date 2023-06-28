@@ -23,13 +23,14 @@ function Profile() {
     const isClient = auth.user!.role.includes("Client")
     const isExpert = auth.user!.role.includes("Expert")
     const isVendor = auth.user!.role.includes("Vendor")
+    const isManager = auth.user!.role.includes("Manager")
 
     useEffect(() => {
         async function getCustomer() {
             setProfile(await CustomerAPI.getProfileByEmail(token, email))
         }
 
-        async function getExpert() {
+        async function getStaff() {
             setProfile(await StaffAPI.getProfile(token, email))
         }
 
@@ -52,14 +53,14 @@ function Profile() {
         if (isClient) {
             getCustomer()
                 .catch(onError)
-        } else if (isExpert) {
-            getExpert()
+        } else if (isExpert || isManager) {
+            getStaff()
                 .catch(onError)
         } else if (isVendor) {
             getVendor()
                 .catch(onError)
         }
-    }, [token, email, isClient, isExpert, isVendor])
+    }, [token, email, isClient, isExpert, isVendor, isManager])
 
     if (!auth.isLoggedIn)
         return (<Navigate to={"/login"} />)

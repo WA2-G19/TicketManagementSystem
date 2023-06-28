@@ -20,63 +20,69 @@ import SkillForm from "../components/skill/SkillForm";
 import ProductForm from "../components/product/ProductForm";
 import ProfileEditForm from "../components/profile/ProfileEditForm";
 import TicketDetail from "../components/ticket/TicketDetail";
+import IsAnonymous from "../components/authentication/IsAnonymous";
 
 function HomePage() {
     return (
-        <IsAuthenticated alt={<Navigate to={"/login"} />}>
-            <SidebarLayout>
-                <SidebarLayout.Main>
-                    <HasRole role={"Manager"} key={"manager"}>
-                        <Routes>
-                            <Route path={"/stats"} element={<Stats/>} />
-                            <Route path={"/tickets"} element={<Tickets />} />
-                            <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
-                            <Route path={"/staffs"} element={<Staffs />} />
-                            <Route path={"/staffs/edit/:expertEmail"} element={<ProfileEditForm />} />
-                            <Route path={"/staffs/add"} element={<StaffForm />} />
-                            <Route path={"/vendors"} element={<Vendors />} />
-                            <Route path={"/vendors/add"} element={<VendorForm />} />
-                            <Route path={"/products"} element={<Products />} />
-                            <Route path={"/products/add"} element={<ProductForm />} />
-                            <Route path={"/warranties"} element={<Warranties />} />
-                            <Route path={"/skills"} element={<Skills />} />
-                            <Route path={"/skills/add"} element={<SkillForm />} />
-                        </Routes>
-                    </HasRole>
-                    <HasRole role={"Client"} key={"client"}>
-                        <Routes>
-                            <Route path={"/warranties"} element={<Warranties />} />
-                            <Route path={"/warranties/add"} element={<WarrantyForm />} />
-                            <Route path={"/tickets"} element={<Tickets />} />
-                            <Route path={"/tickets/add"} element={<TicketForm />} />
-                            <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
-                            <Route path={"/profile/edit"} element={<ProfileEditForm />} />
-                        </Routes>
-                    </HasRole>
-                    <HasRole role={"Expert"} key={"expert"}>
-                        <Routes>
-                            <Route path={"/tickets"} element={<Tickets />} />
-                            <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
-                        </Routes>
-                    </HasRole>
-                    <HasRole role={"Vendor"} key={"vendor"}>
-                        <Routes>
-                            <Route path={"/warranties"} element={<Warranties />} />
-                            <Route path={"/warranties/add"} element={<WarrantyForm />} />
-                        </Routes>
-                    </HasRole>
-                    <IsAuthenticated>
-                        <Routes>
-                            <Route path={"/profile"} element={<Profile />} />
-                            <Route path={"/"} element={<Welcome />} />
-                        </Routes>
-                    </IsAuthenticated>
-                </SidebarLayout.Main>
-                <SidebarLayout.Sidebar>
-                    <Sidebar />
-                </SidebarLayout.Sidebar>
-            </SidebarLayout>
-        </IsAuthenticated>
+        <>
+            <IsAuthenticated>
+                <SidebarLayout>
+                    <SidebarLayout.Main>
+                        <HasRole role={"Manager"} key={"manager"}>
+                            <Routes>
+                                <Route path={"/stats"} element={<Stats/>} />
+                                <Route path={"/tickets"} element={<Tickets />} />
+                                <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
+                                <Route path={"/staffs"} element={<Staffs />} />
+                                <Route path={"/staffs/edit/:expertEmail"} element={<ProfileEditForm />} />
+                                <Route path={"/staffs/add"} element={<StaffForm />} />
+                                <Route path={"/vendors"} element={<Vendors />} />
+                                <Route path={"/vendors/add"} element={<VendorForm />} />
+                                <Route path={"/products"} element={<Products />} />
+                                <Route path={"/products/add"} element={<ProductForm />} />
+                                <Route path={"/warranties"} element={<Warranties />} />
+                                <Route path={"/skills"} element={<Skills />} />
+                                <Route path={"/skills/add"} element={<SkillForm />} />
+                            </Routes>
+                        </HasRole>
+                        <HasRole role={"Client"} key={"client"}>
+                            <Routes>
+                                <Route path={"/warranties"} element={<Warranties />} />
+                                <Route path={"/warranties/add"} element={<WarrantyForm />} />
+                                <Route path={"/tickets"} element={<Tickets />} />
+                                <Route path={"/tickets/add"} element={<TicketForm />} />
+                                <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
+                                <Route path={"/profile/edit"} element={<ProfileEditForm />} />
+                            </Routes>
+                        </HasRole>
+                        <HasRole role={"Expert"} key={"expert"}>
+                            <Routes>
+                                <Route path={"/tickets"} element={<Tickets />} />
+                                <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
+                            </Routes>
+                        </HasRole>
+                        <HasRole role={"Vendor"} key={"vendor"}>
+                            <Routes>
+                                <Route path={"/warranties"} element={<Warranties />} />
+                                <Route path={"/warranties/add"} element={<WarrantyForm />} />
+                            </Routes>
+                        </HasRole>
+                        <IsAuthenticated>
+                            <Routes>
+                                <Route path={"/profile"} element={<Profile />} />
+                                <Route path={"/"} element={<Welcome />} />
+                            </Routes>
+                        </IsAuthenticated>
+                    </SidebarLayout.Main>
+                    <SidebarLayout.Sidebar>
+                        <Sidebar />
+                    </SidebarLayout.Sidebar>
+                </SidebarLayout>
+            </IsAuthenticated>
+            <IsAnonymous>
+                <Navigate to={"/login"} />
+            </IsAnonymous>
+        </>
     )
 }
 

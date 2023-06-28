@@ -6,7 +6,7 @@ import Product from "../../classes/Product";
 function ProductCard({product}: {
     product: Product | undefined
 }): JSX.Element {
-    return <Container className={"border border-3 rounded border-primary"}>
+    return <Container className={"border border-3 rounded border-primary h-100"}>
         <Row className={"ps-3 mt-3"}>
             <Typography variant="h5" component="div" color="primary">
                 <strong>EAN</strong>

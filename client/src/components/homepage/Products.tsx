@@ -9,6 +9,7 @@ import {useAlert} from "../../contexts/Alert";
 import {BsPlus} from "react-icons/bs";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 function Products(): JSX.Element {
     const navigate = useNavigate()
@@ -25,11 +26,15 @@ function Products(): JSX.Element {
 
         getWarranties()
             .catch(err => {
-                alert.getBuilder()
+                const builder = alert.getBuilder()
                     .setTitle("Error")
-                    .setMessage("Error loading tickets. Details: " + err)
                     .setButtonsOk()
-                    .show()
+                if (err instanceof ProblemDetail) {
+                    builder.setMessage("Error loading tickets. Details: " + err.getDetails())
+                } else {
+                    builder.setMessage("Error loading tickets. Details: " + err)
+                }
+                builder.show()
             })
     }, [token])
 
@@ -49,7 +54,7 @@ function Products(): JSX.Element {
             <Row>
                 {
                     !loading && products.length !== 0 && products.map(product =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3 h-100"} key={product.ean}>
+                        <Col xs={12} sm={6} md={4} className={"pt-3 d-flex flex-column"} key={product.ean}>
                             <ProductCard product={product}/>
                         </Col>
                     )

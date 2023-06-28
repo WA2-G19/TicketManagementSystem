@@ -36,7 +36,7 @@ function TicketCard({ticket, setSelected, openDetails}: {
             .show()
     }
 
-    return <Container className={"border border-3 rounded border-primary p-3"}>
+    return <Container className={"border border-3 rounded border-primary p-3 h-100"}>
         <Row className={"ps-3"}>
             <Typography variant="h5" component="div" color="primary">
                 ID {ticket.id}

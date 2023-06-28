@@ -8,6 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {Skill} from "../../classes/Skill";
 import SkillAPI from "../../API/Skill/skill";
 import SkillCard from "../skill/SkillCard";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 function Skills() {
     const navigate = useNavigate()
@@ -27,11 +28,15 @@ function Skills() {
             setLoading(true)
             getSkills()
                 .catch(err => {
-                    alert.getBuilder()
+                    const builder = alert.getBuilder()
                         .setTitle("Error")
-                        .setMessage("Error loading skills. Details: " + err)
                         .setButtonsOk()
-                        .show()
+                    if (err instanceof ProblemDetail) {
+                        builder.setMessage("Error loading skills. Details: " + err.getDetails())
+                    } else {
+                        builder.setMessage("Error loading skills. Details: " + err)
+                    }
+                    builder.show()
                 })
                 .finally(() => setDirty(false))
         }
@@ -51,7 +56,7 @@ function Skills() {
             <Row>
                 {
                     !loading && skills.length !== 0 && skills.map(skill =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={skill.name}>
+                        <Col xs={12} sm={6} md={4} className={"pt-3 d-flex flex-column"} key={skill.name}>
                             <SkillCard skill={skill} forceReload={() => setDirty(true)}/>
                         </Col>
                     )

@@ -9,6 +9,7 @@ import {useAlert} from "../../contexts/Alert";
 import {BsPlus} from "react-icons/bs";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 function Staffs() {
     const navigate = useNavigate()
@@ -25,11 +26,15 @@ function Staffs() {
 
         getStaffs()
             .catch(err => {
-                alert.getBuilder()
+                const builder = alert.getBuilder()
                     .setTitle("Error")
-                    .setMessage("Error loading staff members. Details: " + err)
                     .setButtonsOk()
-                    .show()
+                if (err instanceof ProblemDetail) {
+                    builder.setMessage("Error loading staff members. Details: " + err.getDetails())
+                } else {
+                    builder.setMessage("Error loading members. Details: " + err)
+                }
+                builder.show()
             })
     }, [token])
 
@@ -49,7 +54,7 @@ function Staffs() {
             <Row>
                 {
                     !loading && staffs.length !== 0 && staffs.map(staff =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={staff.email}>
+                        <Col xs={12} sm={6} md={4} className={"pt-3 d-flex flex-column"} key={staff.email}>
                             <StaffCard staff={staff}/>
                         </Col>
                     )

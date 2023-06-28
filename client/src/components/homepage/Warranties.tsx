@@ -9,6 +9,7 @@ import {BsPlus} from "react-icons/bs";
 import {useNavigate} from "react-router-dom";
 import HasAnyRole from "../authentication/HasAnyRole";
 import {useAlert} from "../../contexts/Alert";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 function Warranties(): JSX.Element {
     const navigate = useNavigate()
@@ -37,11 +38,15 @@ function Warranties(): JSX.Element {
 
         getWarranties()
             .catch(err => {
-                alert.getBuilder()
+                const builder = alert.getBuilder()
                     .setTitle("Error")
-                    .setMessage("Error loading warranties. Details: " + err)
                     .setButtonsOk()
-                    .show()
+                if (err instanceof ProblemDetail) {
+                    builder.setMessage("Error loading warranties. Details: " + err.getDetails())
+                } else {
+                    builder.setMessage("Error loading warranties. Details: " + err)
+                }
+                builder.show()
             })
     }, [token])
 
@@ -67,7 +72,7 @@ function Warranties(): JSX.Element {
             <Row>
                 {
                     !loading && warranties.length !== 0 && warranties.map(warranty =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={warranty.id}>
+                        <Col xs={12} sm={6} md={4} className={"pt-3 d-flex flex-column"} key={warranty.id}>
                             <WarrantyCard warranty={warranty} now={now} remove = {deleteWarranty}/>
                         </Col>
                     )

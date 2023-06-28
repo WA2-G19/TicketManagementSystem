@@ -59,7 +59,7 @@ function WarrantyCard({ warranty, now = new Date(Date.now()), remove }: {
     }
 
     return (
-        <Container className={"border border-3 rounded border-primary"}>
+        <Container className={"border border-3 rounded border-primary h-100"}>
             <Row className={"pt-3 ms-1 d-flex justify-content-start"}>
                 <Col>
                     {

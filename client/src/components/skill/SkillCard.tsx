@@ -47,7 +47,7 @@ function SkillCard({ skill, forceReload }: {
     }
 
     return (
-        <Container className={"border border-3 rounded border-primary p-2"}>
+        <Container className={"border border-3 rounded border-primary p-2 h-100"}>
             <Row>
                 <Typography variant="h5" component="div" color="primary">
                     {skill.name}

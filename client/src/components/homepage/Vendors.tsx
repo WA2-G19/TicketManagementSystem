@@ -9,6 +9,7 @@ import VendorCard from "../vendor/VendorCard";
 import {BsPlus} from "react-icons/bs";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 function Vendors() {
     const navigate = useNavigate()
@@ -25,11 +26,15 @@ function Vendors() {
 
         getVendors()
             .catch(err => {
-                alert.getBuilder()
+                const builder = alert.getBuilder()
                     .setTitle("Error")
-                    .setMessage("Error loading vendors. Details: " + err)
                     .setButtonsOk()
-                    .show()
+                if (err instanceof ProblemDetail) {
+                    builder.setMessage("Error loading vendors. Details: " + err.getDetails())
+                } else {
+                    builder.setMessage("Error loading vendors. Details: " + err)
+                }
+                builder.show()
             })
     }, [token])
 
@@ -49,7 +54,7 @@ function Vendors() {
             <Row>
                 {
                     !loading && vendors.length !== 0 && vendors.map(vendor =>
-                        <Col xs={12} sm={6} md={4} className={"pt-3"} key={vendor.email}>
+                        <Col xs={12} sm={6} md={4} className={"pt-3 d-flex flex-column"} key={vendor.email}>
                             <VendorCard vendor={vendor}/>
                         </Col>
                     )

@@ -7,6 +7,7 @@ import TicketCard from "../ticket/TicketCard";
 import Loading from "../Loading";
 import {useAlert} from "../../contexts/Alert";
 import ModalAssignTicket from "../modals/ModalAssignTicket";
+import ProblemDetail from "../../classes/ProblemDetail";
 
 function Tickets() {
     const [tickets, setTickets] = useState(Array<TicketOut>)
@@ -25,11 +26,15 @@ function Tickets() {
 
         getTickets()
             .catch(err => {
-                alert.getBuilder()
+                const builder = alert.getBuilder()
                     .setTitle("Error")
-                    .setMessage("Error loading tickets. Details: " + err)
                     .setButtonsOk()
-                    .show()
+                if (err instanceof ProblemDetail) {
+                    builder.setMessage("Error loading tickets. Details: " + err.getDetails())
+                } else {
+                    builder.setMessage("Error loading tickets. Details: " + err)
+                }
+                builder.show()
             })
     }, [token, selectedTicket])
 
@@ -45,7 +50,7 @@ function Tickets() {
             <Row>
                 {
                     !loading && tickets.length > 0 && tickets.map(ticket =>
-                        <Col xs={12} className={"pt-3"} key={ticket.id}>
+                        <Col xs={12} className={"pt-3 d-flex flex-column"} key={ticket.id}>
                             <TicketCard ticket={ticket}
                                         setSelected={isManager && (ticket.status === TicketStatusEnum.Open || ticket.status === TicketStatusEnum.Reopened) ? () => setSelectedTicket(ticket) : undefined}
                                         openDetails={true}/>
