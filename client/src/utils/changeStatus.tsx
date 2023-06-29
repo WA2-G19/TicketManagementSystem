@@ -4,6 +4,7 @@ export enum OpenManager {
 }
 
 export enum ReopenedManager {
+    RESOLVED = "Resolved",
     CLOSED = 'Closed',
 }
 
@@ -13,6 +14,7 @@ export enum ResolvedManager {
 
 export enum InProgressManager {
     RESOLVED = "Resolved",
+    CLOSED = "Closed"
 }
 
 export enum ClosedClient {
