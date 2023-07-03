@@ -8,6 +8,9 @@ import it.polito.wa2.g19.server.profiles.ProfileNotFoundException
 import it.polito.wa2.g19.server.profiles.staff.StaffRepository
 import it.polito.wa2.g19.server.ticketing.attachments.AttachmentDTO
 import it.polito.wa2.g19.server.ticketing.attachments.toDTO
+import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
+import it.polito.wa2.g19.server.ticketing.tickets.ForbiddenException
+import it.polito.wa2.g19.server.ticketing.tickets.TicketNotFoundException
 import it.polito.wa2.g19.server.ticketing.tickets.TicketRepository
 import it.polito.wa2.g19.server.ticketing.tickets.TicketService
 import org.springframework.data.repository.findByIdOrNull
@@ -71,8 +74,11 @@ class ChatMessageServiceImpl(
 
     @PreAuthorize("isAuthenticated()")
     override fun insertChatMessage(ticketId: Int, messageToSave: ChatMessageInDTO, files: List<MultipartFile>?):Int {
+        val referredTicket = ticketRepository.findByIdOrNull(ticketId) ?: throw TicketNotFoundException()
+        if (referredTicket.status == TicketStatusEnum.Closed){
+            throw ChatClosedException()
+        }
 
-        val referredTicket = ticketRepository.findById(ticketId).get()
         val authorEmail = SecurityContextHolder.getContext().authentication.name
         val profile = customerRepository.findByEmailIgnoreCase(authorEmail)
             ?: staffRepository.findByEmailIgnoreCase(authorEmail)

@@ -1,16 +1,17 @@
 import Product from "../../classes/Product";
+import PageProduct from "../../classes/PageProduct";
 import ProblemDetail from "../../classes/ProblemDetail";
 
 const { REACT_APP_SERVER_URL } = process.env;
 
-async function getAllProducts(token: string) {
-    const response = await fetch(REACT_APP_SERVER_URL + "/API/products", {
+async function getAllProducts(token: string, page: number) {
+    const response = await fetch(REACT_APP_SERVER_URL + `/API/products?page=${page}&size=9`, {
         headers: {
             "Authorization": "Bearer " + token
         }
     })
     if (response.ok) {
-        return await response.json() as Array<Product>
+        return await response.json() as PageProduct
     }
     throw ProblemDetail.fromJSON(await response.json())
 }

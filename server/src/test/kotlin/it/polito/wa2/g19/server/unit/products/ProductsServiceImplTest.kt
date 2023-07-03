@@ -85,7 +85,7 @@ internal class ProductsServiceImplTest {
         }
         val service = ProductServiceImpl(repo)
         //Act & Assert
-        val productsDTO = service.getAll()
+        val productsDTO = service.getAll(0,-1).products
 
         productsDTO.sortedBy { p -> p.ean }.forEachIndexed { index, p ->
             assert("${index}Ean" == p.ean)
@@ -103,7 +103,7 @@ internal class ProductsServiceImplTest {
         }
         val service = ProductServiceImpl(repo)
         //Act & Assert
-        val productsDTO = service.getAll()
+        val productsDTO = service.getAll(0,-1).products
         assert(productsDTO.isEmpty())
     }
 

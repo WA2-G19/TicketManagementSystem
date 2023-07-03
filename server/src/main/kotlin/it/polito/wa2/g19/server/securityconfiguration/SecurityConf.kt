@@ -42,8 +42,10 @@ class ResourceServerConfig {
             // ================================== //
             // Products API
             // ================================== //
+            .requestMatchers(HttpMethod.GET, "/API/products**")
+                .authenticated()
             .requestMatchers("/API/products/**")
-                .permitAll()
+                .authenticated()
             // ================================== //
             // Staff API
             // ================================== //

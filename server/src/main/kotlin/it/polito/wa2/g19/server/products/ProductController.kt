@@ -1,6 +1,8 @@
 package it.polito.wa2.g19.server.products
 
 import io.micrometer.observation.annotation.Observed
+import it.polito.wa2.g19.server.ticketing.statuses.PriorityLevelEnum
+import it.polito.wa2.g19.server.ticketing.statuses.TicketStatusEnum
 import jakarta.validation.Valid
 import lombok.extern.slf4j.Slf4j
 import org.hibernate.validator.constraints.EAN
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.util.Objects
 
 @RestController
 @CrossOrigin
@@ -22,9 +25,12 @@ class ProductController(
 
     private val log: Logger = LoggerFactory.getLogger(ProductController::class.java)
     @GetMapping("/products")
-    fun getAll(): List<ProductDTO> {
+    fun getAll(
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) size: Int? ,
+    ): PageProductsDTO {
         log.info("Getting all products")
-        return productService.getAll()
+        return productService.getAll(page?: 0, size ?: -1)
     }
 
     @GetMapping("/products/{ean}")

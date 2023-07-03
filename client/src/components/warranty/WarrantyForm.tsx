@@ -27,9 +27,9 @@ function WarrantyForm(): JSX.Element {
 
     useEffect(() => {
         async function getProducts() {
-            const tmp = await ProductAPI.getAllProducts(token)
+            const tmp = await ProductAPI.getAllProducts(token, -1)
             if (tmp !== undefined) {
-                setProducts(tmp)
+                setProducts(tmp.products)
             } else {
                 alert.getBuilder()
                     .setTitle("Error")

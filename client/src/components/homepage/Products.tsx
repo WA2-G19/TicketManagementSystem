@@ -10,17 +10,30 @@ import {BsPlus} from "react-icons/bs";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
 import ProblemDetail from "../../classes/ProblemDetail";
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import { tr } from "date-fns/locale";
+import PageProduct from "../../classes/PageProduct";
 
 function Products(): JSX.Element {
     const navigate = useNavigate()
     const {user} = useAuthentication()
     const alert = useAlert()
-    const [products, setProducts] = useState(Array<Product>)
+    const [pageProduct, setPageProduct] = useState(new PageProduct(Array.of(), 1))
     const [loading, setLoading] = useState(true)
+    
     const token = user!.token
+
+    const getPage = async (page: number) =>{
+        setLoading(true)
+        setPageProduct((await ProductAPI.getAllProducts(token, page)))
+        setLoading(false)
+
+    }
+
     useEffect(() => {
         async function getWarranties() {
-            setProducts(await ProductAPI.getAllProducts(token))
+            setPageProduct(await ProductAPI.getAllProducts(token, 0))
             setLoading(false)
         }
 
@@ -50,10 +63,17 @@ function Products(): JSX.Element {
                     </Col>
                 </HasRole>
             </Row>
+            <Stack spacing={2} alignItems="center">
+                <Pagination count={pageProduct.totalPages} variant="outlined" shape="rounded" size="large" onChange={
+                    (_, page) =>  getPage(page)
+                }
+
+                />
+            </Stack>
             {loading && <Loading/>}
             <Row>
                 {
-                    !loading && products.length !== 0 && products.map(product =>
+                    !loading && pageProduct.products.length !== 0 && pageProduct.products.map(product =>
                         <Col xs={12} sm={6} md={4} className={"pt-3 d-flex flex-column"} key={product.ean}>
                             <ProductCard product={product}/>
                         </Col>
@@ -61,7 +81,7 @@ function Products(): JSX.Element {
                 }
             </Row>
             {
-                !loading && products.length === 0 &&
+                !loading && pageProduct.products.length === 0 &&
                 <h1 color="primary" className={"position-absolute top-50 start-50"}>
                     <strong>No product found</strong>
                 </h1>

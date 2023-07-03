@@ -26,4 +26,8 @@ class ChatMessageProblemDetailsHandler: ResponseEntityExceptionHandler() {
     fun handleDifferentAuthor(e: AuthorAndUserAreDifferentException) = ProblemDetail
         .forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message!!)
 
+    @ExceptionHandler(ChatClosedException::class)
+    fun handleChatClosed(e: ChatClosedException) = ProblemDetail
+        .forStatusAndDetail(HttpStatus.CONFLICT, e.message!!)
+
 }

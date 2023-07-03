@@ -17,3 +17,9 @@ data class ProductDTO (
 fun Product.toDTO(): ProductDTO {
     return ProductDTO(ean, name, brand)
 }
+
+
+data class PageProductsDTO(
+    val products: List<ProductDTO>,
+    val totalPages: Int
+)
