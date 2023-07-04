@@ -44,13 +44,15 @@ class WarrantyServiceImpl(
     @PreAuthorize("hasAnyRole('Client', 'Manager', 'Vendor')")
     override fun getById(id: UUID): WarrantyOutDTO {
         val principal = SecurityContextHolder.getContext().authentication
-        return when(Role.valueOf(principal.authorities.iterator().next().authority)){
-            Role.ROLE_Client -> warrantyRepository.findByIdAndCustomerEmail(id, principal.name)
-            Role.ROLE_Manager -> warrantyRepository.findByIdOrNull(id)
-            Role.ROLE_Vendor -> warrantyRepository.findByIdAndVendorEmail(id, principal.name)
-            else -> throw ForbiddenException()
-        }?.toDTO() ?: throw WarrantyNotFoundException()
-
+        return if (principal.authorities.any { it.authority == Role.ROLE_Client.name }) {
+            warrantyRepository.findByIdAndCustomerEmail(id, principal.name)?.toDTO() ?: throw WarrantyNotFoundException()
+        } else if (principal.authorities.any { it.authority == Role.ROLE_Manager.name }) {
+            warrantyRepository.findByIdOrNull(id)?.toDTO() ?: throw WarrantyNotFoundException()
+        } else if (principal.authorities.any { it.authority == Role.ROLE_Vendor.name }) {
+            warrantyRepository.findByIdAndVendorEmail(id, principal.name)?.toDTO() ?: throw WarrantyNotFoundException()
+        } else {
+            throw ForbiddenException()
+        }
     }
 
 
