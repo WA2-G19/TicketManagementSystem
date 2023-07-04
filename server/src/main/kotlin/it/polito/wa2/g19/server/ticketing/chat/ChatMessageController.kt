@@ -40,19 +40,20 @@ class ChatMessageController(
         val principal = SecurityContextHolder.getContext().authentication
         val email = principal.name
 
-        val tickets = when (Role.valueOf(principal.authorities.stream().findFirst().get().authority)) {
-            /*If the customer param is specified ignores it*/
-            Role.ROLE_Client -> ticketService.getTickets(email)
-            /*If the expert param is specified ignores it*/
-            Role.ROLE_Expert -> ticketService.getTickets(null, email,)
-
-            Role.ROLE_Manager -> ticketService.getTickets()
-
-            Role.ROLE_Vendor -> throw ForbiddenException()
-        }
-
-        return tickets.associate {
-            it.id!! to chatMessageService.getUnreadMessages(it.id)
+        return if (principal.authorities.any { it.authority == Role.ROLE_Client.name }) {
+            ticketService.getTickets(email).associate {
+                it.id!! to chatMessageService.getUnreadMessages(it.id)
+            }
+        } else if (principal.authorities.any { it.authority == Role.ROLE_Expert.name }) {
+            ticketService.getTickets(null, email,).associate {
+                it.id!! to chatMessageService.getUnreadMessages(it.id)
+            }
+        } else if (principal.authorities.any { it.authority == Role.ROLE_Manager.name }) {
+            ticketService.getTickets().associate {
+                it.id!! to chatMessageService.getUnreadMessages(it.id)
+            }
+        } else {
+            throw ForbiddenException()
         }
     }
 

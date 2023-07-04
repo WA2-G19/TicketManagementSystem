@@ -41,10 +41,10 @@ class ChatMessageServiceImpl(
     override fun getUnreadMessages(ticketId: Int): Int {
         val principal = SecurityContextHolder.getContext().authentication
         val userEmail = principal.name
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val isManager = principal.authorities.any { it.authority == Role.ROLE_Manager.name }
         ticketService.getTicket(ticketId)
         return chatMessageRepository.findByTicketId(ticketId)?.filter {
-            role != Role.ROLE_Manager && userEmail != it.getAuthor().email && !it.read
+             !isManager && userEmail != it.getAuthor().email && !it.read
         }?.size ?: 0
     }
 
@@ -60,11 +60,11 @@ class ChatMessageServiceImpl(
     override fun getChatMessages(ticketId: Int): Set<ChatMessageOutDTO> {
         val principal = SecurityContextHolder.getContext().authentication
         val userEmail = principal.name
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
+        val isManager = principal.authorities.any { it.authority == Role.ROLE_Manager.name }
         ticketService.getTicket(ticketId)
         return chatMessageRepository.findByTicketId(ticketId)!!
             .map {
-                if (role != Role.ROLE_Manager && userEmail != it.getAuthor().email) {
+                if (!isManager && userEmail != it.getAuthor().email) {
                     it.read = true
                     chatMessageRepository.save(it)
                 }
@@ -78,8 +78,15 @@ class ChatMessageServiceImpl(
         if (referredTicket.status == TicketStatusEnum.Closed){
             throw ChatClosedException()
         }
+        val principal = SecurityContextHolder.getContext().authentication
+        if (principal.authorities.any { it.authority == Role.ROLE_Expert.name } && referredTicket.expert?.email != principal.name) {
+            throw ForbiddenException()
+        }
+        if (principal.authorities.any { it.authority == Role.ROLE_Client.name } && referredTicket.warranty.customer?.email != principal.name) {
+            throw ForbiddenException()
+        }
 
-        val authorEmail = SecurityContextHolder.getContext().authentication.name
+        val authorEmail = principal.name
         val profile = customerRepository.findByEmailIgnoreCase(authorEmail)
             ?: staffRepository.findByEmailIgnoreCase(authorEmail)
             ?: throw ProfileNotFoundException()

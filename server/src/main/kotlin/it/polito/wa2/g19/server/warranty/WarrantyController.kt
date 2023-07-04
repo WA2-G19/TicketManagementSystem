@@ -20,7 +20,8 @@ import java.util.*
 @CrossOrigin
 class WarrantyController(
     private val warrantyService: WarrantyService,
-    @Qualifier("requestMappingHandlerMapping") private val handlerMapping: RequestMappingHandlerMapping
+    @Qualifier("requestMappingHandlerMapping")
+    private val handlerMapping: RequestMappingHandlerMapping
 
 ) {
     @GetMapping("")
