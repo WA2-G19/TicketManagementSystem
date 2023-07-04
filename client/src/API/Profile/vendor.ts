@@ -7,7 +7,7 @@ async function getVendors(token: string) {
     const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/profiles", {
         headers: {
             "Authorization": "Bearer " + token,
-            "Accept": "Application/Json"
+            "Accept": "application/json"
         }
     })
     if (response.ok) {
@@ -20,7 +20,7 @@ async function getVendor(token: string, email: string) {
     const response = await fetch(REACT_APP_SERVER_URL + "/API/vendor/" + email, {
         headers: {
             "Authorization": "Bearer " + token,
-            "Accept": "Application/Json"
+            "Accept": "application/json"
         }
     })
     if (response.ok) {
@@ -34,8 +34,8 @@ async function createVendor(token: string, credentials: CredentialVendor) {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + token,
-            "Accept": "Application/Json",
-            "Content": "Application/Json"
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         },
         body: credentials.toJsonObject()
     })
