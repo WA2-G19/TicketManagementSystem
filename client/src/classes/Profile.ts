@@ -124,7 +124,7 @@ export class CredentialVendor {
 
     toJsonObject(): string {
         return JSON.stringify({
-            profile: this.vendor,
+            vendor: this.vendor,
             password: this.password
         })
     }
