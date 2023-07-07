@@ -31,7 +31,7 @@ function HomePage() {
                         <HasRole role={"Manager"} key={"manager"}>
                             <Routes>
                                 <Route path={"/stats"} element={<Stats/>} />
-                                <Route path={"/tickets"} element={<Tickets />} />
+                                <Route path={"/tickets"} element={<Tickets/>} />
                                 <Route path={"/tickets/:ticketId"} element={<TicketDetail />} />
                                 <Route path={"/staffs"} element={<Staffs />} />
                                 <Route path={"/staffs/edit/:expertEmail"} element={<ProfileEditForm />} />

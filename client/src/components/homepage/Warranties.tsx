@@ -1,6 +1,6 @@
 import {useAuthentication} from "../../contexts/Authentication";
 import React, {useEffect, useState} from "react";
-import {Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import {WarrantyOut} from "../../classes/Warranty";
 import WarrantyAPI from "../../API/Warranty/warranty";
 import WarrantyCard from "../warranty/WarrantyCard";
@@ -63,8 +63,11 @@ function Warranties(): JSX.Element {
                     <h1>Warranties</h1>
                 </Col>
                 <HasAnyRole roles={["Client", "Vendor"]}>
-                    <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                        <BsPlus size={"2em"} onClick={() => navigate("/warranties/add")} role={"button"}/>
+                    <Col className={"d-flex flex-row align-items-center"} xs={2}>
+                        <Button onClick={() => navigate("/warranties/add")}>
+                            {user?.role[0] === "Client" ?  "Activate Warranty":"Create Warranty"} 
+                            <BsPlus size={"2em"}  role={"button"}/>
+                        </Button>
                     </Col>
                 </HasAnyRole>
             </Row>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Col, Container, Row} from "react-bootstrap";
+import {Col, Container, Row, Button} from "react-bootstrap";
 import {Vendor} from "../../classes/Profile";
 import VendorAPI from "../../API/Profile/vendor";
 import {useAuthentication} from "../../contexts/Authentication";
@@ -45,8 +45,11 @@ function Vendors() {
                     <h1>Vendors</h1>
                 </Col>
                 <HasRole role={"Manager"}>
-                    <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                        <BsPlus size={"2em"} onClick={() => navigate("/vendors/add")} role={"button"}/>
+                    <Col className={"d-flex flex-row align-items-center"} xs={2}>
+                        <Button  onClick={() => navigate("/vendors/add")}>
+                            Add Vendor
+                            <BsPlus size={"2em"} role={"button"}/>
+                        </Button>
                     </Col>
                 </HasRole>
             </Row>

@@ -4,7 +4,7 @@ import {useAuthentication} from "../../contexts/Authentication";
 import {Navigate, useNavigate, useParams} from "react-router-dom";
 import ChatAPI from "../../API/Ticketing/chat";
 import TicketCard from "./TicketCard";
-import {Button, Col, Container, Form, Row} from "react-bootstrap";
+import {Button, Col, Container, Form, InputGroup, Row} from "react-bootstrap";
 import {useAlert} from "../../contexts/Alert";
 import ProblemDetail from "../../classes/ProblemDetail";
 import {BsArrowLeft, BsFileArrowDown} from "react-icons/bs";
@@ -171,20 +171,23 @@ function TicketDetail() {
                 <Col>
                     <Form onSubmit={handleSubmit}>
                         <Row className={"mb-3"}>
-                            <Col>
+                            <Col >
+                                <InputGroup>
                                 <Form.FloatingLabel label={"Message"}>
                                     <Form.Control required={true} ref={messageRef} />
                                 </Form.FloatingLabel>
+                                <Button type={"submit"}>
+                                            Send
+                                        </Button>
+                                </InputGroup>
+                                
                             </Col>
+                           
                         </Row>
                         <Row>
                             <Col>
                                 <Row>
-                                    <Col>
-                                        <Button type={"submit"}>
-                                            Send
-                                        </Button>
-                                    </Col>
+                                    
                                     <Col>
                                         <Form.Control ref={attachmentsRef} type={"file"} required={false} multiple={true} />
                                     </Col>
