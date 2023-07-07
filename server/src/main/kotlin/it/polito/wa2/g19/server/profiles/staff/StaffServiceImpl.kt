@@ -121,10 +121,8 @@ class StaffServiceImpl(
             staffRepository.save(p)
         } catch (e: Exception){
             //delete the expert is something go wrong
-
             userResource.get(userId).remove()
             throw KeycloakException()
         }
-
     }
 }

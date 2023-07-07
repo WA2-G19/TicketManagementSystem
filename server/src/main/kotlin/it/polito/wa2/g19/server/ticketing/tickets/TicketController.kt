@@ -42,21 +42,17 @@ class TicketController(
         @RequestParam(required = false) priorityLevel: PriorityLevelEnum?
     ): List<TicketOutDTO> {
         val principal = SecurityContextHolder.getContext().authentication
-        val role = Role.valueOf(principal.authorities.stream().findFirst().get().authority)
         val email = principal.name
 
-        val tickets = when (role) {
-            /*If the customer param is specified ignores it*/
-            Role.ROLE_Client -> ticketService.getTickets(email, expert, status, priorityLevel)
-            /*If the expert param is specified ignores it*/
-            Role.ROLE_Expert -> ticketService.getTickets(customer, email, status, priorityLevel)
-
-            Role.ROLE_Manager -> ticketService.getTickets(customer, expert, status, priorityLevel)
-
-            Role.ROLE_Vendor -> throw ForbiddenException()
+        return if (principal.authorities.any { it.authority == Role.ROLE_Expert.name }) {
+            ticketService.getTickets(customer, email, status, priorityLevel)
+        } else if (principal.authorities.any { it.authority == Role.ROLE_Client.name }) {
+            ticketService.getTickets(email, expert, status, priorityLevel)
+        } else if (principal.authorities.any { it.authority == Role.ROLE_Manager.name }) {
+            ticketService.getTickets(customer, expert, status, priorityLevel)
+        } else {
+            throw ForbiddenException()
         }
-
-        return tickets
     }
 
     @GetMapping("/{ticketId}")
@@ -75,7 +71,6 @@ class TicketController(
         @RequestBody
         ticket: TicketDTO
     ): ResponseEntity<Void> {
-
         val id = ticketService.createTicket(ticket)
         val headers = HttpHeaders()
         headers.location = URI.create(Util.getUri(handlerMapping, ::getTicketById.name, id))
@@ -98,7 +93,6 @@ class TicketController(
         @RequestBody
         ticketStatus: TicketStatusDTO
     ) {
-
         when(ticketStatus.status) {
             TicketStatusEnum.Reopened -> ticketService.reopenTicket(ticketId)
             TicketStatusEnum.InProgress -> ticketService.startProgressTicket(ticketId, principal.name, ticketStatus)

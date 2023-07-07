@@ -38,7 +38,6 @@ class VendorServiceImpl(
             email = credentials.vendor.email
             isEnabled = true
             isEmailVerified = true
-            realmRoles = listOf("Vendor")
             this.credentials = listOf(
                 CredentialRepresentation().apply {
                     type = CredentialRepresentation.PASSWORD
@@ -53,7 +52,10 @@ class VendorServiceImpl(
         if (creationResponse.status == HttpStatus.CONFLICT.value()) throw DuplicateEmailException()
         if (creationResponse.status != HttpStatus.CREATED.value()) throw KeycloakException()
 
+        val role = keycloak.realm(realmName).roles().get("Vendor").toRepresentation()
         val userId = CreatedResponseUtil.getCreatedId(creationResponse)
+        val userResponse = userResource.get(userId)
+        userResponse.roles().realmLevel().add(listOf(role))
         try{
             val profile = credentials.vendor
             val p = Vendor().apply {

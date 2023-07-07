@@ -102,7 +102,7 @@ class CustomerServiceImpl(
         val userId = CreatedResponseUtil.getCreatedId(response)
         val userResponse = userResource.get(userId)
         userResponse.roles().realmLevel().add(listOf(role))
-        try{
+        try {
             val p = Customer().apply {
                 id = UUID.fromString(userId)
                 email = credentials.customerDTO.email.trim().lowercase()
@@ -111,14 +111,11 @@ class CustomerServiceImpl(
                 address = credentials.customerDTO.address
             }
             customerRepository.save(p)
-//            userResource.get(userId).sendVerifyEmail()
+            //userResource.get(userId).sendVerifyEmail()
         } catch (e: Exception){
             //delete the user is something go wrong
             userResource.get(userId).remove()
             throw KeycloakException()
         }
-        // Insert inside database
-
-
     }
 }

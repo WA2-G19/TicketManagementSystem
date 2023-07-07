@@ -44,6 +44,8 @@ class ResourceServerConfig {
             // ================================== //
             .requestMatchers(HttpMethod.GET, "/API/products**")
                 .authenticated()
+            .requestMatchers(HttpMethod.POST, "/API/products")
+                .hasRole("Manager")
             .requestMatchers("/API/products/**")
                 .authenticated()
             // ================================== //
@@ -79,7 +81,7 @@ class ResourceServerConfig {
             .requestMatchers(HttpMethod.POST, "/API/tickets")
                 .hasRole("Client")
             .requestMatchers(HttpMethod.GET, "/API/tickets**")
-            .authenticated()
+                .hasAnyRole("Manager", "Client", "Expert")
             // ================================== //
             // Warranty API
             // ================================== //
