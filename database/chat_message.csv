@@ -1,3 +1,9 @@
 dtype,id,body,read,timestamp,ticket_id,customer_author_id,staff_author_id
-CustomerChatMessage,0,ciao,false,2023-06-14 17:40:08.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,
-CustomerChatMessage,1,mondo,false,2023-06-14 17:40:40.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,
+CustomerChatMessage,0,I need help!,true,2023-06-14 17:40:08.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,
+CustomerChatMessage,1,Stop working!,true,2023-06-14 17:40:40.000000,0,f5ac7878-d7ac-4668-8db3-94f3890cd6e3,
+StaffChatMessage,2,Ok i will assign to an expert!,true,2023-07-07 21:01:42.914921,0,,69401713-2310-4eff-aa90-bc2ccb231ba8
+StaffChatMessage,3,Hello i will help you!,true,2023-07-07 21:02:09.823244,0,,44afd9d1-d74e-4f4c-8ee2-3ce4978d4411
+StaffChatMessage,4,Ok i will assign to an expert!,false,2023-07-07 21:07:59.042204,1,,69401713-2310-4eff-aa90-bc2ccb231ba8
+StaffChatMessage,5,Ok i will assign to an expert!,false,2023-07-07 21:08:11.622632,3,,69401713-2310-4eff-aa90-bc2ccb231ba8
+StaffChatMessage,6,Ok i will assign to an expert!,false,2023-07-07 21:08:34.744248,2,,69401713-2310-4eff-aa90-bc2ccb231ba8
+StaffChatMessage,7,Ok i will assign to an expert!,true,2023-07-07 21:10:58.892391,4,,69401713-2310-4eff-aa90-bc2ccb231ba8

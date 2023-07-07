@@ -1,2 +1,5 @@
 id,email,business_name,address,phone_number
 44afd9d1-d74e-4f4c-8ee2-3ce4978d4412,vendor@test.it,Vendor,"Via Test 1","1234567890"
+8dbf0eda-b1f1-4dd1-9dd8-2a226e152f4b,vendor2@test.it,Vendor2,"Via Giacomo Matteotti 10","3456039485"
+f7edc661-34eb-4f51-a96d-35c9ed5443e3,vendor3@test.it,Vendor3,"Via Antonio Del Vecchio 15","2039658495"
+c22efd92-52a0-406b-a209-99ad2043c989,vendor4@test.it,Vendor4,"Via Antonio Gramsci 23","3491023456"

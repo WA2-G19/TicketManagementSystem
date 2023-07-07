@@ -1,3 +1,13 @@
 dtype,id,timestamp,ticket_id,by_id,expert_id,priority_name
 Open,0,2022-06-22 19:10:25,0,,,
 Closed,1,2022-07-22 19:10:25,0,69401713-2310-4eff-aa90-bc2ccb231ba8,,
+Reopened,2,2023-07-07 21:01:12,0,,,
+InProgress,3,2023-07-07 21:01:26,0,69401713-2310-4eff-aa90-bc2ccb231ba8,44afd9d1-d74e-4f4c-8ee2-3ce4978d4411,LOW
+Open,4,2023-07-07 21:06:16,1,,,
+Open,5,2023-07-07 21:07:03,2,,,
+Open,6,2023-07-07 21:07:37,3,,,
+InProgress,7,2023-07-07 21:08:06,1,69401713-2310-4eff-aa90-bc2ccb231ba8,ccf91711-3bf6-48f6-bbaf-e033028ec9e2,MEDIUM
+InProgress,8,2023-07-07 21:08:29,3,69401713-2310-4eff-aa90-bc2ccb231ba8,4acd4c78-ce76-4f62-9afb-cd58e2be840a,CRITICAL
+InProgress,9,2023-07-07 21:08:41,2,69401713-2310-4eff-aa90-bc2ccb231ba8,ccf91711-3bf6-48f6-bbaf-e033028ec9e2,HIGH
+Open,10,2023-07-07 21:10:45,4,,,
+Closed,11,2023-07-07 21:11:14,1,69401713-2310-4eff-aa90-bc2ccb231ba8,,

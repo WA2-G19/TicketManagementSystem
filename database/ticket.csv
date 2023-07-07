@@ -1,2 +1,6 @@
 id,description,warranty_id,expert_id,priority_level_name,status
-0,"Non si connette ad internet",f5ac7878-d7ac-4668-8db3-94f3890cd6e4,,,2
+0,"Non si connette ad internet",f5ac7878-d7ac-4668-8db3-94f3890cd6e4,44afd9d1-d74e-4f4c-8ee2-3ce4978d4411,LOW,2
+3,"I need help!",f9c28c6e-1899-4b16-81a6-7fcd12543258,4acd4c78-ce76-4f62-9afb-cd58e2be840a,CRITICAL,1
+2,"Stop working today",6d0f3bf5-0cb6-420e-9078-1e5a5c0965a6,ccf91711-3bf6-48f6-bbaf-e033028ec9e2,HIGH,1
+4,"Broken object need another",4f7c5e16-4136-49ee-8bd3-517e0f7f96ac,,,0
+1,"Not working",8b1598e9-0978-4346-82bd-ffeb6582eb93,,,2

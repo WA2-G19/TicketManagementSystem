@@ -1,3 +1,6 @@
 id,email,name,surname,dtype
 44afd9d1-d74e-4f4c-8ee2-3ce4978d4411,expert@test.it,Expert,Test,Expert
 69401713-2310-4eff-aa90-bc2ccb231ba8,manager@test.it,Manager,Test,Manager
+ccf91711-3bf6-48f6-bbaf-e033028ec9e2,expert2@test.it,Expert2,Test,Expert
+4acd4c78-ce76-4f62-9afb-cd58e2be840a,expert3@test.it,Expert3,Test,Expert
+e10fe8ec-e311-4834-a540-5d5c7a07642b,expert4@test.it,Expert4,Test,Expert
