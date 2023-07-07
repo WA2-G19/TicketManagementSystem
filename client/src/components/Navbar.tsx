@@ -13,7 +13,7 @@ function MyNavbar() {
 
     const logout = () => {
         auth.logout()
-            .then(() => navigate("/"))
+            .then(() => navigate("/login"))
     }
 
     const goToHome = () => {

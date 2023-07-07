@@ -95,7 +95,7 @@ function ListItem({ item }: {
     return <ListGroup.Item onClick={() => {
         navigate(item.path)
     }} active={active} action={true} className={!active ? "bg-transparent" : ""}>
-        <Nav.Link className={"link-dark"}>{item.display}</Nav.Link>
+        <Nav.Link className={!active ? "link-dark": "link-light"}>{item.display}</Nav.Link>
     </ListGroup.Item>
 
 }

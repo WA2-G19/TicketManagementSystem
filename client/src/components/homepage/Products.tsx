@@ -1,6 +1,6 @@
 import {useAuthentication} from "../../contexts/Authentication";
 import React, {useEffect, useState} from "react";
-import {Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import ProductAPI from "../../API/Products/products";
 import Product from "../../classes/Product";
 import ProductCard from "../product/ProductCard";
@@ -58,8 +58,10 @@ function Products(): JSX.Element {
                     <h1>Products</h1>
                 </Col>
                 <HasRole role={"Manager"}>
-                    <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                        <BsPlus size={"2em"} onClick={() => navigate("/products/add")} role={"button"}/>
+                    <Col className={"d-flex flex-row align-items-center"} xs={2}>
+                        <Button onClick={() => navigate("/products/add")}> Add Product
+                            <BsPlus size={"2em"}  role={"button"}/>
+                        </Button>
                     </Col>
                 </HasRole>
             </Row>

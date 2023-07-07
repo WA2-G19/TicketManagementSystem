@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Col, Container, Row} from "react-bootstrap";
+import {Col, Container, Row, Button} from "react-bootstrap";
 import {useAuthentication} from "../../contexts/Authentication";
 import Loading from "../Loading";
 import {useAlert} from "../../contexts/Alert";
@@ -48,8 +48,11 @@ function Skills() {
                 <Col>
                     <h1>Skills</h1>
                 </Col>
-                <Col className={"d-flex flex-row align-items-center"} xs={1}>
-                    <BsPlus size={"2em"} onClick={() => navigate("/skills/add")} role={"button"}/>
+                <Col className={"d-flex flex-row align-items-center"} xs={2}>
+                    <Button onClick={() => navigate("/skills/add")}>
+                        Add Skill
+                        <BsPlus size={"2em"}  role={"button"}/>
+                    </Button>
                 </Col>
             </Row>
             {loading && <Loading/>}
