@@ -77,10 +77,10 @@ export class Period {
 
     static fromString(durationString: string): Period {
         const integer = /[1-9][0-9]*|0/
-        const validation = new RegExp("P(?<years>" + integer.source + ")Y)?((?<months>" + integer.source + ")M)?((?<days>" + integer.source + ")D")
+        const validation = new RegExp("P((?<years>" + integer.source + ")Y)?((?<months>" + integer.source + ")M)?((?<days>" + integer.source + ")D)?")
         const match = durationString.match(validation)
         if (!match || !match.groups) {
-            throw new Error('Invalid duration string');
+            throw new Error(`Invalid duration string ${durationString}`);
         }
 
         return new Period(

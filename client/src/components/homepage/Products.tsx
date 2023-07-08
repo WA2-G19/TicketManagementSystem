@@ -2,7 +2,6 @@ import {useAuthentication} from "../../contexts/Authentication";
 import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import ProductAPI from "../../API/Products/products";
-import Product from "../../classes/Product";
 import ProductCard from "../product/ProductCard";
 import Loading from "../Loading";
 import {useAlert} from "../../contexts/Alert";
@@ -12,7 +11,6 @@ import {useNavigate} from "react-router-dom";
 import ProblemDetail from "../../classes/ProblemDetail";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { tr } from "date-fns/locale";
 import PageProduct from "../../classes/PageProduct";
 
 function Products(): JSX.Element {

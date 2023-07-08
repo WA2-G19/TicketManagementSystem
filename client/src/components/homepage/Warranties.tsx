@@ -7,9 +7,9 @@ import WarrantyCard from "../warranty/WarrantyCard";
 import Loading from "../Loading";
 import {BsPlus} from "react-icons/bs";
 import {useNavigate} from "react-router-dom";
-import HasAnyRole from "../authentication/HasAnyRole";
 import {useAlert} from "../../contexts/Alert";
 import ProblemDetail from "../../classes/ProblemDetail";
+import HasRole from "../authentication/HasRole";
 
 function Warranties(): JSX.Element {
     const navigate = useNavigate()
@@ -62,14 +62,22 @@ function Warranties(): JSX.Element {
                 <Col>
                     <h1>Warranties</h1>
                 </Col>
-                <HasAnyRole roles={["Client", "Vendor"]}>
+                <HasRole role={"Client"}>
                     <Col className={"d-flex flex-row align-items-center"} xs={2}>
                         <Button onClick={() => navigate("/warranties/add")}>
-                            {user?.role[0] === "Client" ?  "Activate Warranty":"Create Warranty"} 
+                            Activate Warranty
                             <BsPlus size={"2em"}  role={"button"}/>
                         </Button>
                     </Col>
-                </HasAnyRole>
+                </HasRole>
+                <HasRole role={"Vendor"}>
+                    <Col className={"d-flex flex-row align-items-center"} xs={2}>
+                        <Button onClick={() => navigate("/warranties/add")}>
+                            Create Warranty
+                            <BsPlus size={"2em"}  role={"button"}/>
+                        </Button>
+                    </Col>
+                </HasRole>
             </Row>
             {loading && <Loading/>}
             <Row>
