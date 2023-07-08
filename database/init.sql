@@ -8,12 +8,15 @@ create sequence public.attachment_seq
     increment by 50;
 
 create sequence public.chat_message_seq
+    start 57
     increment by 50;
 
 create sequence public.ticket_seq
+    start 54
     increment by 50;
 
 create sequence public.ticket_status_seq
+    start 61
     increment by 50;
 
 create table public.priority_level
