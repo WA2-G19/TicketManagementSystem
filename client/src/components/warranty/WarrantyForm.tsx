@@ -7,7 +7,7 @@ import ProductAPI from "../../API/Products/products";
 import {useAuthentication} from "../../contexts/Authentication";
 import {useAlert} from "../../contexts/Alert";
 import WarrantyAPI from "../../API/Warranty/warranty";
-import {Duration, WarrantyIn} from "../../classes/Warranty";
+import {Period, WarrantyIn} from "../../classes/Warranty";
 import HasRole from "../authentication/HasRole";
 
 function WarrantyForm(): JSX.Element {
@@ -57,10 +57,9 @@ function WarrantyForm(): JSX.Element {
             try {
                 const response = await WarrantyAPI.postWarranty(token, new WarrantyIn(
                     productRef.current.value,
-                    new Duration(
+                    new Period(
                         parseFloat(yearsRef.current.value),
                         parseInt(monthsRef.current.value),
-                        0,
                         parseInt(daysRef.current.value)
                     ).toString()
                 ))
@@ -139,7 +138,7 @@ function WarrantyForm(): JSX.Element {
                                         label={"Years"}
                                         className={"mb-3"}
                                     >
-                                        <Form.Control type={"number"} step={"0.01"} min={"0"} ref={yearsRef} defaultValue={0} />
+                                        <Form.Control type={"number"} step={"1"} min={"0"} ref={yearsRef} defaultValue={0} />
                                     </Form.FloatingLabel>
                                 </Col>
                                 <Col>

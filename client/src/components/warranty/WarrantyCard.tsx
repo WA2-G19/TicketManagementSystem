@@ -1,7 +1,7 @@
 import {Badge, Button, Col, Container, Row} from "react-bootstrap";
 import {Typography} from "@mui/material";
 import React, {useState} from "react";
-import {WarrantyOut, Duration} from "../../classes/Warranty";
+import {WarrantyOut, Period} from "../../classes/Warranty";
 import HasRole from "../authentication/HasRole";
 import {useNavigate} from "react-router-dom";
 import ProductAPI from "../../API/Products/products";
@@ -19,7 +19,7 @@ function WarrantyCard({ warranty, now = new Date(Date.now()), remove }: {
     remove: (arg0 : number) => void
 }): JSX.Element {
     const navigate = useNavigate()
-    const duration = Duration.fromString(warranty.duration)
+    const duration = Period.fromString(warranty.duration)
     const creationTime = new Date(warranty.creationTimestamp)
     const activationTime = new Date(warranty.activationTimestamp)
     const isExpired = duration.addToDate(creationTime) < now
