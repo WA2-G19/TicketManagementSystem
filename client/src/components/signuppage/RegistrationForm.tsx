@@ -34,6 +34,11 @@ function RegistrationForm() {
                     surnameRef.current.value,
                     addressRef.current.value
                 ), passwordRef.current.value))
+                alert.getBuilder()
+                    .setTitle("Registration succeeded")
+                    .setMessage("Registration is completed")
+                    .setButtonsOk(() => navigate("/login"))
+                    .show()
             } catch (e) {
                 if (e instanceof ProblemDetail) {
                     if (e.status === HttpStatusCode.CREATED) {
